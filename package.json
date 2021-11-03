@@ -1,5 +1,5 @@
 {
-  "name": "eig-pkcs",
+  "name": "eigen_service",
   "version": "1.0.0",
   "main": "build/src/app.js",
   "license": "Apache-2.0",
