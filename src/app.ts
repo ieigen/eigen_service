@@ -765,7 +765,7 @@ app.get("/user/:user_id/statistics", async function (req, res) {
     return;
   }
 
-  var kind = req.body.kind;
+  var kind = req.query.kind;
 
   if (kind === undefined) {
     console.log("Satistics kind is not given ", user_id);
