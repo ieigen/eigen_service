@@ -752,7 +752,7 @@ app.post("/user/:user_id/otpauth", async function (req, res) {
 });
 
 // Statistics
-app.post("/user/:user_id/statistics", async function (req, res) {
+app.get("/user/:user_id/statistics", async function (req, res) {
   const user_id = req.params.user_id;
   if (!util.check_user_id(req, user_id)) {
     console.log("user_id does not match with decoded JWT");

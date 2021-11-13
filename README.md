@@ -132,7 +132,7 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/recovery?us
 curl -XDELETE -H "Content-Type:application/json"  --url "localhost:3000/recovery"  -d '{"id": 6}'
 
 # Statistics
-curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/statistics" -d '{"kind": "send email"}'
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/statistics" -d '{"kind": "send email"}'
 ```
 
 ### Login by Oauth
