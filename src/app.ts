@@ -751,6 +751,32 @@ app.post("/user/:user_id/otpauth", async function (req, res) {
   }
 });
 
+// Statistics
+app.get("/user/:user_id/statistics", async function (req, res) {
+  const user_id = req.params.user_id;
+  if (!util.check_user_id(req, user_id)) {
+    console.log("user_id does not match with decoded JWT");
+    res.json(
+      util.Err(
+        util.ErrCode.InvalidAuth,
+        "user_id does not match, you can't see any other people's information"
+      )
+    );
+    return;
+  }
+
+  var kind = req.query.kind;
+
+  if (kind === undefined) {
+    console.log("Satistics kind is not given ", user_id);
+    res.json(util.Err(util.ErrCode.Unknown, "satistics kind is not given"));
+    return;
+  } else {
+    console.log(`[Statistics: ${kind}] (${user_id})`);
+    return res.json(util.Succ(""));
+  }
+});
+
 require("./login/google")(app);
 
 app.listen(3000, function () {
