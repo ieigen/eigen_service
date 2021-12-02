@@ -2,7 +2,7 @@
 
 - PKCS
 - Transaction History
-- Secret recovery
+- Secret recovery by TSS with Share Refresh
 
 ## Usage
 
