@@ -229,6 +229,8 @@ sequelize
     return token_allowance_db.create({
       network_id: "_network_id",
       token_address: "0xTOKEN",
+      user_address: "0xUSER",
+      swap_address: "0xSWAP",
       allowance: 0,
     });
   })
@@ -318,12 +320,12 @@ export { updateOrAdd, get, add };
 
 // TODO: Implement a background search for all the allowance when needed
 export const get_allowance = function (
-  network_id,
+  network,
   user_address,
   token_address,
   swap_address
 ) {
-  let provider = ethers.getDefaultProvider(getRpcUrl(network_id));
+  let provider = ethers.getDefaultProvider(getRpcUrl(network));
   console.log("Provider: ", provider);
 
   const token = new ethers.Contract(token_address, ERC20_ABI, provider);
