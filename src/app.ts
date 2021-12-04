@@ -830,12 +830,12 @@ app.get("/user/:user_id/allowance", async function (req, res) {
     return;
   }
 
-  console.log(req.body);
+  console.log(req.query);
 
-  const user_address = req.body.user_address;
-  const token_address = req.body.token_address;
-  const swap_address = req.body.swap_address;
-  const network_id = req.body.network_id;
+  const user_address = req.query.user_address;
+  const token_address = req.query.token_address;
+  const swap_address = req.query.swap_address;
+  const network_id = req.query.network_id;
   if (
     !util.has_value(user_address) ||
     !util.has_value(swap_address) ||
