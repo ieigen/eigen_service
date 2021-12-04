@@ -140,8 +140,11 @@ curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user
 # Get user's allowance for a token in a network for a swap contract
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/allowance?network_id=1&token_address=0x1&user_address=0x2&swap_address=0x3'
 
-# Get user's allowances for diplay
+# Get user's allowances for display
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/allowances?network_id=1&user_address=0x2'
+
+# Save user's address
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/address?network_id=1&user_address=0x2'
 ```
 
 ### Login by Oauth

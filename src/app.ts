@@ -11,6 +11,7 @@ import * as db_pk from "./database_pk";
 import * as db_txh from "./database_transaction_history";
 import * as db_recovery from "./database_recovery";
 import * as friend_list from "./database_friend_relationship";
+import * as db_address from "./database_address";
 import * as util from "./util";
 
 import * as userdb from "./pid/pid";
@@ -937,6 +938,30 @@ app.get("/user/:user_id/allowances", async function (req, res) {
 
   res.json(util.Succ(allowance_list));
   return;
+});
+
+app.post("/user/:user_id/address", async function (req, res) {
+  const user_id = req.params.user_id;
+  if (!util.check_user_id(req, user_id)) {
+    console.log("user_id does not match with decoded JWT");
+    res.json(
+      util.Err(
+        util.ErrCode.InvalidAuth,
+        "user_id does not match, you can't see any other people's information"
+      )
+    );
+    return;
+  }
+
+  const user_address = req.body.user_address;
+  const network_id = req.body.network_id;
+  if (!util.has_value(user_address) || !util.has_value(network_id)) {
+    return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
+  }
+  console.log(req.body);
+
+  const result = db_address.updateOrAdd(user_id, network_id, user_address);
+  res.json(util.Succ(result));
 });
 
 require("./login/google")(app);

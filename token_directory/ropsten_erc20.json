@@ -1,0 +1,14 @@
+{
+  "name": "ropsten-erc20",
+  "chainId": 1,
+  "tokenStandard": "erc20",
+  "logoURI": "",
+  "keywords": ["erc20", "test"],
+  "timestamp": "2021-12-04T22:00:03.430Z",
+  "tokens": [],
+  "version": {
+    "major": 0,
+    "minor": 0,
+    "patch": 1
+  }
+}
