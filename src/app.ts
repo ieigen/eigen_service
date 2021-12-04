@@ -964,6 +964,34 @@ app.post("/user/:user_id/address", async function (req, res) {
   res.json(util.Succ(result));
 });
 
+app.get("/user/:user_id/addresses", async function (req, res) {
+  const user_id = req.params.user_id;
+  if (!util.check_user_id(req, user_id)) {
+    console.log("user_id does not match with decoded JWT");
+    res.json(
+      util.Err(
+        util.ErrCode.InvalidAuth,
+        "user_id does not match, you can't see any other people's information"
+      )
+    );
+    return;
+  }
+
+  console.log(req.query);
+
+  const filter = {
+    user_id: user_id,
+    network_id: req.query.network_id,
+  };
+
+  let addresses: any = await db_address.search(filter);
+
+  console.log(addresses);
+
+  res.json(util.Succ(addresses));
+  return;
+});
+
 require("./login/google")(app);
 
 app.listen(3000, function () {

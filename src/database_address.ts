@@ -67,8 +67,8 @@ const add = function (user_id, network_id, user_address) {
   });
 };
 
-const findAllByUserId = function (user_id) {
-  return addressdb.findAll({ where: { user_id } });
+const search = function (filter_dict) {
+  return addressdb.findAll({ where: filter_dict });
 };
 
 const updateOrAdd = function (user_id, network_id, user_address) {
@@ -83,4 +83,4 @@ const updateOrAdd = function (user_id, network_id, user_address) {
     });
 };
 
-export { updateOrAdd, findAllByUserId, add };
+export { updateOrAdd, search, add };

@@ -144,7 +144,14 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/allowances?network_id=1&user_address=0x2'
 
 # Save user's address
-curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/address" -d '{ "network_id": "1", "user_address": "0x2" }'3
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/address" -d '{ "network_id": "1", "user_address": "0x2" }'
+
+# Get user's addresses on all networks
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/addresses'
+
+# Get user's addresses on all networks (We can filter the network_id)
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/addresses?network_id=1'
+```
 
 ### Login by Oauth
 
@@ -201,6 +208,8 @@ docker build -t ieigen/service:v1 .
 ```
 
 docker run --name=eigen-service -p 3000:3000 -d ieigen/service:v1
+
+```
 
 ```
 
