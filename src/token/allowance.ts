@@ -215,6 +215,11 @@ const token_allowance_db = sequelize.define("token_allowance_st", {
     allowNull: false,
     primaryKey: true,
   },
+  swap_address: {
+    type: DataTypes.STRING(64),
+    allowNull: false,
+    primaryKey: true,
+  },
   allowance: DataTypes.INTEGER,
 });
 
@@ -234,25 +239,84 @@ sequelize
       })
     );
     token_allowance_db.destroy({
-      where: { network: row.network, token_address: row.token_address },
+      where: {
+        network: row.network,
+        token_address: row.token_address,
+        user_address: row.user_address,
+        swap_address: row.swap_address,
+      },
     });
   })
   .catch(function (err) {
     console.log("Unable to connect to the database:", err);
   });
 
-const add = function (dict) {
+const add = function (
+  network,
+  token_address,
+  user_address,
+  swap_address,
+  allowance
+) {
   return token_allowance_db.create({
-    network: dict.network,
-    token_address: dict.token_address,
-    allowance: dict.allowance,
+    network: network,
+    token_address: token_address,
+    user_address: user_address,
+    swap_address: swap_address,
+    allowance: allowance,
   });
 };
 
-const get = function (network, token_address) {
-  return token_allowance_db.findOne({ where: { network, token_address } });
+const updateOrAdd = function (
+  network,
+  token_address,
+  user_address,
+  swap_address,
+  allowance
+) {
+  token_allowance_db
+    .findOne({
+      where: {
+        network: network,
+        token_address: token_address,
+        user_address: user_address,
+        swap_address: swap_address,
+      },
+    })
+    .then(function (row: any) {
+      console.log(row);
+      if (row === null) {
+        add(network, token_address, user_address, swap_address, allowance);
+        return true;
+      }
+      return row
+        .update({
+          network,
+          token_address,
+          user_address,
+          swap_address,
+          allowance,
+        })
+        .then(function (result) {
+          console.log("Update success: " + result);
+          return true;
+        })
+        .catch(function (err) {
+          console.log("Update error: " + err);
+          return false;
+        });
+    });
 };
 
+const get = function (network, token_address, user_address, swap_address) {
+  return token_allowance_db.findOne({
+    where: { network, token_address, user_address, swap_address },
+  });
+};
+
+export { updateOrAdd, get, add };
+
+// TODO: Implement a background search for all the allowance when needed
 export const get_allowance = function (
   network,
   user_address,

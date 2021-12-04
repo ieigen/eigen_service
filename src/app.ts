@@ -15,7 +15,7 @@ import * as util from "./util";
 
 import * as userdb from "./pid/pid";
 import { Session } from "./session";
-import * as token_allowance from "./token/allowance";
+import * as db_allowance from "./token/allowance";
 
 import bodyParser from "body-parser";
 const app = express();
@@ -778,8 +778,7 @@ app.get("/user/:user_id/statistics", async function (req, res) {
   }
 });
 
-// Statistics
-app.get("/user/:user_id/token", async function (req, res) {
+app.post("/user/:user_id/allowance", async function (req, res) {
   const user_id = req.params.user_id;
   if (!util.check_user_id(req, user_id)) {
     console.log("user_id does not match with decoded JWT");
@@ -792,16 +791,76 @@ app.get("/user/:user_id/token", async function (req, res) {
     return;
   }
 
-  var network = req.query.network;
-  var token_address = req.query.token_address;
-  var swap_address = req.query.swap_address;
-  let allowance = await token_allowance.get_allowance(
+  const user_address = req.body.user_address;
+  const token_address = req.body.token_address;
+  const swap_address = req.body.swap_address;
+  const allowance = req.body.allowance;
+  const network = req.body.network;
+  if (
+    !util.has_value(user_address) ||
+    !util.has_value(swap_address) ||
+    !util.has_value(allowance) ||
+    !util.has_value(token_address) ||
+    !util.has_value(network)
+  ) {
+    return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
+  }
+  console.log(req.body);
+
+  const result = db_allowance.updateOrAdd(
     network,
     token_address,
+    user_address,
+    swap_address,
+    allowance
+  );
+  res.json(util.Succ(result));
+});
+
+app.get("/user/:user_id/allowance", async function (req, res) {
+  const user_id = req.params.user_id;
+  if (!util.check_user_id(req, user_id)) {
+    console.log("user_id does not match with decoded JWT");
+    res.json(
+      util.Err(
+        util.ErrCode.InvalidAuth,
+        "user_id does not match, you can't see any other people's information"
+      )
+    );
+    return;
+  }
+
+  const user_address = req.body.user_address;
+  const token_address = req.body.token_address;
+  const swap_address = req.body.swap_address;
+  const network = req.body.network;
+  if (
+    !util.has_value(user_address) ||
+    !util.has_value(swap_address) ||
+    !util.has_value(network) ||
+    !util.has_value(token_address)
+  ) {
+    return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
+  }
+  console.log(req.body);
+
+  let allowance = await db_allowance.get(
+    network,
+    token_address,
+    user_address,
     swap_address
   );
 
-  return res.json(util.Succ(""));
+  if (allowance === undefined) {
+    console.log("The allowance record does not exist: ", user_id);
+    res.json(
+      util.Err(util.ErrCode.Unknown, "the allowance record does not exist")
+    );
+    return;
+  }
+
+  res.json(util.Succ(allowance));
+  return;
 });
 
 require("./login/google")(app);

@@ -132,7 +132,13 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/recovery?us
 curl -XDELETE -H "Content-Type:application/json"  --url "localhost:3000/recovery"  -d '{"id": 6}'
 
 # Statistics
-curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/statistics" -d '{"kind": "send email"}'
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/statistics" -d '{"kind": "sendemail"}'
+
+# Save user's allowance for a token in a network for a swap contract
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/allowance" -d '{ "network": "mainnet", "token_address": "0x1", "user_address": "0x2", "swap_address": "0x3", "allowance": 4 }'
+
+# Get user's allowance for a token in a network for a swap contract
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/2/allowance" -d '{ "network": "mainnet", "token_address": "0x1", "user_address": "0x2", "swap_address": "0x3" }'
 ```
 
 ### Login by Oauth
