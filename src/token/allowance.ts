@@ -200,7 +200,7 @@ const sequelize = new Sequelize({
 });
 
 const token_allowance_db = sequelize.define("token_allowance_st", {
-  network: {
+  network_id: {
     type: DataTypes.STRING(64),
     allowNull: false,
     primaryKey: true,
@@ -227,7 +227,7 @@ sequelize
   .sync()
   .then(function () {
     return token_allowance_db.create({
-      network: "_network",
+      network_id: "_network_id",
       token_address: "0xTOKEN",
       allowance: 0,
     });
@@ -240,7 +240,7 @@ sequelize
     );
     token_allowance_db.destroy({
       where: {
-        network: row.network,
+        network_id: row.network_id,
         token_address: row.token_address,
         user_address: row.user_address,
         swap_address: row.swap_address,
@@ -252,14 +252,14 @@ sequelize
   });
 
 const add = function (
-  network,
+  network_id,
   token_address,
   user_address,
   swap_address,
   allowance
 ) {
   return token_allowance_db.create({
-    network: network,
+    network_id: network_id,
     token_address: token_address,
     user_address: user_address,
     swap_address: swap_address,
@@ -268,7 +268,7 @@ const add = function (
 };
 
 const updateOrAdd = function (
-  network,
+  network_id,
   token_address,
   user_address,
   swap_address,
@@ -277,7 +277,7 @@ const updateOrAdd = function (
   token_allowance_db
     .findOne({
       where: {
-        network: network,
+        network_id: network_id,
         token_address: token_address,
         user_address: user_address,
         swap_address: swap_address,
@@ -286,12 +286,12 @@ const updateOrAdd = function (
     .then(function (row: any) {
       console.log(row);
       if (row === null) {
-        add(network, token_address, user_address, swap_address, allowance);
+        add(network_id, token_address, user_address, swap_address, allowance);
         return true;
       }
       return row
         .update({
-          network,
+          network_id,
           token_address,
           user_address,
           swap_address,
@@ -308,9 +308,9 @@ const updateOrAdd = function (
     });
 };
 
-const get = function (network, token_address, user_address, swap_address) {
+const get = function (network_id, token_address, user_address, swap_address) {
   return token_allowance_db.findOne({
-    where: { network, token_address, user_address, swap_address },
+    where: { network_id, token_address, user_address, swap_address },
   });
 };
 
@@ -318,12 +318,12 @@ export { updateOrAdd, get, add };
 
 // TODO: Implement a background search for all the allowance when needed
 export const get_allowance = function (
-  network,
+  network_id,
   user_address,
   token_address,
   swap_address
 ) {
-  let provider = ethers.getDefaultProvider(getRpcUrl(network));
+  let provider = ethers.getDefaultProvider(getRpcUrl(network_id));
   console.log("Provider: ", provider);
 
   const token = new ethers.Contract(token_address, ERC20_ABI, provider);

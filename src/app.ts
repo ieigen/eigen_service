@@ -795,20 +795,20 @@ app.post("/user/:user_id/allowance", async function (req, res) {
   const token_address = req.body.token_address;
   const swap_address = req.body.swap_address;
   const allowance = req.body.allowance;
-  const network = req.body.network;
+  const network_id = req.body.network_id;
   if (
     !util.has_value(user_address) ||
     !util.has_value(swap_address) ||
     !util.has_value(allowance) ||
     !util.has_value(token_address) ||
-    !util.has_value(network)
+    !util.has_value(network_id)
   ) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
   }
   console.log(req.body);
 
   const result = db_allowance.updateOrAdd(
-    network,
+    network_id,
     token_address,
     user_address,
     swap_address,
@@ -833,11 +833,11 @@ app.get("/user/:user_id/allowance", async function (req, res) {
   const user_address = req.body.user_address;
   const token_address = req.body.token_address;
   const swap_address = req.body.swap_address;
-  const network = req.body.network;
+  const network_id = req.body.network_id;
   if (
     !util.has_value(user_address) ||
     !util.has_value(swap_address) ||
-    !util.has_value(network) ||
+    !util.has_value(network_id) ||
     !util.has_value(token_address)
   ) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
@@ -845,7 +845,7 @@ app.get("/user/:user_id/allowance", async function (req, res) {
   console.log(req.body);
 
   let allowance = await db_allowance.get(
-    network,
+    network_id,
     token_address,
     user_address,
     swap_address
