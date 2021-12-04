@@ -84,6 +84,28 @@ var mainnet_tokens = JSON.parse(
   fs.readFileSync("./token_directory/mainnet_erc20.json", "utf-8")
 );
 
+export const MAINNET_TOKEN_ADDRESS_TO_TOKEN_MAP = Object.values(
+  mainnet_tokens.tokens
+).reduce(
+  (
+    tokenMap,
+    { chainId, address, name, symbol, decimals, logoURI, extensions }
+  ) => {
+    tokenMap[address] = {
+      chainId,
+      address,
+      name,
+      symbol,
+      decimals,
+      logoURI,
+      extensions,
+    };
+
+    return tokenMap;
+  },
+  {}
+);
+
 export const NETWORK_TYPE_TO_TOKENS = {
   [ROPSTEN]: [],
   [RINKEBY]: [],
@@ -316,7 +338,27 @@ const get = function (network_id, token_address, user_address, swap_address) {
   });
 };
 
-export { updateOrAdd, get, add };
+const findAllAllowancesGreaterThanZero = function (network_id, user_address) {
+  return token_allowance_db.findAll({
+    attributes: [
+      "network_id",
+      "token_address",
+      "user_address",
+      "swap_address",
+      "updatedAt",
+    ],
+    where: {
+      network_id: network_id,
+      user_address: user_address,
+      allowance: {
+        [Op.gt]: 0,
+      },
+    },
+    raw: true,
+  });
+};
+
+export { updateOrAdd, get, add, findAllAllowancesGreaterThanZero };
 
 // TODO: Implement a background search for all the allowance when needed
 export const get_allowance = function (
@@ -335,4 +377,23 @@ export const get_allowance = function (
     console.log(res);
     return res;
   });
+};
+
+const get_allowances_for_all_tokens_on_a_network = async function (
+  network,
+  user_address,
+  swap_address
+) {
+  let provider = ethers.getDefaultProvider(getRpcUrl(network));
+  console.log("Provider: ", provider);
+
+  for (let token_info in mainnet_tokens.tokens) {
+    // const token = new ethers.Contract(token_info.address, ERC20_ABI, provider);
+    // console.log("erc20: ", token);
+    // token.allowance(user_address, swap_address).then(function (res) {
+    //   console.log(res);
+    //   return res;
+    // });
+    console.log(token_info);
+  }
 };

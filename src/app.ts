@@ -864,6 +864,81 @@ app.get("/user/:user_id/allowance", async function (req, res) {
   return;
 });
 
+app.get("/user/:user_id/allowances", async function (req, res) {
+  const user_id = req.params.user_id;
+  if (!util.check_user_id(req, user_id)) {
+    console.log("user_id does not match with decoded JWT");
+    res.json(
+      util.Err(
+        util.ErrCode.InvalidAuth,
+        "user_id does not match, you can't see any other people's information"
+      )
+    );
+    return;
+  }
+
+  console.log(req.query);
+
+  const user_address = req.query.user_address;
+  const network_id = req.query.network_id;
+  if (!util.has_value(user_address) || !util.has_value(network_id)) {
+    return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
+  }
+
+  let allowances: any = await db_allowance.findAllAllowancesGreaterThanZero(
+    network_id,
+    user_address
+  );
+
+  console.log(allowances);
+
+  let allowance_list = [];
+
+  if (network_id !== "1") {
+    // We only support more information display on mainnet
+    for (var i = 0; i < allowances.length; i++) {
+      var allowance = allowances[i];
+
+      allowance_list.push({
+        approved_time: allowance.updatedAt,
+        token_name: "(UNKNOWN TOKEN)",
+        token_icon: "",
+        token_address: allowance.token_address,
+      });
+    }
+  }
+
+  for (var i = 0; i < allowances.length; i++) {
+    var allowance = allowances[i];
+    var token_info =
+      db_allowance.MAINNET_TOKEN_ADDRESS_TO_TOKEN_MAP[allowance.token_address];
+    if (token_info === undefined) {
+      allowance_list.push({
+        approved_time: allowance.updatedAt,
+        token_name: "(UNKNOWN TOKEN)",
+        token_icon: "",
+        token_address: allowance.token_address,
+      });
+    } else {
+      allowance_list.push({
+        approved_time: allowance.updatedAt,
+        token_name:
+          db_allowance.MAINNET_TOKEN_ADDRESS_TO_TOKEN_MAP[
+            allowance.token_address
+          ].symbol,
+        token_icon:
+          db_allowance.MAINNET_TOKEN_ADDRESS_TO_TOKEN_MAP[
+            allowance.token_address
+          ].logoUrl,
+        token_address: allowance.token_address,
+      });
+    }
+  }
+
+  res.json(util.Succ(allowance_list));
+  return;
+});
+
 require("./login/google")(app);
 
 app.listen(3000, function () {
