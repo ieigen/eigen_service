@@ -144,8 +144,7 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/allowances?network_id=1&user_address=0x2'
 
 # Save user's address
-curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/address?network_id=1&user_address=0x2'
-```
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/address" -d '{ "network_id": "1", "user_address": "0x2" }'3
 
 ### Login by Oauth
 
@@ -154,7 +153,9 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_
 1. Get google oauth url
 
 ```
+
 curl http://localhost:3000/auth/google/url
+
 ```
 
 2. Submit login request by copying the above url responsed to browser
@@ -166,17 +167,22 @@ curl http://localhost:3000/auth/google/url
 5. Access other backend API which need authorization with addtional header like:
 
 ```
- -H "Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExNDU1MDE2Njg5ODA0MTc1MTU3OSIsImVtYWlsIjoiaGliZHVhbkBnbWFpbC5jb20iLCJ2ZXJpZmllZF9lbWFpbCI6dHJ1ZSwibmFtZSI6IlN0ZXBoZW4iLCJnaXZlbl9uYW1lIjoiU3RlcGhlbiIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS0vQU9oMTRHajJxZ2poczV6Qk15VzJ6Y0dUeEpyMG9FSmhiTkVaRmdnWm1xUXhEUT1zOTYtYyIsImxvY2FsZSI6InpoLUNOIiwiaWF0IjoxNjM0NDg3MjQyfQ.dkuRxjKyQNtUb2sZFvJ4RXW59p0D-0dhhYzkOjY4pYE"
+
+-H "Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExNDU1MDE2Njg5ODA0MTc1MTU3OSIsImVtYWlsIjoiaGliZHVhbkBnbWFpbC5jb20iLCJ2ZXJpZmllZF9lbWFpbCI6dHJ1ZSwibmFtZSI6IlN0ZXBoZW4iLCJnaXZlbl9uYW1lIjoiU3RlcGhlbiIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS0vQU9oMTRHajJxZ2poczV6Qk15VzJ6Y0dUeEpyMG9FSmhiTkVaRmdnWm1xUXhEUT1zOTYtYyIsImxvY2FsZSI6InpoLUNOIiwiaWF0IjoxNjM0NDg3MjQyfQ.dkuRxjKyQNtUb2sZFvJ4RXW59p0D-0dhhYzkOjY4pYE"
+
 ```
 
 #### Google Authenticator TOTP
 
 ```
+
 # Save or update otpauth secret
-curl -XPUT -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/otpauth" -d '{"secret": "GAXGGYT2OU2DEOJR"}'
+
+curl -XPUT -H "Content-Type:application/json" --url "localhost:3000/user/{user_id}/otpauth" -d '{"secret": "GAXGGYT2OU2DEOJR"}'
 
 # Verify code
-curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/otpauth" -d '{"code": "123456"}'
+
+curl -XPOST -H "Content-Type:application/json" --url "localhost:3000/user/{user_id}/otpauth" -d '{"code": "123456"}'
 
 ```
 
@@ -195,5 +201,7 @@ docker build -t ieigen/service:v1 .
 ```
 
 docker run --name=eigen-service -p 3000:3000 -d ieigen/service:v1
+
+```
 
 ```
