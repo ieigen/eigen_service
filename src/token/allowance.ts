@@ -210,6 +210,11 @@ const token_allowance_db = sequelize.define("token_allowance_st", {
     allowNull: false,
     primaryKey: true,
   },
+  user_address: {
+    type: DataTypes.STRING(64),
+    allowNull: false,
+    primaryKey: true,
+  },
   allowance: DataTypes.INTEGER,
 });
 
