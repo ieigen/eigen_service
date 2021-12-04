@@ -830,6 +830,8 @@ app.get("/user/:user_id/allowance", async function (req, res) {
     return;
   }
 
+  console.log(req.body);
+
   const user_address = req.body.user_address;
   const token_address = req.body.token_address;
   const swap_address = req.body.swap_address;
@@ -842,7 +844,6 @@ app.get("/user/:user_id/allowance", async function (req, res) {
   ) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
   }
-  console.log(req.body);
 
   let allowance = await db_allowance.get(
     network_id,
