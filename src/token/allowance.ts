@@ -346,6 +346,7 @@ const findAllAllowancesGreaterThanZero = function (network_id, user_address) {
       "token_address",
       "user_address",
       "swap_address",
+      "allowance",
       "updatedAt",
     ],
     where: {
