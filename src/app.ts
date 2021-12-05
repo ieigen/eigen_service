@@ -951,6 +951,8 @@ app.get("/user/:user_id/allowances", async function (req, res) {
         allowance: allowance.allowance,
       });
     }
+    res.json(util.Succ(allowance_list));
+    return;
   }
 
   for (var i = 0; i < allowances.length; i++) {
