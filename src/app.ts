@@ -218,13 +218,7 @@ app.get("/txhs", async function (req, res) {
       delete dict.page_size;
       delete dict.order;
 
-      // TODO: 0x2 (L2->L1), 0x3 (L2->L2) should replaced with enum
-      /*
-      dict.type = {
-        [Op.or]: [0x2, 0x3],
-      };
-      */
-      dict.type = ["2", "3"];
+      dict.type = [db_txh.TX_TYPE_L2ToL1, db_txh.TX_TYPE_L2ToL2];
       return res.json(
         util.Succ(await db_txh.search(req.query, page, page_size, order))
       );
@@ -274,20 +268,38 @@ app.post("/txh", async function (req, res) {
   const block_num = req.body.block_num;
   const type = req.body.type;
   const name = req.body.name;
+  const network_id = req.body.network_id;
+  const to_network_id = req.body.to_network_id;
+  const kind = req.body.kind;
   if (
     !util.has_value(txid) ||
+    !util.has_value(network_id) ||
     !util.has_value(from) ||
     !util.has_value(value) ||
     !util.has_value(to) ||
+    !util.has_value(kind) ||
     !util.has_value(type)
   ) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
+  }
+
+  if (type == db_txh.TX_TYPE_L1ToL2 || type == db_txh.TX_TYPE_L2ToL1) {
+    if (!util.has_value(to_network_id)) {
+      return res.json(
+        util.Err(
+          util.ErrCode.Unknown,
+          "missing fields, cross chain transaction should set 'to_network_id'"
+        )
+      );
+    }
   }
   console.log(req.body);
 
   const result = db_txh.updateOrAdd(txid, {
     txid,
+    network_id,
     from,
+    to_network_id,
     to,
     value,
     type: Number(type),
@@ -295,6 +307,7 @@ app.post("/txh", async function (req, res) {
     block_num: req.body.block_num || -1,
     status: req.body.status || 0,
     sub_txid: req.body.sub_txid || "",
+    kind,
   });
   res.json(util.Succ(result));
 });

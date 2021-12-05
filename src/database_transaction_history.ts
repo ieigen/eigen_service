@@ -31,10 +31,10 @@ const pkdb = sequelize.define("transaction_history_st", {
   kind: DataTypes.STRING, // Transaction kind (e.g., send, exchange, approve, etc.)
 });
 
-const TX_TYPE_L1ToL1 = 0x0;
-const TX_TYPE_L1ToL2 = 0x1;
-const TX_TYPE_L2ToL1 = 0x2;
-const TX_TYPE_L2ToL2 = 0x3;
+export const TX_TYPE_L1ToL1 = 0x0;
+export const TX_TYPE_L1ToL2 = 0x1;
+export const TX_TYPE_L2ToL1 = 0x2;
+export const TX_TYPE_L2ToL2 = 0x3;
 
 sequelize
   .sync()
@@ -88,7 +88,7 @@ const getByTxid = function (txid) {
 };
 
 const search = function (filter_dict, page, page_size, order) {
-  console.log(filter_dict);
+  console.log("Search filter: ", filter_dict);
   filter_dict.type = {
     [Op.or]: filter_dict.type,
   };
