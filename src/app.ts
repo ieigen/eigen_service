@@ -919,6 +919,7 @@ app.get("/user/:user_id/allowances", async function (req, res) {
         token_icon: "",
         token_address: allowance.token_address,
         swap_address: allowance.swap_address,
+        allowance: allowance.allowance,
       });
     }
   }
@@ -934,6 +935,7 @@ app.get("/user/:user_id/allowances", async function (req, res) {
         token_icon: "",
         token_address: allowance.token_address,
         swap_address: allowance.swap_address,
+        allowance: allowance.allowance,
       });
     } else {
       allowance_list.push({
@@ -948,6 +950,7 @@ app.get("/user/:user_id/allowances", async function (req, res) {
           ].logoUrl,
         token_address: allowance.token_address,
         swap_address: allowance.swap_address,
+        allowance: allowance.allowance,
       });
     }
   }
