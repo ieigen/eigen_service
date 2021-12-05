@@ -28,8 +28,7 @@ const pkdb = sequelize.define("transaction_history_st", {
   block_num: DataTypes.INTEGER,
   status: DataTypes.INTEGER,
   sub_txid: DataTypes.STRING,
-  // FIXME: kind name should be changed (operation, method?)
-  kind: DataTypes.STRING, // Transaction kind (e.g., send, exchange, approve, etc.)
+  operation: DataTypes.STRING, // Transaction operation (e.g., send, exchange, approve, etc.)
 });
 
 export const TX_TYPE_L1ToL1 = 0x0;
@@ -52,7 +51,7 @@ sequelize
       name: "ETH",
       status: 0, // 1 success, 0 init
       sub_txid: "",
-      kind: "send",
+      operation: "send",
     });
   })
   .then(function (row: any) {
@@ -80,7 +79,7 @@ const add = function (dict) {
     block_num: dict.block_num || -1, // `block_num` can be empty when `send` is called
     status: dict.status || 0,
     sub_txid: dict.sub_txid || "",
-    kind: dict.kind,
+    operation: dict.operation,
   });
 };
 

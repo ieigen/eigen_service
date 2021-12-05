@@ -299,14 +299,14 @@ app.post("/txh", async function (req, res) {
   const name = req.body.name;
   const network_id = req.body.network_id;
   const to_network_id = req.body.to_network_id;
-  const kind = req.body.kind;
+  const operation = req.body.operation;
   if (
     !util.has_value(txid) ||
     !util.has_value(network_id) ||
     !util.has_value(from) ||
     !util.has_value(value) ||
     !util.has_value(to) ||
-    !util.has_value(kind) ||
+    !util.has_value(operation) ||
     !util.has_value(type)
   ) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
@@ -336,7 +336,7 @@ app.post("/txh", async function (req, res) {
     block_num: req.body.block_num || -1,
     status: req.body.status || 0,
     sub_txid: req.body.sub_txid || "",
-    kind,
+    operation,
   });
   res.json(util.Succ(result));
 });

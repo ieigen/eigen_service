@@ -17,7 +17,7 @@ export const ROPSTEN_NETWORK_ID = "3";
 export const RINKEBY_NETWORK_ID = "4";
 export const GOERLI_NETWORK_ID = "5";
 export const KOVAN_NETWORK_ID = "42";
-export const LOCALHOST_NETWORK_ID = "1337";
+export const LOCALHOST_NETWRK_ID = "1337";
 
 export const MAINNET_CHAIN_ID = "0x1";
 export const ROPSTEN_CHAIN_ID = "0x3";
@@ -243,7 +243,7 @@ const token_allowance_db = sequelize.define("token_allowance_st", {
     allowNull: false,
     primaryKey: true,
   },
-  allowance: DataTypes.INTEGER,
+  allowance: DataTypes.STRING,
 });
 
 sequelize
@@ -353,7 +353,7 @@ const findAllAllowancesGreaterThanZero = function (network_id, user_address) {
       network_id: network_id,
       user_address: user_address,
       allowance: {
-        [Op.gt]: 0,
+        [Op.not]: "0",
       },
     },
     raw: true,

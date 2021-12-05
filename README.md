@@ -77,7 +77,7 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txh?action=
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txh?action=account_count_l2"
 
 # add
-curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/txh" -d '{"txid": "2", "network_id": "1", "from": "0x2", "to_network_id": "1", "to": "0x2", "type":0, "value": 1, "block_num": 1027, "name": "ERC20", "kind": "send"}'
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/txh" -d '{"txid": "2", "network_id": "1", "from": "0x2", "to_network_id": "1", "to": "0x2", "type":0, "value": 1, "block_num": 1027, "name": "ERC20", "operation": "send"}'
 
 # update
 curl -XPUT -H "Content-Type:application/json"  --url "localhost:3000/txh/{txid}" -d '{"status": 1, "sub_txid": "2121"}'
