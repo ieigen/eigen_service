@@ -1,4 +1,4 @@
-import {Sequelize, Op, DataTypes} from "sequelize";
+import { Sequelize, Op, DataTypes } from "sequelize";
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
@@ -18,7 +18,9 @@ const pkdb = sequelize.define("transaction_history_st", {
     allowNull: false,
     unique: true,
   },
+  network_id: DataTypes.STRING(64),
   from: DataTypes.STRING,
+  to_network_id: DataTypes.STRING(64), // Could be empty since L1 -> L1 or L2 -> L2 should be occured on the same network
   to: DataTypes.STRING,
   name: DataTypes.STRING,
   value: DataTypes.INTEGER,
@@ -26,6 +28,7 @@ const pkdb = sequelize.define("transaction_history_st", {
   block_num: DataTypes.INTEGER,
   status: DataTypes.INTEGER,
   sub_txid: DataTypes.STRING,
+  kind: DataTypes.STRING, // Transaction kind (e.g., send, exchange, approve, etc.)
 });
 
 const TX_TYPE_L1ToL1 = 0x0;
@@ -38,7 +41,9 @@ sequelize
   .then(function () {
     return pkdb.create({
       txid: "_txid",
+      network_id: "1",
       from: "0xID",
+      to_network_id: "1",
       to: "0xID",
       value: 0,
       type: TX_TYPE_L1ToL1,
@@ -46,6 +51,7 @@ sequelize
       name: "ETH",
       status: 0, // 1 success, 0 init
       sub_txid: "",
+      kind: "send",
     });
   })
   .then(function (row: any) {
@@ -63,7 +69,9 @@ sequelize
 const add = function (dict) {
   return pkdb.create({
     txid: dict.txid,
+    network_id: dict.network_id,
     from: dict.from,
+    to_network_id: dict.network_id,
     to: dict.to,
     value: dict.value,
     type: dict.type,
@@ -71,6 +79,7 @@ const add = function (dict) {
     block_num: dict.block_num || -1, // `block_num` can be empty when `send` is called
     status: dict.status || 0,
     sub_txid: dict.sub_txid || "",
+    kind: dict.kind,
   });
 };
 
@@ -81,8 +90,8 @@ const getByTxid = function (txid) {
 const search = function (filter_dict, page, page_size, order) {
   console.log(filter_dict);
   filter_dict.type = {
-        [Op.or]: filter_dict.type
-  }
+    [Op.or]: filter_dict.type,
+  };
   if (page) {
     console.log("page = ", page);
     console.log("page_size = ", page_size);
@@ -162,7 +171,7 @@ const updateOrAdd = function (txid, update_dict) {
 
 const account_count_l2 = function () {
   return (async () => {
-    const l2_to_l1:any = await pkdb.findAll({
+    const l2_to_l1: any = await pkdb.findAll({
       attributes: [["from", "account"]],
       where: {
         type: TX_TYPE_L2ToL1,
@@ -175,7 +184,7 @@ const account_count_l2 = function () {
       accounts.add(l2_to_l1[i].account);
     }
 
-    const l2_to_l2:any = await pkdb.findAll({
+    const l2_to_l2: any = await pkdb.findAll({
       attributes: [
         ["from", "account"],
         ["to", "account"],
@@ -204,4 +213,12 @@ const transaction_count_l2 = function () {
     },
   });
 };
-export {account_count_l2, transaction_count_l2, updateOrAdd, add, search, getByTxid, findAll};
+export {
+  account_count_l2,
+  transaction_count_l2,
+  updateOrAdd,
+  add,
+  search,
+  getByTxid,
+  findAll,
+};
