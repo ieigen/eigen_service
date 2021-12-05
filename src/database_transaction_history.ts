@@ -28,6 +28,7 @@ const pkdb = sequelize.define("transaction_history_st", {
   block_num: DataTypes.INTEGER,
   status: DataTypes.INTEGER,
   sub_txid: DataTypes.STRING,
+  // FIXME: kind name should be changed (operation, method?)
   kind: DataTypes.STRING, // Transaction kind (e.g., send, exchange, approve, etc.)
 });
 

@@ -237,6 +237,7 @@ const token_allowance_db = sequelize.define("token_allowance_st", {
     allowNull: false,
     primaryKey: true,
   },
+  // FIXME: swap_address name should be changed
   swap_address: {
     type: DataTypes.STRING(64),
     allowNull: false,
