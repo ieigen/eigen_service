@@ -918,6 +918,7 @@ app.get("/user/:user_id/allowances", async function (req, res) {
         token_name: "(UNKNOWN TOKEN)",
         token_icon: "",
         token_address: allowance.token_address,
+        swap_address: allowance.swap_address,
       });
     }
   }
@@ -932,6 +933,7 @@ app.get("/user/:user_id/allowances", async function (req, res) {
         token_name: "(UNKNOWN TOKEN)",
         token_icon: "",
         token_address: allowance.token_address,
+        swap_address: allowance.swap_address,
       });
     } else {
       allowance_list.push({
@@ -945,6 +947,7 @@ app.get("/user/:user_id/allowances", async function (req, res) {
             allowance.token_address
           ].logoUrl,
         token_address: allowance.token_address,
+        swap_address: allowance.swap_address,
       });
     }
   }
