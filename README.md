@@ -61,6 +61,9 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txhs?action
 # search all (with network_id filtered)
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txhs?action=search&from=0x1&network_id=1"
 
+# search from or to address  (with/without filters, also provide order, page, page_size)
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txhs?action=search_both_sides&address=0x1"
+
 # query all transactions with the reverse time order (also support page)
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txhs?action=search&order=1"
 

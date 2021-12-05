@@ -223,7 +223,36 @@ app.get("/txhs", async function (req, res) {
         util.Succ(await db_txh.search(req.query, page, page_size, order))
       );
       break;
+    case "search_both_sizes":
+      delete dict.action;
+      delete dict.page;
+      delete dict.page_size;
+      delete dict.order;
 
+      const address = dict.address;
+      const from = dict.from;
+      const to = dict.to;
+
+      if (
+        !util.has_value(address) ||
+        util.has_value(from) ||
+        util.has_value(to)
+      ) {
+        res.json(
+          util.Err(
+            util.ErrCode.Unknown,
+            "wrong search pattern for both sized, address should be given, neither from or to should not be given"
+          )
+        );
+        return;
+      }
+
+      return res.json(
+        util.Succ(
+          await db_txh.search_both_sizes(req.query, page, page_size, order)
+        )
+      );
+      break;
     default:
       return res.json(util.Err(util.ErrCode.Unknown, "invalid action"));
       break;
