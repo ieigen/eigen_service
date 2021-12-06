@@ -223,7 +223,7 @@ app.get("/txhs", async function (req, res) {
         util.Succ(await db_txh.search(req.query, page, page_size, order))
       );
       break;
-    case "search_both_sizes":
+    case "search_both_sides":
       delete dict.action;
       delete dict.page;
       delete dict.page_size;
