@@ -16,6 +16,7 @@ import * as util from "./util";
 
 import * as userdb from "./pid/pid";
 import { Session } from "./session";
+import * as TOKEN_CONSTANS from "./token/constants";
 import * as db_allowance from "./token/allowance";
 
 import bodyParser from "body-parser";
@@ -958,7 +959,9 @@ app.get("/user/:user_id/allowances", async function (req, res) {
   for (var i = 0; i < allowances.length; i++) {
     var allowance = allowances[i];
     var token_info =
-      db_allowance.MAINNET_TOKEN_ADDRESS_TO_TOKEN_MAP[allowance.token_address];
+      TOKEN_CONSTANS.MAINNET_TOKEN_ADDRESS_TO_TOKEN_MAP[
+        allowance.token_address
+      ];
     if (token_info === undefined) {
       allowance_list.push({
         approved_time: allowance.updatedAt,
@@ -972,11 +975,11 @@ app.get("/user/:user_id/allowances", async function (req, res) {
       allowance_list.push({
         approved_time: allowance.updatedAt,
         token_name:
-          db_allowance.MAINNET_TOKEN_ADDRESS_TO_TOKEN_MAP[
+          TOKEN_CONSTANS.MAINNET_TOKEN_ADDRESS_TO_TOKEN_MAP[
             allowance.token_address
           ].symbol,
         token_icon:
-          db_allowance.MAINNET_TOKEN_ADDRESS_TO_TOKEN_MAP[
+          TOKEN_CONSTANS.MAINNET_TOKEN_ADDRESS_TO_TOKEN_MAP[
             allowance.token_address
           ].logoUrl,
         token_address: allowance.token_address,
