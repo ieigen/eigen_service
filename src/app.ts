@@ -11,10 +11,13 @@ import * as db_pk from "./database_pk";
 import * as db_txh from "./database_transaction_history";
 import * as db_recovery from "./database_recovery";
 import * as friend_list from "./database_friend_relationship";
+import * as db_address from "./database_address";
 import * as util from "./util";
 
 import * as userdb from "./pid/pid";
 import { Session } from "./session";
+import * as TOKEN_CONSTANS from "./token/constants";
+import * as db_allowance from "./token/allowance";
 
 import bodyParser from "body-parser";
 const app = express();
@@ -216,18 +219,41 @@ app.get("/txhs", async function (req, res) {
       delete dict.page_size;
       delete dict.order;
 
-      // TODO: 0x2 (L2->L1), 0x3 (L2->L2) should replaced with enum
-      /*
-      dict.type = {
-        [Op.or]: [0x2, 0x3],
-      };
-      */
-      dict.type = ["2", "3"];
+      dict.type = [db_txh.TX_TYPE_L2ToL1, db_txh.TX_TYPE_L2ToL2];
       return res.json(
         util.Succ(await db_txh.search(req.query, page, page_size, order))
       );
       break;
+    case "search_both_sides":
+      delete dict.action;
+      delete dict.page;
+      delete dict.page_size;
+      delete dict.order;
 
+      const address = dict.address;
+      const from = dict.from;
+      const to = dict.to;
+
+      if (
+        !util.has_value(address) ||
+        util.has_value(from) ||
+        util.has_value(to)
+      ) {
+        res.json(
+          util.Err(
+            util.ErrCode.Unknown,
+            "wrong search pattern for both sized, address should be given, neither from or to should not be given"
+          )
+        );
+        return;
+      }
+
+      return res.json(
+        util.Succ(
+          await db_txh.search_both_sizes(req.query, page, page_size, order)
+        )
+      );
+      break;
     default:
       return res.json(util.Err(util.ErrCode.Unknown, "invalid action"));
       break;
@@ -272,20 +298,38 @@ app.post("/txh", async function (req, res) {
   const block_num = req.body.block_num;
   const type = req.body.type;
   const name = req.body.name;
+  const network_id = req.body.network_id;
+  const to_network_id = req.body.to_network_id;
+  const operation = req.body.operation;
   if (
     !util.has_value(txid) ||
+    !util.has_value(network_id) ||
     !util.has_value(from) ||
     !util.has_value(value) ||
     !util.has_value(to) ||
+    !util.has_value(operation) ||
     !util.has_value(type)
   ) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
+  }
+
+  if (type == db_txh.TX_TYPE_L1ToL2 || type == db_txh.TX_TYPE_L2ToL1) {
+    if (!util.has_value(to_network_id)) {
+      return res.json(
+        util.Err(
+          util.ErrCode.Unknown,
+          "missing fields, cross chain transaction should set 'to_network_id'"
+        )
+      );
+    }
   }
   console.log(req.body);
 
   const result = db_txh.updateOrAdd(txid, {
     txid,
+    network_id,
     from,
+    to_network_id,
     to,
     value,
     type: Number(type),
@@ -293,6 +337,7 @@ app.post("/txh", async function (req, res) {
     block_num: req.body.block_num || -1,
     status: req.body.status || 0,
     sub_txid: req.body.sub_txid || "",
+    operation,
   });
   res.json(util.Succ(result));
 });
@@ -775,6 +820,229 @@ app.get("/user/:user_id/statistics", async function (req, res) {
     console.log(`[Statistics: ${kind}] (${user_id})`);
     return res.json(util.Succ(""));
   }
+});
+
+app.post("/user/:user_id/allowance", async function (req, res) {
+  const user_id = req.params.user_id;
+  if (!util.check_user_id(req, user_id)) {
+    console.log("user_id does not match with decoded JWT");
+    res.json(
+      util.Err(
+        util.ErrCode.InvalidAuth,
+        "user_id does not match, you can't see any other people's information"
+      )
+    );
+    return;
+  }
+
+  const user_address = req.body.user_address;
+  const token_address = req.body.token_address;
+  const swap_address = req.body.swap_address;
+  const allowance = req.body.allowance;
+  const network_id = req.body.network_id;
+  if (
+    !util.has_value(user_address) ||
+    !util.has_value(swap_address) ||
+    !util.has_value(allowance) ||
+    !util.has_value(token_address) ||
+    !util.has_value(network_id)
+  ) {
+    return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
+  }
+  console.log(req.body);
+
+  const result = db_allowance.updateOrAdd(
+    network_id,
+    token_address,
+    user_address,
+    swap_address,
+    allowance
+  );
+  res.json(util.Succ(result));
+});
+
+app.get("/user/:user_id/allowance", async function (req, res) {
+  const user_id = req.params.user_id;
+  if (!util.check_user_id(req, user_id)) {
+    console.log("user_id does not match with decoded JWT");
+    res.json(
+      util.Err(
+        util.ErrCode.InvalidAuth,
+        "user_id does not match, you can't see any other people's information"
+      )
+    );
+    return;
+  }
+
+  console.log(req.query);
+
+  const user_address = req.query.user_address;
+  const token_address = req.query.token_address;
+  const swap_address = req.query.swap_address;
+  const network_id = req.query.network_id;
+  if (
+    !util.has_value(user_address) ||
+    !util.has_value(swap_address) ||
+    !util.has_value(network_id) ||
+    !util.has_value(token_address)
+  ) {
+    return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
+  }
+
+  let allowance = await db_allowance.get(
+    network_id,
+    token_address,
+    user_address,
+    swap_address
+  );
+
+  if (allowance === undefined) {
+    console.log("The allowance record does not exist: ", user_id);
+    res.json(
+      util.Err(util.ErrCode.Unknown, "the allowance record does not exist")
+    );
+    return;
+  }
+
+  res.json(util.Succ(allowance));
+  return;
+});
+
+app.get("/user/:user_id/allowances", async function (req, res) {
+  const user_id = req.params.user_id;
+  if (!util.check_user_id(req, user_id)) {
+    console.log("user_id does not match with decoded JWT");
+    res.json(
+      util.Err(
+        util.ErrCode.InvalidAuth,
+        "user_id does not match, you can't see any other people's information"
+      )
+    );
+    return;
+  }
+
+  console.log(req.query);
+
+  const user_address = req.query.user_address;
+  const network_id = req.query.network_id;
+  if (!util.has_value(user_address) || !util.has_value(network_id)) {
+    return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
+  }
+
+  let allowances: any = await db_allowance.findAllAllowancesGreaterThanZero(
+    network_id,
+    user_address
+  );
+
+  console.log(allowances);
+
+  let allowance_list = [];
+
+  if (network_id !== "1") {
+    // We only support more information display on mainnet
+    for (var i = 0; i < allowances.length; i++) {
+      var allowance = allowances[i];
+
+      allowance_list.push({
+        approved_time: allowance.updatedAt,
+        token_name: "(UNKNOWN TOKEN)",
+        token_icon: "",
+        token_address: allowance.token_address,
+        swap_address: allowance.swap_address,
+        allowance: allowance.allowance,
+      });
+    }
+    res.json(util.Succ(allowance_list));
+    return;
+  }
+
+  for (var i = 0; i < allowances.length; i++) {
+    var allowance = allowances[i];
+    var token_info =
+      TOKEN_CONSTANS.MAINNET_TOKEN_ADDRESS_TO_TOKEN_MAP[
+        allowance.token_address
+      ];
+    if (token_info === undefined) {
+      allowance_list.push({
+        approved_time: allowance.updatedAt,
+        token_name: "(UNKNOWN TOKEN)",
+        token_icon: "",
+        token_address: allowance.token_address,
+        swap_address: allowance.swap_address,
+        allowance: allowance.allowance,
+      });
+    } else {
+      allowance_list.push({
+        approved_time: allowance.updatedAt,
+        token_name:
+          TOKEN_CONSTANS.MAINNET_TOKEN_ADDRESS_TO_TOKEN_MAP[
+            allowance.token_address
+          ].symbol,
+        token_icon:
+          TOKEN_CONSTANS.MAINNET_TOKEN_ADDRESS_TO_TOKEN_MAP[
+            allowance.token_address
+          ].logoUrl,
+        token_address: allowance.token_address,
+        swap_address: allowance.swap_address,
+        allowance: allowance.allowance,
+      });
+    }
+  }
+
+  res.json(util.Succ(allowance_list));
+  return;
+});
+
+app.post("/user/:user_id/address", async function (req, res) {
+  const user_id = req.params.user_id;
+  if (!util.check_user_id(req, user_id)) {
+    console.log("user_id does not match with decoded JWT");
+    res.json(
+      util.Err(
+        util.ErrCode.InvalidAuth,
+        "user_id does not match, you can't see any other people's information"
+      )
+    );
+    return;
+  }
+
+  const user_address = req.body.user_address;
+  const network_id = req.body.network_id;
+  if (!util.has_value(user_address) || !util.has_value(network_id)) {
+    return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
+  }
+  console.log(req.body);
+
+  const result = db_address.updateOrAdd(user_id, network_id, user_address);
+  res.json(util.Succ(result));
+});
+
+app.get("/user/:user_id/addresses", async function (req, res) {
+  const user_id = req.params.user_id;
+  if (!util.check_user_id(req, user_id)) {
+    console.log("user_id does not match with decoded JWT");
+    res.json(
+      util.Err(
+        util.ErrCode.InvalidAuth,
+        "user_id does not match, you can't see any other people's information"
+      )
+    );
+    return;
+  }
+
+  console.log(req.query);
+
+  const filter = {
+    user_id: user_id,
+    network_id: req.query.network_id,
+  };
+
+  let addresses: any = await db_address.search(filter);
+
+  console.log(addresses);
+
+  res.json(util.Succ(addresses));
+  return;
 });
 
 require("./login/google")(app);

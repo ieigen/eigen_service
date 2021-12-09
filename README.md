@@ -58,6 +58,12 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txh?txid=1"
 # search all (with/without filters)
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txhs?action=search&from=0x1"
 
+# search all (with network_id filtered)
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txhs?action=search&from=0x1&network_id=1"
+
+# search from or to address  (with/without filters, also provide order, page, page_size)
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txhs?action=search_both_sides&address=0x1"
+
 # query all transactions with the reverse time order (also support page)
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txhs?action=search&order=1"
 
@@ -71,7 +77,7 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txh?action=
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txh?action=account_count_l2"
 
 # add
-curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/txh" -d '{"txid": "1", "from": "0x1", "to": "0x1", "type":0, "value": 1, "block_num": 1027, "name": "ERC20"}'
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/txh" -d '{"txid": "2", "network_id": "1", "from": "0x2", "to_network_id": "1", "to": "0x2", "type":0, "value": 1, "block_num": 1027, "name": "ERC20", "operation": "send"}'
 
 # update
 curl -XPUT -H "Content-Type:application/json"  --url "localhost:3000/txh/{txid}" -d '{"status": 1, "sub_txid": "2121"}'
@@ -132,7 +138,25 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/recovery?us
 curl -XDELETE -H "Content-Type:application/json"  --url "localhost:3000/recovery"  -d '{"id": 6}'
 
 # Statistics
-curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/statistics" -d '{"kind": "send email"}'
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/statistics" -d '{"kind": "sendemail"}'
+
+# Save user's allowance for a token in a network for a swap contract
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/allowance" -d '{ "network_id": "1", "token_address": "0x1", "user_address": "0x2", "swap_address": "0x3", "allowance": 4 }'
+
+# Get user's allowance for a token in a network for a swap contract
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/allowance?network_id=1&token_address=0x1&user_address=0x2&swap_address=0x3'
+
+# Get user's allowances for display
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/allowances?network_id=1&user_address=0x2'
+
+# Save user's address
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/address" -d '{ "network_id": "1", "user_address": "0x2" }'
+
+# Get user's addresses on all networks
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/addresses'
+
+# Get user's addresses on all networks (We can filter the network_id)
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/addresses?network_id=1'
 ```
 
 ### Login by Oauth
@@ -142,7 +166,9 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_
 1. Get google oauth url
 
 ```
+
 curl http://localhost:3000/auth/google/url
+
 ```
 
 2. Submit login request by copying the above url responsed to browser
@@ -154,17 +180,22 @@ curl http://localhost:3000/auth/google/url
 5. Access other backend API which need authorization with addtional header like:
 
 ```
- -H "Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExNDU1MDE2Njg5ODA0MTc1MTU3OSIsImVtYWlsIjoiaGliZHVhbkBnbWFpbC5jb20iLCJ2ZXJpZmllZF9lbWFpbCI6dHJ1ZSwibmFtZSI6IlN0ZXBoZW4iLCJnaXZlbl9uYW1lIjoiU3RlcGhlbiIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS0vQU9oMTRHajJxZ2poczV6Qk15VzJ6Y0dUeEpyMG9FSmhiTkVaRmdnWm1xUXhEUT1zOTYtYyIsImxvY2FsZSI6InpoLUNOIiwiaWF0IjoxNjM0NDg3MjQyfQ.dkuRxjKyQNtUb2sZFvJ4RXW59p0D-0dhhYzkOjY4pYE"
+
+-H "Authorization:Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjExNDU1MDE2Njg5ODA0MTc1MTU3OSIsImVtYWlsIjoiaGliZHVhbkBnbWFpbC5jb20iLCJ2ZXJpZmllZF9lbWFpbCI6dHJ1ZSwibmFtZSI6IlN0ZXBoZW4iLCJnaXZlbl9uYW1lIjoiU3RlcGhlbiIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS0vQU9oMTRHajJxZ2poczV6Qk15VzJ6Y0dUeEpyMG9FSmhiTkVaRmdnWm1xUXhEUT1zOTYtYyIsImxvY2FsZSI6InpoLUNOIiwiaWF0IjoxNjM0NDg3MjQyfQ.dkuRxjKyQNtUb2sZFvJ4RXW59p0D-0dhhYzkOjY4pYE"
+
 ```
 
 #### Google Authenticator TOTP
 
 ```
+
 # Save or update otpauth secret
-curl -XPUT -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/otpauth" -d '{"secret": "GAXGGYT2OU2DEOJR"}'
+
+curl -XPUT -H "Content-Type:application/json" --url "localhost:3000/user/{user_id}/otpauth" -d '{"secret": "GAXGGYT2OU2DEOJR"}'
 
 # Verify code
-curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/otpauth" -d '{"code": "123456"}'
+
+curl -XPOST -H "Content-Type:application/json" --url "localhost:3000/user/{user_id}/otpauth" -d '{"code": "123456"}'
 
 ```
 
@@ -183,5 +214,9 @@ docker build -t ieigen/service:v1 .
 ```
 
 docker run --name=eigen-service -p 3000:3000 -d ieigen/service:v1
+
+```
+
+```
 
 ```
