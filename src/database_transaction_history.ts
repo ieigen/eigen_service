@@ -145,6 +145,19 @@ const search_both_sizes = function (filter_dict, page, page_size, order) {
   console.log("Search both sizes filter: ", filter_dict);
   const address = filter_dict.address;
   delete filter_dict.address;
+  const address_filter = {
+    where: {
+      ...filter_dict,
+      [Op.or]: [
+        {
+          from: address,
+        },
+        {
+          to: address,
+        },
+      ],
+    },
+  };
 
   if (page) {
     console.log("page = ", page);
@@ -153,17 +166,7 @@ const search_both_sizes = function (filter_dict, page, page_size, order) {
       console.log("Reverse order is enabled");
       return (async () => {
         const { count, rows } = await pkdb.findAndCountAll({
-          where: {
-            ...filter_dict,
-            [Op.or]: [
-              {
-                from: address,
-              },
-              {
-                to: address,
-              },
-            ],
-          },
+          ...address_filter,
           order: [["updatedAt", "DESC"]],
           limit: page_size,
           offset: (page - 1) * page_size,
@@ -179,17 +182,7 @@ const search_both_sizes = function (filter_dict, page, page_size, order) {
     } else {
       return (async () => {
         const { count, rows } = await pkdb.findAndCountAll({
-          where: {
-            ...filter_dict,
-            [Op.or]: [
-              {
-                from: address,
-              },
-              {
-                to: address,
-              },
-            ],
-          },
+          ...address_filter,
           limit: page_size,
           offset: (page - 1) * page_size,
         });
@@ -203,37 +196,17 @@ const search_both_sizes = function (filter_dict, page, page_size, order) {
       })();
     }
   } else {
+    let filter: any = address_filter;
+
     if (order) {
       console.log("Reverse order is enabled");
-      return pkdb.findAll({
-        where: {
-          ...filter_dict,
-          [Op.or]: [
-            {
-              from: address,
-            },
-            {
-              to: address,
-            },
-          ],
-        },
+      filter = {
+        ...address_filter,
         order: [["updatedAt", "DESC"]],
-      });
-    } else {
-      return pkdb.findAll({
-        where: {
-          ...filter_dict,
-          [Op.or]: [
-            {
-              from: address,
-            },
-            {
-              to: address,
-            },
-          ],
-        },
-      });
+      };
     }
+
+    return pkdb.findAll(filter);
   }
 };
 
