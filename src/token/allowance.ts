@@ -188,7 +188,7 @@ const get_allowances_for_all_tokens_on_a_network = async function (
   let provider = ethers.getDefaultProvider(CONSTANTS.getRpcUrl(network));
   console.log("Provider: ", provider);
 
-  for (let token_info in CONSTANTS.mainnet_tokens.tokens) {
+  for (let token_info in CONSTANTS.MAINNET_TOKENS.tokens) {
     // const token = new ethers.Contract(token_info.address, ERC20_ABI, provider);
     // console.log("erc20: ", token);
     // token.allowance(user_address, swap_address).then(function (res) {
