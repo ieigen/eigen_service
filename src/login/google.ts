@@ -7,7 +7,7 @@ import * as crypto from "crypto";
 import { Session } from "../session";
 
 import * as util from "../util";
-import * as userdb from "../pid/pid";
+import * as userdb from "../model/database_id";
 require("dotenv").config();
 
 util.require_env_variables([
