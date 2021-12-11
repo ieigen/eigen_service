@@ -5,7 +5,7 @@ const ec = new EC("p256");
 import * as mocha from 'mocha';
 import {expect} from 'chai';
 
-import * as ecies from "../src/ecies";
+import * as ecies from "../src/crypto/ecies";
 import * as crypto from "crypto";
 
 const msg = "Hello, Eigen, Privacy Computing!";

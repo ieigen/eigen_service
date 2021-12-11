@@ -1,4 +1,4 @@
-import * as sec from "../src/secretshare"
+import * as sec from "../src/crypto/secretshare"
 import * as mocha from 'mocha';
 import {expect} from 'chai';
 

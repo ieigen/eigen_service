@@ -7,14 +7,13 @@ const TOTP = require("totp.js");
 require("dotenv").config();
 
 import * as log4js from "./log";
-import * as db_pk from "./database_pk";
-import * as db_txh from "./database_transaction_history";
-import * as db_recovery from "./database_recovery";
-import * as friend_list from "./database_friend_relationship";
-import * as db_address from "./database_address";
+import * as db_pk from "./model/database_pk";
+import * as db_txh from "./model/database_transaction_history";
+import * as db_recovery from "./model/database_recovery";
+import * as friend_list from "./model/database_friend_relationship";
+import * as db_address from "./model/database_address";
 import * as util from "./util";
-
-import * as userdb from "./pid/pid";
+import * as userdb from "./model/database_id";
 import { Session } from "./session";
 import * as TOKEN_CONSTANS from "./token/constants";
 import * as db_allowance from "./token/allowance";
@@ -450,10 +449,10 @@ app.get("/user/:user_id", async function (req, res) {
 // TODO: Just for test
 app.post("/user", async function (req, res) {
   var result: any = await userdb.add(req.body);
-  console.log("Create a new user, id = ", result.user_id);
+  console.log("Create a new user, id = ", result.unique_id);
   console.log(result);
   const user_info = {
-    user_id: result.user_id,
+    unique_id: result.unique_id,
     email: result.email,
     name: result.name,
     given_name: result.given_name,
@@ -551,7 +550,6 @@ app.post("/user/:user_id/guardian", async function (req, res) {
 app.put("/user/:user_id/guardian", async function (req, res) {
   const user_id = req.params.user_id;
   if (!util.check_user_id(req, user_id)) {
-    console.log("user_id does not match with decoded JWT");
     res.json(
       util.Err(
         util.ErrCode.InvalidAuth,
@@ -1046,6 +1044,7 @@ app.get("/user/:user_id/addresses", async function (req, res) {
 });
 
 require("./login/google")(app);
+require("./relay/relay")(app);
 
 app.listen(3000, function () {
   console.log("Eigen Service listening on port 3000!");

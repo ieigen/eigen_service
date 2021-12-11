@@ -1,7 +1,7 @@
 export module Session {
 export class session {
     token: string
-    expiry: number    
+    expiry: number
     issueTime: number
     constructor (t: string, e: number) {
         this.token = t;
