@@ -12,18 +12,18 @@ const sequelize = new Sequelize({
 });
 
 const keydb = sequelize.define('key_st', {
-  user_id: DataTypes.INTEGER,
-  address: {
-      type: DataTypes.STRING,
+  user_id: {
+      type: DataTypes.INTEGER,
       unique: true
   },
+  address: DataTypes.STRING,
 
   cipher_key: DataTypes.STRING
 });
 
 sequelize.sync().then(function() {
     return keydb.create({
-        user_id: 'eigen__',
+        user_id: 0,
         address: 'address__',
         cipher_key: 'eigen__'
     });
@@ -66,9 +66,9 @@ const updateOrAdd = function(user_id, old_address, new_address, new_cipher_key){
     });
 };
 
-const getByUserID = function (user_id: string, address: string) {
+const getByUserID = function (user_id: string) {
   return keydb
-    .findOne({ where: { user_id: user_id, address: address } })
+    .findOne({ where: { user_id: user_id } })
     .then(function (row: any) {
       console.log(row)
       return row;
