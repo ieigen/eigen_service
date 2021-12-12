@@ -39,7 +39,7 @@ module.exports = function(app) {
             );
             return;
         }
-        let ret = await keydb.getByUserID(user_id, req.body.address)
+        let ret = await keydb.getByUserID(user_id)
         res.json(util.Succ(ret));
     })
 
