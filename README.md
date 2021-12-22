@@ -157,6 +157,21 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_
 
 # Get user's addresses on all networks (We can filter the network_id)
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/addresses?network_id=1'
+
+# Add a wallet (returns the corresponding wallet id)
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet" -d '{"name": "test", "balance": 567, "address": "0x123"}'
+
+# Get all wallets
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallets"
+
+# Add a signer for a wallet
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"name": "name1", "ens": "example.ens", "address": "0x123"}'
+
+# Get all signers for a wallet (including states)
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signers"
+
+# Detele a signer
+curl -XDELETE -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer"  -d '{"signer_id": 1}'
 ```
 
 ### Login by Oauth
