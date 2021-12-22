@@ -28,6 +28,11 @@ const addressdb = sequelize.define("address_st", {
     allowNull: false,
     primaryKey: true,
   },
+
+  cipher_key: {
+      allowNull: false,
+      type: DataTypes.STRING,
+  }
 });
 
 sequelize
@@ -37,6 +42,7 @@ sequelize
       user_id: 1,
       network_id: "id",
       user_address: "0xUSER",
+      cipher_key: "0x",
     });
   })
   .then(function (row: any) {
@@ -59,11 +65,12 @@ sequelize
     console.log("Unable to connect to the database:", err);
   });
 
-const add = function (user_id, network_id, user_address) {
+const add = function (user_id, network_id, user_address, cipher_key) {
   return addressdb.create({
     user_id,
     network_id,
     user_address,
+    cipher_key
   });
 };
 
@@ -71,13 +78,13 @@ const search = function (filter_dict) {
   return addressdb.findAll({ where: filter_dict });
 };
 
-const updateOrAdd = function (user_id, network_id, user_address) {
+const updateOrAdd = function (user_id, network_id, user_address, cipher_key) {
   addressdb
     .findOne({ where: { user_id, network_id, user_address } })
     .then(function (row: any) {
       console.log(row);
       if (row === null) {
-        add(user_id, network_id, user_address);
+        add(user_id, network_id, user_address, cipher_key);
       }
       return true;
     });

@@ -1006,12 +1006,13 @@ app.post("/user/:user_id/address", async function (req, res) {
 
   const user_address = req.body.user_address;
   const network_id = req.body.network_id;
+  const cipher_key = req.body.cipher_key;
   if (!util.has_value(user_address) || !util.has_value(network_id)) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
   }
   console.log(req.body);
 
-  const result = db_address.updateOrAdd(user_id, network_id, user_address);
+  const result = db_address.updateOrAdd(user_id, network_id, user_address, cipher_key);
   res.json(util.Succ(result));
 });
 
