@@ -150,7 +150,7 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/allowances?network_id=1&user_address=0x2'
 
 # Save user's address
-curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/address" -d '{ "network_id": "1", "user_address": "0x2" }'
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/address" -d '{ "network_id": "1", "user_address": "0x2" , "cipher_key": "0x"}'
 
 # Get user's addresses on all networks
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/addresses'
