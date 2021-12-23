@@ -8,7 +8,7 @@
     "prebuild_close": "./node_modules/.bin/tslint -c tslint.json -p tsconfig.json --fix",
     "build": "./node_modules/.bin/tsc",
     "test": "yarn build && mocha ./build/**/*.test.js",
-    "clean": "rm -f ./db_*.sqlite",
+    "clean": "rm -f ./data/db_*.sqlite",
     "build_image": "docker build -t ieigen/service:v1 .",
     "deploy": "yarn build_image && docker run --name=eigen-service -p 3000:3000 -v $PWD/data:/app/data  -d ieigen/service:v1"
   },
