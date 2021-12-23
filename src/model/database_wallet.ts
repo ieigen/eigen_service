@@ -86,4 +86,15 @@ const updateOrAdd = function (user_id, name, address, ens) {
   });
 };
 
-export { updateOrAdd, search, add };
+const isWalletBelongUser = function (user_id, wallet_id) {
+  return walletdb
+    .findOne({ where: { user_id, wallet_id } })
+    .then(function (row: any) {
+      return row !== null;
+    })
+    .catch(function (err) {
+      return false;
+    });
+};
+
+export { updateOrAdd, search, add, isWalletBelongUser };
