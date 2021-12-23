@@ -159,7 +159,7 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/addresses?network_id=1'
 
 # Add a wallet (returns the corresponding wallet id)
-curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet" -d '{"name": "test", "balance": 567, "address": "0x123"}'
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet" -d '{"name": "test", "address": "0x123", "ens": "test.ens"}'
 
 # Get all wallets
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallets"
@@ -168,10 +168,20 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_
 curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"name": "name1", "ens": "example.ens", "address": "0x123"}'
 
 # Get all signers for a wallet (including states)
+# Status:
+#         1 to be confirmed
+#         2 rejected
+#         3 active
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signers"
+
+# Update status for a signer
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"signer_id": 1, "status": 2}'
 
 # Detele a signer
 curl -XDELETE -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer"  -d '{"signer_id": 1}'
+
+# Search User
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/users/statistics" -d '{"kind": "sendemail"}'
 ```
 
 ### Login by Oauth
