@@ -1011,7 +1011,12 @@ app.post("/user/:user_id/address", async function (req, res) {
   }
   console.log(req.body);
 
-  const result = db_address.updateOrAdd(user_id, network_id, user_address, cipher_key);
+  const result = db_address.updateOrAdd(
+    user_id,
+    network_id,
+    user_address,
+    cipher_key
+  );
   res.json(util.Succ(result));
 });
 
