@@ -25,7 +25,7 @@ module.exports = function (app) {
     }
     console.log(req.body);
 
-    const result = db_wallet.updateOrAdd(user_id, name, address, ens);
+    const result = await db_wallet.updateOrAdd(user_id, name, address, ens);
     res.json(util.Succ(result));
   });
 

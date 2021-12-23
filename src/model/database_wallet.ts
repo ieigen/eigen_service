@@ -65,25 +65,27 @@ const search = function (filter_dict) {
 };
 
 const updateOrAdd = function (user_id, name, address, ens) {
-  walletdb.findOne({ where: { user_id, address } }).then(function (row: any) {
-    console.log(row);
-    if (row === null) {
-      return add(user_id, name, address, ens);
-    }
-    return row
-      .update({
-        name: name,
-        ens: ens,
-      })
-      .then(function (result) {
-        console.log("Update success: " + result);
-        return true;
-      })
-      .catch(function (err) {
-        console.log("Update error: " + err);
-        return false;
-      });
-  });
+  return walletdb
+    .findOne({ where: { user_id, address } })
+    .then(function (row: any) {
+      console.log(row);
+      if (row === null) {
+        return add(user_id, name, address, ens);
+      }
+      return row
+        .update({
+          name: name,
+          ens: ens,
+        })
+        .then(function (result) {
+          console.log("Update success: " + result);
+          return true;
+        })
+        .catch(function (err) {
+          console.log("Update error: " + err);
+          return false;
+        });
+    });
 };
 
 const isWalletBelongUser = function (user_id, wallet_id) {

@@ -86,12 +86,12 @@ const updateOrAdd = function (walltet_id, name, address, ens) {
           ens: ens,
         })
         .then(function (result) {
-          console.log("Update success: " + result);
-          return true;
+          console.log("Update success: " + JSON.stringify(result));
+          return row;
         })
         .catch(function (err) {
           console.log("Update error: " + err);
-          return false;
+          return row;
         });
     });
 };

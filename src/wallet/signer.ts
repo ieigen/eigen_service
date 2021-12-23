@@ -37,16 +37,19 @@ module.exports = function (app) {
           signer_id,
           status
         );
-        res.json(util.Succ(result));
-        return;
+        return res.json(util.Succ(result));
       } else {
         if (!util.has_value(address) || !util.has_value(name)) {
           return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
         }
 
-        const result = db_signer.updateOrAdd(wallet_id, name, address, ens);
-        res.json(util.Succ(result));
-        return;
+        const result = await db_signer.updateOrAdd(
+          wallet_id,
+          name,
+          address,
+          ens
+        );
+        return res.json(util.Succ(result));
       }
     }
   );
