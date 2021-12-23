@@ -30,9 +30,9 @@ const addressdb = sequelize.define("address_st", {
   },
 
   cipher_key: {
-      allowNull: false,
-      type: DataTypes.STRING,
-  }
+    allowNull: false,
+    type: DataTypes.STRING,
+  },
 });
 
 sequelize
@@ -70,7 +70,7 @@ const add = function (user_id, network_id, user_address, cipher_key) {
     user_id,
     network_id,
     user_address,
-    cipher_key
+    cipher_key,
   });
 };
 
