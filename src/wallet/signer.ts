@@ -4,6 +4,7 @@ import * as ecies from "../crypto/ecies";
 import * as db_wallet from "../model/database_wallet";
 import * as db_signer from "../model/database_signer";
 import * as db_user from "../model/database_id";
+import * as db_address from "../model/database_address";
 
 module.exports = function (app) {
   app.post(
@@ -173,7 +174,17 @@ module.exports = function (app) {
         if (row === null) {
           return [];
         }
-        return [row["address"]];
+        let found_user_id = row["dataValues"]["user_id"];
+        console.log("Find user id: ", found_user_id);
+        return db_address
+          .findOne({ user_id: found_user_id })
+          .then(function (row: any) {
+            console.log(row);
+            if (row === null) {
+              return "";
+            }
+            return row["dataValues"]["address"];
+          });
       });
 
       res.json(util.Succ(addresses));
@@ -183,9 +194,9 @@ module.exports = function (app) {
       let addresses = db_wallet.findOne({ ens }).then(function (row: any) {
         console.log(row);
         if (row === null) {
-          return [];
+          return "";
         }
-        return [row["address"]];
+        return row["dataValues"]["address"];
       });
 
       res.json(util.Succ(addresses));

@@ -78,6 +78,10 @@ const search = function (filter_dict) {
   return addressdb.findAll({ where: filter_dict });
 };
 
+const findOne = function (filter_dict) {
+  return addressdb.findOne({ where: filter_dict });
+};
+
 const updateOrAdd = function (user_id, network_id, user_address, cipher_key) {
   addressdb
     .findOne({ where: { user_id, network_id, user_address } })
@@ -90,4 +94,4 @@ const updateOrAdd = function (user_id, network_id, user_address, cipher_key) {
     });
 };
 
-export { updateOrAdd, search, add };
+export { updateOrAdd, search, add, findOne };
