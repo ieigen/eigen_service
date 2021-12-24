@@ -180,8 +180,11 @@ curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user
 # Detele a signer
 curl -XDELETE -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer"  -d '{"signer_id": 1}'
 
-# Search User
-curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/users/statistics" -d '{"kind": "sendemail"}'
+# Search Signers (with email)
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/signers&email=abc@google.com"
+
+# Search Signers (with ens)
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/signers&ens=test.ens"
 ```
 
 ### Login by Oauth

@@ -3,6 +3,7 @@ import * as util from "../util";
 import * as ecies from "../crypto/ecies";
 import * as db_wallet from "../model/database_wallet";
 import * as db_signer from "../model/database_signer";
+import * as db_user from "../model/database_id";
 
 module.exports = function (app) {
   app.post(
@@ -134,4 +135,61 @@ module.exports = function (app) {
       res.json(util.Succ(result));
     }
   );
+
+  app.get("/user/:user_id/signers", async function (req, res) {
+    const user_id = req.params.user_id;
+
+    if (!util.check_user_id(req, user_id)) {
+      console.log("user_id does not match with decoded JWT");
+      res.json(
+        util.Err(
+          util.ErrCode.InvalidAuth,
+          "user_id does not match, you can't see any other people's information"
+        )
+      );
+      return;
+    }
+
+    console.log(req.query);
+
+    const email = req.query.email;
+    const ens = req.query.ens;
+
+    if (!util.has_value(email) && !util.has_value(ens)) {
+      return res.json(
+        util.Err(util.ErrCode.Unknown, "email or ens should be given")
+      );
+    }
+
+    if (util.has_value(email) && util.has_value(ens)) {
+      return res.json(
+        util.Err(util.ErrCode.Unknown, "email and ens should be given both")
+      );
+    }
+
+    if (email !== undefined) {
+      let addresses = db_user.findByEmail(email).then(function (row: any) {
+        console.log(row);
+        if (row === null) {
+          return [];
+        }
+        return [row["address"]];
+      });
+
+      res.json(util.Succ(addresses));
+      return;
+    } else {
+      // ens
+      let addresses = db_wallet.findOne({ ens }).then(function (row: any) {
+        console.log(row);
+        if (row === null) {
+          return [];
+        }
+        return [row["address"]];
+      });
+
+      res.json(util.Succ(addresses));
+      return;
+    }
+  });
 };

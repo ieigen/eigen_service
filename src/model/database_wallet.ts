@@ -64,6 +64,10 @@ const search = function (filter_dict) {
   return walletdb.findAll({ where: filter_dict });
 };
 
+const findOne = function (filter_dict) {
+  return walletdb.findOne({ where: filter_dict });
+};
+
 const updateOrAdd = function (user_id, name, address, ens) {
   return walletdb
     .findOne({ where: { user_id, address } })
@@ -99,4 +103,4 @@ const isWalletBelongUser = function (user_id, wallet_id) {
     });
 };
 
-export { updateOrAdd, search, add, isWalletBelongUser };
+export { updateOrAdd, search, add, isWalletBelongUser, findOne };
