@@ -77,7 +77,7 @@ module.exports = function (app) {
     let addresses: any = await db_wallet.findAllAddresses(user_id);
 
     let signers = await db_signer.findAll({
-      attributes: ["updatedAt", "name", "address", "status"],
+      attributes: ["createdAt", "updatedAt", "name", "address", "status"],
       where: {
         address: {
           [Op.in]: addresses,
