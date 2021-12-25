@@ -155,16 +155,19 @@ module.exports = function (app) {
 
     const email = req.query.email;
     const ens = req.query.ens;
+    const address = req.query.ens;
 
-    if (!util.has_value(email) && !util.has_value(ens)) {
-      return res.json(
-        util.Err(util.ErrCode.Unknown, "email or ens should be given")
-      );
-    }
+    const filter_paramter_count = [email, ens, address]
+      .map(util.has_value)
+      .map((x) => (x ? 1 : 0))
+      .reduce((partial_sum, a) => partial_sum + a, 0);
 
-    if (util.has_value(email) && util.has_value(ens)) {
+    if (filter_paramter_count != 1) {
       return res.json(
-        util.Err(util.ErrCode.Unknown, "email and ens should be given both")
+        util.Err(
+          util.ErrCode.Unknown,
+          "if and only if one of email, ens, address should be given"
+        )
       );
     }
 
@@ -198,10 +201,10 @@ module.exports = function (app) {
 
       res.json(util.Succ(addresses));
       return;
-    } else {
-      // ens
+    } else if (address !== undefined) {
+      // ens or address
       let addresses = await db_wallet
-        .findOne({ ens })
+        .findOne({ address, ens })
         .then(function (row: any) {
           console.log(row);
           if (row === null) {
