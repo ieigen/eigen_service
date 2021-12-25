@@ -23,12 +23,19 @@ module.exports = function (app) {
     const address = req.body.address;
     const name = req.body.name;
     const ens = req.body.ens || "";
+    const signers = req.body.signers;
     if (!util.has_value(address) || !util.has_value(name)) {
       return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
     }
     console.log(req.body);
 
     const result = await db_wallet.updateOrAdd(user_id, name, address, ens);
+    for (let signer of signers) {
+      console.log(
+        `Add ${signer} into wallet ${result["dataValues"]["wallet_id"]}`
+      );
+      await db_signer.add(result["dataValues"]["wallet_id"], "", signer, "");
+    }
     res.json(util.Succ(result));
   });
 

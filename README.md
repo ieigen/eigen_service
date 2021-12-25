@@ -159,7 +159,7 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/addresses?network_id=1'
 
 # Add a wallet (returns the corresponding wallet id)
-curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet" -d '{"name": "test", "address": "0x123", "ens": "test.ens"}'
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet" -d '{"name": "test", "address": "0x123", "ens": "test.ens", "signers": ["0x456", "0x789"]}'
 
 # Get all wallets
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallets"
