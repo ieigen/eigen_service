@@ -123,4 +123,8 @@ const remove = function (walltet_id, signer_id) {
   return signerdb.destroy({ where: { walltet_id, signer_id } });
 };
 
-export { updateOrAdd, search, add, updateStatus, remove };
+const findAll = function (filter_dict) {
+  return signerdb.findAll(filter_dict);
+};
+
+export { updateOrAdd, search, add, updateStatus, remove, findAll };

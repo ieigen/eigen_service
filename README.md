@@ -185,6 +185,12 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_
 
 # Search Signers (with ens)
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/signers&ens=test.ens"
+
+# Search Signers (with address)
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/signers&address=0x1"
+
+# Get all information as singers
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/as_signers"
 ```
 
 ### Login by Oauth

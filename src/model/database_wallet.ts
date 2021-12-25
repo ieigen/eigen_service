@@ -64,6 +64,16 @@ const search = function (filter_dict) {
   return walletdb.findAll({ where: filter_dict });
 };
 
+const findAllAddresses = function (user_id) {
+  return walletdb.findAll({
+    attributes: [["address", "address"]],
+    where: {
+      user_id,
+    },
+    raw: true,
+  });
+};
+
 const findOne = function (filter_dict) {
   return walletdb.findOne({ where: filter_dict });
 };
@@ -103,4 +113,11 @@ const isWalletBelongUser = function (user_id, wallet_id) {
     });
 };
 
-export { updateOrAdd, search, add, isWalletBelongUser, findOne };
+export {
+  updateOrAdd,
+  search,
+  add,
+  isWalletBelongUser,
+  findOne,
+  findAllAddresses,
+};

@@ -169,37 +169,48 @@ module.exports = function (app) {
     }
 
     if (email !== undefined) {
-      let addresses = db_user.findByEmail(email).then(function (row: any) {
-        console.log(row);
-        if (row === null) {
-          return [];
-        }
-        let found_user_id = row["dataValues"]["user_id"];
-        console.log("Find user id: ", found_user_id);
-        return db_address
-          .findOne({ user_id: found_user_id })
-          .then(function (row: any) {
-            console.log(row);
-            if (row === null) {
-              return "";
-            }
-            return row["dataValues"]["address"];
-          });
-      });
+      let addresses = await db_user
+        .findByEmail(email)
+        .then(function (row: any) {
+          console.log(row);
+          if (row === null) {
+            return [];
+          }
+          let found_user_id = row["dataValues"]["user_id"];
+          console.log("Find user id: ", found_user_id);
+          return db_address
+            .findAll({
+              where: { user_id: found_user_id },
+              raw: true,
+            })
+            .then(function (rows: any) {
+              let addresses = [];
+              console.log(rows);
+              for (let i = 0; i < rows.length; i++) {
+                console.log(rows[i]);
+                addresses.push(rows[i]["user_address"]);
+              }
+              return addresses;
+            });
+        });
+
+      console.log(addresses);
 
       res.json(util.Succ(addresses));
       return;
     } else {
       // ens
-      let addresses = db_wallet.findOne({ ens }).then(function (row: any) {
-        console.log(row);
-        if (row === null) {
-          return "";
-        }
-        return row["dataValues"]["address"];
-      });
+      let addresses = await db_wallet
+        .findOne({ ens })
+        .then(function (row: any) {
+          console.log(row);
+          if (row === null) {
+            return [""];
+          }
+          return row["dataValues"]["address"];
+        });
 
-      res.json(util.Succ(addresses));
+      res.json(util.Succ([addresses]));
       return;
     }
   });
