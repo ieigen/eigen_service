@@ -81,7 +81,10 @@ module.exports = function (app) {
 
     console.log(req.query);
 
-    let addresses: any = await db_wallet.findAllAddresses(user_id);
+    let address_map_array: any = await db_wallet.findAllAddresses(user_id);
+    let addresses = address_map_array.map((a) => a["address"]);
+
+    console.log("Find all addresses: ", addresses);
 
     let signers = await db_signer.findAll({
       attributes: ["createdAt", "updatedAt", "name", "address", "status"],
