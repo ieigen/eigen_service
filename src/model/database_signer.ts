@@ -22,7 +22,7 @@ const signerdb = sequelize.define("signer_st", {
     autoIncrement: true,
     primaryKey: true,
   },
-  walltet_id: DataTypes.INTEGER,
+  wallet_id: DataTypes.INTEGER,
   name: DataTypes.STRING,
   address: DataTypes.STRING(64),
   ens: DataTypes.STRING,
@@ -33,7 +33,7 @@ sequelize
   .sync()
   .then(function () {
     return signerdb.create({
-      walltet_id: 1,
+      wallet_id: 1,
       name: "name",
       address: "0x",
       ens: "name.ens",
@@ -43,13 +43,13 @@ sequelize
   .then(function (row: any) {
     console.log(
       row.get({
-        walltet_id: 1,
+        wallet_id: 1,
         address: "0x",
       })
     );
     signerdb.destroy({
       where: {
-        walltet_id: row.walltet_id,
+        wallet_id: row.wallet_id,
         address: row.address,
       },
     });
@@ -58,9 +58,9 @@ sequelize
     console.log("Unable to connect to the database:", err);
   });
 
-const add = function (walltet_id, name, address, ens) {
+const add = function (wallet_id, name, address, ens) {
   return signerdb.create({
-    walltet_id,
+    wallet_id,
     name,
     address,
     ens,
@@ -72,13 +72,13 @@ const search = function (filter_dict) {
   return signerdb.findAll({ where: filter_dict });
 };
 
-const updateOrAdd = function (walltet_id, name, address, ens) {
+const updateOrAdd = function (wallet_id, name, address, ens) {
   return signerdb
-    .findOne({ where: { walltet_id, address } })
+    .findOne({ where: { wallet_id, address } })
     .then(function (row: any) {
       console.log(row);
       if (row === null) {
-        return add(walltet_id, name, address, ens);
+        return add(wallet_id, name, address, ens);
       }
       return row
         .update({
@@ -96,9 +96,9 @@ const updateOrAdd = function (walltet_id, name, address, ens) {
     });
 };
 
-const updateStatus = function (walltet_id, signer_id, status) {
+const updateStatus = function (wallet_id, signer_id, status) {
   return signerdb
-    .findOne({ where: { walltet_id, signer_id } })
+    .findOne({ where: { wallet_id, signer_id } })
     .then(function (row: any) {
       console.log(row);
       if (row === null) {
@@ -119,8 +119,8 @@ const updateStatus = function (walltet_id, signer_id, status) {
     });
 };
 
-const remove = function (walltet_id, signer_id) {
-  return signerdb.destroy({ where: { walltet_id, signer_id } });
+const remove = function (wallet_id, signer_id) {
+  return signerdb.destroy({ where: { wallet_id, signer_id } });
 };
 
 const findAll = function (filter_dict) {
