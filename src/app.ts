@@ -1036,11 +1036,12 @@ app.get("/user/:user_id/addresses", async function (req, res) {
   console.log(req.query);
 
   const filter = {
-    user_id: user_id,
-    network_id: req.query.network_id,
+    user_address: req.query.address,
+    email: req.querey.email,
   };
 
-  let addresses: any = await db_address.search(filter);
+  let addresses_array: any = await db_address.search(filter);
+  let addresses = addresses_array.map((a) => a["dataValues"]["user_address"]);
 
   console.log(addresses);
 

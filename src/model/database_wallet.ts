@@ -11,6 +11,14 @@ const sequelize = new Sequelize({
   storage: "./data/db_wallet.sqlite",
 });
 
+export const WALLET_USER_ADDRESS_ROLE_OWNER = 0x0;
+export const WALLET_USER_ADDRESS_ROLE_SIGNER = 0x1;
+
+export const SINGER_TYPE_NONE = 0x0;
+export const SINGER_TYPE_TO_BE_CONFIRMED = 0x1;
+export const SINGER_TYPE_REJECTED = 0x2;
+export const SINGER_TYPE_ACTIVE = 0x3;
+
 const walletdb = sequelize.define("wallet_st", {
   wallet_id: {
     type: DataTypes.INTEGER,
@@ -19,8 +27,11 @@ const walletdb = sequelize.define("wallet_st", {
   },
   user_id: DataTypes.INTEGER,
   name: DataTypes.STRING,
-  address: DataTypes.STRING(64),
-  ens: DataTypes.STRING,
+  wallet_address: DataTypes.CITEXT,
+  address: DataTypes.CITEXT,
+  role: DataTypes.INTEGER,
+  status: DataTypes.INTEGER,
+  sign_message: DataTypes.STRING,
 });
 
 sequelize
@@ -29,21 +40,24 @@ sequelize
     return walletdb.create({
       user_id: 1,
       name: "name",
-      address: "0x",
-      ens: "name.ens",
+      wallet_address: "0x",
+      address: "0x", // Owner or signer's address
+      role: WALLET_USER_ADDRESS_ROLE_OWNER,
+      status: SINGER_TYPE_NONE,
+      sign_message: "",
     });
   })
   .then(function (row: any) {
     console.log(
       row.get({
         user_id: 1,
-        address: "0x",
+        wallet_address: "0x",
       })
     );
     walletdb.destroy({
       where: {
         user_id: row.user_id,
-        address: row.address,
+        wallet_address: row.wallet_address,
       },
     });
   })
@@ -51,17 +65,24 @@ sequelize
     console.log("Unable to connect to the database:", err);
   });
 
-const add = function (user_id, name, address, ens) {
+const add = function (
+  user_id,
+  name,
+  wallet_address,
+  address,
+  role,
+  status,
+  sign_message
+) {
   return walletdb.create({
     user_id,
     name,
+    wallet_address,
     address,
-    ens,
+    role,
+    status,
+    sign_message,
   });
-};
-
-const search = function (filter_dict) {
-  return walletdb.findAll({ where: filter_dict });
 };
 
 const findAllAddresses = function (user_id) {
@@ -78,28 +99,8 @@ const findOne = function (filter_dict) {
   return walletdb.findOne({ where: filter_dict });
 };
 
-const updateOrAdd = function (user_id, name, address, ens) {
-  return walletdb
-    .findOne({ where: { user_id, address } })
-    .then(function (row: any) {
-      console.log(row);
-      if (row === null) {
-        return add(user_id, name, address, ens);
-      }
-      return row
-        .update({
-          name: name,
-          ens: ens,
-        })
-        .then(function (result) {
-          console.log("Update success: " + result);
-          return true;
-        })
-        .catch(function (err) {
-          console.log("Update error: " + err);
-          return false;
-        });
-    });
+const findAll = function (filter_dict) {
+  return walletdb.findAll({ where: filter_dict });
 };
 
 const isWalletBelongUser = function (user_id, wallet_id) {
@@ -113,11 +114,41 @@ const isWalletBelongUser = function (user_id, wallet_id) {
     });
 };
 
+const update = function (wallet_id, signer_address, information) {
+  return walletdb
+    .findOne({ where: { wallet_id, signer_address } })
+    .then(function (row: any) {
+      console.log(row);
+      if (row === null) {
+        return false;
+      }
+      return row
+        .update(information)
+        .then(function (result) {
+          console.log("Update signer information success: ", information);
+          return true;
+        })
+        .catch(function (err) {
+          console.log(
+            "Update signer information error (" + err,
+            "): ",
+            information
+          );
+          return false;
+        });
+    });
+};
+
+const remove = function (wallet_id, signer_address) {
+  return walletdb.destroy({ where: { wallet_id, signer_address } });
+};
+
 export {
-  updateOrAdd,
-  search,
+  update,
   add,
   isWalletBelongUser,
   findOne,
+  findAll,
   findAllAddresses,
+  remove,
 };
