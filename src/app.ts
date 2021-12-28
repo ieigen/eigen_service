@@ -1056,6 +1056,7 @@ app.get("/user/:user_id/addresses", async function (req, res) {
     let found_user_id = user["dataValues"]["user_id"];
     filter = { user_id: found_user_id };
   } else {
+    // Nothing given, then return all the addresses the user has
     filter = {
       user_id: user_id,
     };
@@ -1063,7 +1064,7 @@ app.get("/user/:user_id/addresses", async function (req, res) {
   let addresses_array: any = await db_address.findAll(filter);
   let addresses = addresses_array.map((a) => a["dataValues"]["user_address"]);
 
-  console.log(addresses);
+  console.log("Return all addresses:", addresses);
 
   res.json(util.Succ(addresses));
   return;
