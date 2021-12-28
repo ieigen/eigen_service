@@ -1073,58 +1073,57 @@ app.get("/user/:user_id/addresses", async function (req, res) {
   return;
 });
 
-// app.get("/user/:user_id/addresses", async function (req, res) {
-//   const user_id = req.params.user_id;
-//   if (!util.check_user_id(req, user_id)) {
-//     console.log("user_id does not match with decoded JWT");
-//     res.json(
-//       util.Err(
-//         util.ErrCode.InvalidAuth,
-//         "user_id does not match, you can't see any other people's information"
-//       )
-//     );
-//     return;
-//   }
+app.get("/user/:user_id/friends_addresses", async function (req, res) {
+  // TODO: search friends and then return addresses
+  const user_id = req.params.user_id;
+  if (!util.check_user_id(req, user_id)) {
+    console.log("user_id does not match with decoded JWT");
+    res.json(
+      util.Err(
+        util.ErrCode.InvalidAuth,
+        "user_id does not match, you can't see any other people's information"
+      )
+    );
+    return;
+  }
 
-//   console.log(req.query);
-//   let filter;
+  console.log(req.query);
+  let filter;
 
-//   if (util.has_value(req.query.address) && util.has_value(req.query.email)) {
-//     console.log("address and emial can not both exist");
-//     res.json(
-//       util.Err(util.ErrCode.InvalidAuth, "address and emial can not both exist")
-//     );
-//     return;
-//   } else if (util.has_value(req.query.address)) {
-//     filter = {
-//       user_address: req.query.address,
-//     };
-//   } else if (util.has_value(req.query.email)) {
-//     let user = await db_user.findByEmail(req.query.email);
-//     if (user === null) {
-//       res.json(util.Succ([]));
-//       return;
-//     }
-//     console.log(user);
-//     let found_user_id = user["dataValues"]["user_id"];
-//     filter = { user_id: found_user_id };
-//   } else {
-//     // Nothing given, then return all the addresses the user has
-//     filter = {
-//       user_id: user_id,
-//     };
-//   }
-//   let addresses_array: any = await db_address.findAll(filter);
-//   res.json(util.Succ(addresses_array));
+  if (util.has_value(req.query.address) && util.has_value(req.query.email)) {
+    console.log("address and emial can not both exist");
+    res.json(
+      util.Err(util.ErrCode.InvalidAuth, "address and emial can not both exist")
+    );
+    return;
+  } else if (util.has_value(req.query.address)) {
+    filter = {
+      user_address: req.query.address,
+    };
+  } else if (util.has_value(req.query.email)) {
+    let user = await db_user.findByEmail(req.query.email);
+    if (user === null) {
+      res.json(util.Succ([]));
+      return;
+    }
+    console.log(user);
+    let found_user_id = user["dataValues"]["user_id"];
+    filter = { user_id: found_user_id };
+  } else {
+    // Nothing given, then return all the addresses the user has
+    filter = {
+      user_id: user_id,
+    };
+  }
 
-//   // let addresses_array: any = await db_address.findAll(filter);
-//   // let addresses = addresses_array.map((a) => a["dataValues"]["user_address"]);
+  let addresses_array: any = await db_address.findAll(filter);
+  let addresses = addresses_array.map((a) => a["dataValues"]["user_address"]);
 
-//   // console.log("Return all addresses:", addresses);
+  console.log("Return all addresses:", addresses);
 
-//   // res.json(util.Succ(addresses));
-//   return;
-// });
+  res.json(util.Succ(addresses));
+  return;
+});
 
 require("./login/google")(app);
 require("./relay/relay")(app);

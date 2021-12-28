@@ -165,7 +165,7 @@ curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallets"
 
 # Get all wallets for a given address
-curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallets"
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallets&address=0x123"
 
 # Add a signer for a wallet
 curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"name": "name1", "address": "0x123"}'
@@ -188,6 +188,12 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_
 
 # Get all information as singers for a given address
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/as_signers?address=0x123"
+
+# Search friends addresses by email
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/friends_addresses?email=abc@google.com'
+
+# Search friends addresses by address
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/friends_addresses?network_id=1'
 ```
 
 ### Login by Oauth
