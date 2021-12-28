@@ -120,7 +120,7 @@ const isWalletBelongUser = function (user_id, wallet_id) {
 
 const update = function (wallet_id, signer_address, information) {
   return walletdb
-    .findOne({ where: { wallet_id, signer_address } })
+    .findOne({ where: { wallet_id, address: signer_address } })
     .then(function (row: any) {
       console.log(row);
       if (row === null) {
@@ -144,7 +144,7 @@ const update = function (wallet_id, signer_address, information) {
 };
 
 const remove = function (wallet_id, signer_address) {
-  return walletdb.destroy({ where: { wallet_id, signer_address } });
+  return walletdb.destroy({ where: { wallet_id, address: signer_address } });
 };
 
 export {
