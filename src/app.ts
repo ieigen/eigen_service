@@ -1009,7 +1009,7 @@ app.post("/user/:user_id/address", async function (req, res) {
   if (!util.has_value(user_address) || !util.has_value(network_id)) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
   }
-  console.log(req.body);
+  console.log("Add address information: ", req.body);
 
   const result = db_address.updateOrAdd(
     user_id,
