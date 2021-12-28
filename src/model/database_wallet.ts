@@ -103,6 +103,10 @@ const findAll = function (filter_dict) {
   return walletdb.findAll({ where: filter_dict });
 };
 
+const search = function (dict) {
+  return walletdb.findAll(dict);
+};
+
 const isWalletBelongUser = function (user_id, wallet_id) {
   return walletdb
     .findOne({ where: { user_id, wallet_id } })
@@ -151,4 +155,5 @@ export {
   findAll,
   findAllAddresses,
   remove,
+  search,
 };

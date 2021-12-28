@@ -107,10 +107,9 @@ module.exports = function (app) {
 
     console.log("Find all addresses: ", addresses);
 
-    let signers = await db_wallet.findAll({
+    let signers = await db_wallet.search({
       attributes: ["createdAt", "updatedAt", "name", "address", "status"],
       where: {
-        user_id: user_id,
         address: {
           [Op.in]: addresses,
         },
