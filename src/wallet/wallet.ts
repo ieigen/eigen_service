@@ -115,6 +115,7 @@ module.exports = function (app) {
         "address",
         "status",
         "wallet_address",
+        "wallet_id",
       ],
       where: {
         address: {
