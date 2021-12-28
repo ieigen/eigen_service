@@ -1056,7 +1056,9 @@ app.get("/user/:user_id/addresses", async function (req, res) {
     let found_user_id = user["dataValues"]["user_id"];
     filter = { user_id: found_user_id };
   } else {
-    filter = {};
+    filter = {
+      user_id: user_id,
+    };
   }
   let addresses_array: any = await db_address.findAll(filter);
   let addresses = addresses_array.map((a) => a["dataValues"]["user_address"]);
