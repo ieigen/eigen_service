@@ -164,6 +164,9 @@ curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user
 # Get all wallets
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallets"
 
+# Get all wallets for a given address
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallets"
+
 # Add a signer for a wallet
 curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"name": "name1", "address": "0x123"}'
 
@@ -182,6 +185,9 @@ curl -XDELETE -H "Content-Type:application/json"  --url "localhost:3000/user/{us
 
 # Get all information as singers
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/as_signers"
+
+# Get all information as singers for a given address
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/as_signers?address=0x123"
 ```
 
 ### Login by Oauth

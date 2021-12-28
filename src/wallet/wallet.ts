@@ -72,10 +72,22 @@ module.exports = function (app) {
 
     console.log(req.query);
 
-    const filter = {
-      user_id: user_id,
-      role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
-    };
+    const address = req.query.address;
+
+    let filter;
+
+    if (address !== undefined) {
+      filter = {
+        address: address,
+        user_id: user_id,
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
+      };
+    } else {
+      filter = {
+        user_id: user_id,
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
+      };
+    }
 
     let wallets: any = await db_wallet.findAll(filter);
 
@@ -100,36 +112,62 @@ module.exports = function (app) {
 
     console.log(req.query);
 
-    let address_map_array: any = await db_address.findAll({ user_id });
-    let addresses = address_map_array.map(
-      (a) => a["dataValues"]["user_address"]
-    );
+    let address = req.query.address;
 
-    console.log("Find all addresses: ", addresses);
-
-    let signers = await db_wallet.search({
-      attributes: [
-        "createdAt",
-        "updatedAt",
-        "name",
-        "address",
-        "status",
-        "wallet_address",
-        "wallet_id",
-      ],
-      where: {
-        address: {
-          [Op.in]: addresses,
+    if (address !== undefined) {
+      let signers = await db_wallet.search({
+        attributes: [
+          "createdAt",
+          "updatedAt",
+          "name",
+          "address",
+          "status",
+          "wallet_address",
+          "wallet_id",
+        ],
+        where: {
+          address: address,
+          role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
         },
-        role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-      },
-      raw: true,
-    });
+        raw: true,
+      });
 
-    console.log(signers);
+      console.log(signers);
 
-    res.json(util.Succ(signers));
-    return;
+      res.json(util.Succ(signers));
+      return;
+    } else {
+      let address_map_array: any = await db_address.findAll({ user_id });
+      let addresses = address_map_array.map(
+        (a) => a["dataValues"]["user_address"]
+      );
+
+      console.log("Find all addresses: ", addresses);
+
+      let signers = await db_wallet.search({
+        attributes: [
+          "createdAt",
+          "updatedAt",
+          "name",
+          "address",
+          "status",
+          "wallet_address",
+          "wallet_id",
+        ],
+        where: {
+          address: {
+            [Op.in]: addresses,
+          },
+          role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+        },
+        raw: true,
+      });
+
+      console.log(signers);
+
+      res.json(util.Succ(signers));
+      return;
+    }
   });
 
   app.post(
@@ -183,48 +221,76 @@ module.exports = function (app) {
     }
   );
 
-  // app.get(
-  //   "/user/:user_id/wallet/:wallet_id/signers",
-  //   async function (req, res) {
-  //     const user_id = req.params.user_id;
-  //     const wallet_id = req.params.wallet_id;
-  //     if (!util.check_user_id(req, user_id)) {
-  //       console.log("user_id does not match with decoded JWT");
-  //       res.json(
-  //         util.Err(
-  //           util.ErrCode.InvalidAuth,
-  //           "user_id does not match, you can't see any other people's information"
-  //         )
-  //       );
-  //       return;
-  //     }
+  app.get(
+    "/user/:user_id/wallet/:wallet_id/signers",
+    async function (req, res) {
+      const user_id = req.params.user_id;
+      const wallet_id = req.params.wallet_id;
+      if (!util.check_user_id(req, user_id)) {
+        console.log("user_id does not match with decoded JWT");
+        res.json(
+          util.Err(
+            util.ErrCode.InvalidAuth,
+            "user_id does not match, you can't see any other people's information"
+          )
+        );
+        return;
+      }
 
-  //     if (!db_wallet.isWalletBelongUser(user_id, wallet_id)) {
-  //       console.log("wallet_id does not match with user_id");
-  //       res.json(
-  //         util.Err(
-  //           util.ErrCode.InvalidAuth,
-  //           "user_id does not match with wallet_id, you should not access any other people's wallets"
-  //         )
-  //       );
-  //       return;
-  //     }
+      if (!db_wallet.isWalletBelongUser(user_id, wallet_id)) {
+        console.log("wallet_id does not match with user_id");
+        res.json(
+          util.Err(
+            util.ErrCode.InvalidAuth,
+            "user_id does not match with wallet_id, you should not access any other people's wallets"
+          )
+        );
+        return;
+      }
 
-  //     console.log(req.query);
+      console.log("Request signers for a given wallet:", req.query);
 
-  //     const filter = {
-  //       wallet_id: wallet_id,
-  //       role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-  //     };
+      const wallet_filter = {
+        wallet_id: wallet_id,
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
+      };
 
-  //     let signers: any = await db_wallet.findAll(filter);
+      let wallet: any = await db_wallet.findOne(wallet_filter);
 
-  //     console.log(signers);
+      if (wallet === null) {
+        console.log("wallet does not exist");
+        res.json(util.Err(util.ErrCode.InvalidAuth, "wallet does not exist"));
+        return;
+      }
 
-  //     res.json(util.Succ(signers));
-  //     return;
-  //   }
-  // );
+      let wallet_address = wallet["dataValues"]["wallet_address"];
+
+      const singer_filter = {
+        wallet_address: wallet_address,
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+      };
+
+      let signers: any = await db_wallet.search({
+        attributes: [
+          "createdAt",
+          "updatedAt",
+          "name",
+          "address",
+          "status",
+          "wallet_address",
+        ],
+        where: singer_filter,
+        raw: true,
+      });
+
+      console.log(
+        `Find all signers for wallet ${wallet_id}: ${JSON.stringify(signers)}`
+      );
+
+      res.json(util.Succ(signers));
+      return;
+    }
+  );
 
   app.delete(
     "/user/:user_id/wallet/:wallet_id/signer",
