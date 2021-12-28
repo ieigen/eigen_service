@@ -113,29 +113,23 @@ module.exports = function (app) {
     console.log(req.query);
 
     let address = req.query.address;
+    let arttributes = [
+      "createdAt",
+      "updatedAt",
+      "name",
+      "address",
+      "status",
+      "wallet_address",
+      "wallet_id",
+    ];
+
+    let filter;
 
     if (address !== undefined) {
-      let signers = await db_wallet.search({
-        attributes: [
-          "createdAt",
-          "updatedAt",
-          "name",
-          "address",
-          "status",
-          "wallet_address",
-          "wallet_id",
-        ],
-        where: {
-          address: address,
-          role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-        },
-        raw: true,
-      });
-
-      console.log(signers);
-
-      res.json(util.Succ(signers));
-      return;
+      filter = {
+        address: address,
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+      };
     } else {
       let address_map_array: any = await db_address.findAll({ user_id });
       let addresses = address_map_array.map(
@@ -144,30 +138,24 @@ module.exports = function (app) {
 
       console.log("Find all addresses: ", addresses);
 
-      let signers = await db_wallet.search({
-        attributes: [
-          "createdAt",
-          "updatedAt",
-          "name",
-          "address",
-          "status",
-          "wallet_address",
-          "wallet_id",
-        ],
-        where: {
-          address: {
-            [Op.in]: addresses,
-          },
-          role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+      filter = {
+        address: {
+          [Op.in]: addresses,
         },
-        raw: true,
-      });
-
-      console.log(signers);
-
-      res.json(util.Succ(signers));
-      return;
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+      };
     }
+
+    let signers = await db_wallet.search({
+      attributes: arttributes,
+      where: filter,
+      raw: true,
+    });
+
+    console.log(signers);
+
+    res.json(util.Succ(signers));
+    return;
   });
 
   app.post(
