@@ -156,7 +156,7 @@ curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/addresses?email=abc@google.com'
 
 # Search addresses by address
-curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/addresses?network_id=1'
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/addresses?address=0x123'
 
 # Add a wallet (returns the corresponding wallet id)
 curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet" -d '{"name": "test", "address": "0x123", "wallet_address": "0x999", "signers": ["0x456", "0x789"]}'
@@ -193,7 +193,7 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/friends_addresses?email=abc@google.com'
 
 # Search friends addresses by address
-curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/friends_addresses?network_id=1'
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/friends_addresses?address=0x123'
 ```
 
 ### Login by Oauth
