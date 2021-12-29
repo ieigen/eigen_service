@@ -180,6 +180,12 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_
 # Update status for a signer
 curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"address": "0x123", "status": 2}'
 
+# Update name for a signer
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"address": "0x123", "name": "test"}'
+
+# Upload sign_message for a signer
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"address": "0x123", "sign_message": "abc"}'
+
 # Detele a signer
 curl -XDELETE -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer"  -d '{"address": "0x123"}'
 
