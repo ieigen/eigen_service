@@ -99,6 +99,16 @@ const findOne = function (filter_dict) {
   return walletdb.findOne({ where: filter_dict });
 };
 
+const findWalletById = function (user_id, wallet_id) {
+  return walletdb.findOne({
+    where: {
+      user_id: user_id,
+      wallet_id: wallet_id,
+      role: WALLET_USER_ADDRESS_ROLE_OWNER,
+    },
+  });
+};
+
 const findAll = function (filter_dict) {
   return walletdb.findAll({ where: filter_dict });
 };
@@ -143,8 +153,73 @@ const update = function (wallet_id, signer_address, information) {
     });
 };
 
-const remove = function (wallet_id, signer_address) {
-  return walletdb.destroy({ where: { wallet_id, address: signer_address } });
+const updateOrAdd = function (
+  user_id,
+  wallet_address,
+  signer_address,
+  role,
+  update_dict
+) {
+  walletdb
+    .findOne({
+      where: {
+        wallet_address: wallet_address,
+        address: signer_address,
+        role: role,
+      },
+    })
+    .then(function (row: any) {
+      if (row === null) {
+        let name = update_dict.name || "";
+        let status =
+          update_dict.status ||
+          (role == WALLET_USER_ADDRESS_ROLE_OWNER
+            ? SINGER_TYPE_NONE
+            : SINGER_TYPE_TO_BE_CONFIRMED);
+        let sign_message = update_dict.sign_message || "";
+        add(
+          user_id,
+          name,
+          wallet_address,
+          signer_address,
+          role,
+          status,
+          sign_message
+        );
+        return true;
+      }
+
+      let actual_update_dict = {};
+
+      if (update_dict.name !== undefined) {
+        actual_update_dict["name"] = update_dict.name;
+      }
+
+      if (update_dict.status !== undefined) {
+        actual_update_dict["status"] = update_dict.status;
+      }
+
+      if (update_dict.sign_message !== undefined) {
+        actual_update_dict["sign_message"] = update_dict.sign_message;
+      }
+
+      return row
+        .update(actual_update_dict)
+        .then(function (result) {
+          console.log("Update success: " + JSON.stringify(result));
+          return true;
+        })
+        .catch(function (err) {
+          console.log("Update error: " + err);
+          return false;
+        });
+    });
+};
+
+const remove = function (wallet_address, signer_address, role) {
+  return walletdb.destroy({
+    where: { wallet_address, address: signer_address, role },
+  });
 };
 
 export {
@@ -156,4 +231,6 @@ export {
   findAllAddresses,
   remove,
   search,
+  updateOrAdd,
+  findWalletById,
 };

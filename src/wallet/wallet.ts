@@ -174,36 +174,55 @@ module.exports = function (app) {
         return;
       }
 
+      let wallet = await db_wallet.findWalletById(user_id, wallet_id);
+
+      if (wallet === null) {
+        console.log(
+          `user_id (${user_id}) and wallet_id (${wallet_id}) does not own a wallet`
+        );
+        res.json(
+          util.Err(
+            util.ErrCode.Unknown,
+            `user_id (${user_id}) and wallet_id (${wallet_id}) does not own a wallet`
+          )
+        );
+        return;
+      }
+
+      const wallet_address = wallet["dataValues"]["wallet_address"];
+      console.log("Wallet address found: ", wallet_address);
+      console.log("Req body: ", req.body);
       const sign_message = req.body.sign_message;
       const name = req.body.name;
       const status = req.body.status;
-      const signer_address = req.body.signer_address;
+      const address = req.body.address;
 
       if (status !== undefined) {
-        if (!util.has_value(signer_address)) {
-          console.log("signer_address should be given");
-          res.json(
-            util.Err(util.ErrCode.Unknown, "missing fields: signer_address")
-          );
+        if (!util.has_value(address)) {
+          console.log("address should be given");
+          res.json(util.Err(util.ErrCode.Unknown, "missing fields: address"));
           return;
         }
-        const result = await db_wallet.update(wallet_id, signer_address, {
-          status,
-        });
+        // Update status
+        const result = await db_wallet.updateOrAdd(
+          user_id,
+          wallet_address,
+          address,
+          db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+          {
+            status,
+          }
+        );
         return res.json(util.Succ(result));
       } else {
-        if (!util.has_value(sign_message) || !util.has_value(name)) {
-          return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
-        }
-
-        const information = {
-          name,
-          sign_message,
-        };
-
-        const result = await db_wallet.update(wallet_id, signer_address, {
-          information,
-        });
+        console.log("Update signer: ", req.body);
+        const result = await db_wallet.updateOrAdd(
+          user_id,
+          wallet_address,
+          address,
+          db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+          req.body
+        );
         return res.json(util.Succ(result));
       }
     }
@@ -296,24 +315,36 @@ module.exports = function (app) {
         return;
       }
 
-      if (!db_wallet.isWalletBelongUser(user_id, wallet_id)) {
-        console.log("wallet_id does not match with user_id");
+      let wallet = await db_wallet.findWalletById(user_id, wallet_id);
+
+      if (wallet === null) {
+        console.log(
+          `user_id (${user_id}) and wallet_id (${wallet_id}) does not own a wallet`
+        );
         res.json(
           util.Err(
-            util.ErrCode.InvalidAuth,
-            "user_id does not match with wallet_id, you should not access any other people's wallets"
+            util.ErrCode.Unknown,
+            `user_id (${user_id}) and wallet_id (${wallet_id}) does not own a wallet`
           )
         );
         return;
       }
 
-      const signer_address = req.body.signer_address;
+      const wallet_address = wallet["dataValues"]["wallet_address"];
 
-      if (!util.has_value(signer_address)) {
+      console.log("Wallet address found: ", wallet_address);
+
+      const address = req.body.address;
+
+      if (!util.has_value(address)) {
         return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
       }
 
-      const result = await db_wallet.remove(wallet_id, signer_address);
+      const result = await db_wallet.remove(
+        wallet_address,
+        address,
+        db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER
+      );
       console.log(result);
       res.json(util.Succ(result));
     }

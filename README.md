@@ -178,10 +178,10 @@ curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signers"
 
 # Update status for a signer
-curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"signer_address": "0x123", "status": 2}'
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"address": "0x123", "status": 2}'
 
 # Detele a signer
-curl -XDELETE -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer"  -d '{"signer_address": "0x123"}'
+curl -XDELETE -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer"  -d '{"address": "0x123"}'
 
 # Get all information as singers
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/as_signers"
