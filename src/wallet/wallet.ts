@@ -120,7 +120,6 @@ module.exports = function (app) {
       "address",
       "status",
       "wallet_address",
-      "wallet_id",
     ];
 
     let filter;
@@ -154,6 +153,17 @@ module.exports = function (app) {
 
     console.log(signers);
 
+    for (let i = 0; i < signers.length; i++) {
+      let signer = signers[i];
+      let wallet_address = signer["wallet_address"];
+      let owner = await db_wallet.findOne({
+        wallet_address,
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
+      });
+      let owner_address = owner["dataValues"]["address"];
+      signers[i]["owner_address"] = owner_address;
+    }
+
     res.json(util.Succ(signers));
     return;
   });
@@ -174,56 +184,85 @@ module.exports = function (app) {
         return;
       }
 
-      let wallet = await db_wallet.findWalletById(user_id, wallet_id);
+      let wallet = await db_wallet.findOwnerWalletById(user_id, wallet_id);
 
       if (wallet === null) {
         console.log(
-          `user_id (${user_id}) and wallet_id (${wallet_id}) does not own a wallet`
+          `It is the signer (user_id: ${user_id}) update the signer (which belongs to wallet_id; ${wallet_id}) status`
         );
-        res.json(
-          util.Err(
-            util.ErrCode.Unknown,
-            `user_id (${user_id}) and wallet_id (${wallet_id}) does not own a wallet`
-          )
-        );
-        return;
-      }
 
-      const wallet_address = wallet["dataValues"]["wallet_address"];
-      console.log("Wallet address found: ", wallet_address);
-      console.log("Req body: ", req.body);
-      const sign_message = req.body.sign_message;
-      const name = req.body.name;
-      const status = req.body.status;
-      const address = req.body.address;
+        const wallet_address = wallet["dataValues"]["wallet_address"];
+        console.log("Wallet address found: ", wallet_address);
+        console.log("Req body: ", req.body);
+        const sign_message = req.body.sign_message;
+        const name = req.body.name;
+        const status = req.body.status;
+        const address = req.body.address;
 
-      if (status !== undefined) {
-        if (!util.has_value(address)) {
-          console.log("address should be given");
-          res.json(util.Err(util.ErrCode.Unknown, "missing fields: address"));
-          return;
-        }
-        // Update status
-        const result = await db_wallet.updateOrAdd(
-          user_id,
-          wallet_address,
-          address,
-          db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-          {
-            status,
+        if (status !== undefined) {
+          if (!util.has_value(address)) {
+            console.log("address should be given");
+            res.json(util.Err(util.ErrCode.Unknown, "missing fields: address"));
+            return;
           }
-        );
-        return res.json(util.Succ(result));
+          // Update status
+          const result = await db_wallet.updateOrAddBySigner(
+            wallet_address,
+            address,
+            {
+              status,
+            }
+          );
+          return res.json(util.Succ(result));
+        } else {
+          console.log("Update signer: ", req.body);
+          const result = await db_wallet.updateOrAddBySigner(
+            wallet_address,
+            address,
+            req.body
+          );
+          return res.json(util.Succ(result));
+        }
       } else {
-        console.log("Update signer: ", req.body);
-        const result = await db_wallet.updateOrAdd(
-          user_id,
-          wallet_address,
-          address,
-          db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-          req.body
+        console.log(
+          `It is the owner (user_id: ${user_id}) update the signer (which belongs to wallet_id; ${wallet_id}) status`
         );
-        return res.json(util.Succ(result));
+        const wallet_address = wallet["dataValues"]["wallet_address"];
+        console.log("Wallet address found: ", wallet_address);
+        console.log("Req body: ", req.body);
+        const sign_message = req.body.sign_message;
+        const name = req.body.name;
+        const status = req.body.status;
+        const address = req.body.address;
+
+        if (status !== undefined) {
+          if (!util.has_value(address)) {
+            console.log("address should be given");
+            res.json(util.Err(util.ErrCode.Unknown, "missing fields: address"));
+            return;
+          }
+          // Update status
+          const result = await db_wallet.updateOrAddByOwner(
+            user_id,
+            wallet_address,
+            address,
+            db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+            {
+              status,
+            }
+          );
+          return res.json(util.Succ(result));
+        } else {
+          console.log("Update signer: ", req.body);
+          const result = await db_wallet.updateOrAddByOwner(
+            user_id,
+            wallet_address,
+            address,
+            db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+            req.body
+          );
+          return res.json(util.Succ(result));
+        }
       }
     }
   );
@@ -315,7 +354,7 @@ module.exports = function (app) {
         return;
       }
 
-      let wallet = await db_wallet.findWalletById(user_id, wallet_id);
+      let wallet = await db_wallet.findOwnerWalletById(user_id, wallet_id);
 
       if (wallet === null) {
         console.log(
