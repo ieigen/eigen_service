@@ -162,6 +162,7 @@ module.exports = function (app) {
       });
       let owner_address = owner["dataValues"]["address"];
       signers[i]["owner_address"] = owner_address;
+      signers[i]["wallet_id"] = owner["dataValues"]["wallet_id"];
     }
 
     res.json(util.Succ(signers));
