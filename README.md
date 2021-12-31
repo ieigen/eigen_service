@@ -175,6 +175,10 @@ curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user
 #         1 to be confirmed
 #         2 rejected
 #         3 active
+#         4 freezes
+#         5 start recover
+#         6 agree recover
+#         7 ignore recover
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signers"
 
 # Update status for a signer

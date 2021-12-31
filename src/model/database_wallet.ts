@@ -1,4 +1,4 @@
-import { Sequelize, DataTypes } from "sequelize";
+import { Sequelize, DataTypes, Op } from "sequelize";
 const sequelize = new Sequelize({
   dialect: "sqlite",
 
@@ -14,10 +14,14 @@ const sequelize = new Sequelize({
 export const WALLET_USER_ADDRESS_ROLE_OWNER = 0x0;
 export const WALLET_USER_ADDRESS_ROLE_SIGNER = 0x1;
 
-export const SINGER_TYPE_NONE = 0x0;
-export const SINGER_TYPE_TO_BE_CONFIRMED = 0x1;
-export const SINGER_TYPE_REJECTED = 0x2;
-export const SINGER_TYPE_ACTIVE = 0x3;
+export const SINGER_STATUS_NONE = 0x0;
+export const SINGER_STATUS_TO_BE_CONFIRMED = 0x1;
+export const SINGER_STATUS_REJECTED = 0x2;
+export const SINGER_STATUS_ACTIVE = 0x3;
+export const SINGER_STATUS_FREEZE = 0x4;
+export const SINGER_STATUS_START_RECOVER = 0x5;
+export const SINGER_STATUS_AGREE_RECOVER = 0x6;
+export const SINGER_STATUS_IGNORE_RECOVER = 0x7;
 
 const walletdb = sequelize.define("wallet_st", {
   wallet_id: {
@@ -43,7 +47,7 @@ sequelize
       wallet_address: "0x",
       address: "0x", // Owner or signer's address
       role: WALLET_USER_ADDRESS_ROLE_OWNER,
-      status: SINGER_TYPE_NONE,
+      status: SINGER_STATUS_NONE,
       sign_message: "",
     });
   })
@@ -174,8 +178,8 @@ const updateOrAddByOwner = function (
         let status =
           update_dict.status ||
           (role == WALLET_USER_ADDRESS_ROLE_OWNER
-            ? SINGER_TYPE_NONE
-            : SINGER_TYPE_TO_BE_CONFIRMED);
+            ? SINGER_STATUS_NONE
+            : SINGER_STATUS_TO_BE_CONFIRMED);
         let sign_message = update_dict.sign_message || "";
         add(
           user_id,
@@ -249,7 +253,7 @@ const updateOrAddBySigner = function (
         .then(function (row: any) {
           if (row === null) {
             let name = update_dict.name || "";
-            let status = update_dict.status || SINGER_TYPE_TO_BE_CONFIRMED;
+            let status = update_dict.status || SINGER_STATUS_TO_BE_CONFIRMED;
             let sign_message = update_dict.sign_message || "";
             add(
               user_id,
@@ -296,6 +300,76 @@ const remove = function (wallet_address, signer_address, role) {
     where: { wallet_address, address: signer_address, role },
   });
 };
+
+const checkSingers = function (wallet_id) {
+  return (async function (wallet_id) {
+    let wallet = walletdb.findOne({
+      where: {
+        wallet_id: wallet_id,
+        role: WALLET_USER_ADDRESS_ROLE_OWNER,
+      },
+    });
+
+    if (wallet === null) {
+      console.log(
+        "Wallet does not exist with wallet id when checking signers: ",
+        wallet_id
+      );
+      return false;
+    }
+
+    let wallet_address = wallet["dataValues"]["wallet_address"];
+
+    let all_recover_signers = await walletdb.findAll({
+      where: {
+        wallet_address: wallet_address,
+        role: WALLET_USER_ADDRESS_ROLE_SIGNER,
+        status: {
+          [Op.gte]: SINGER_STATUS_START_RECOVER,
+        },
+      },
+    });
+
+    let agree_recover_signers = await walletdb.findAll({
+      where: {
+        wallet_address: wallet_address,
+        role: WALLET_USER_ADDRESS_ROLE_SIGNER,
+        status: SINGER_STATUS_AGREE_RECOVER,
+      },
+      order: [["address", "DESC"]],
+    });
+
+    if (agree_recover_signers.length >= all_recover_signers.length / 2) {
+      // TODO:
+      return "";
+    }
+
+    return "";
+  })(wallet_id);
+};
+
+// export async function getSignatures(
+//   messageHash,
+//   signers,
+//   returnBadSignatures = false
+// ) {
+//   // Sort the signers
+//   let sortedSigners = signers;
+
+//   let sigs = "0x";
+//   for (let index = 0; index < sortedSigners.length; index += 1) {
+//     const signer = sortedSigners[index];
+//     let sig = await signer.signMessage(messageHash);
+
+//     if (returnBadSignatures) {
+//       sig += "a1";
+//     }
+
+//     sig = sig.slice(2);
+//     sigs += sig;
+//   }
+//   return sigs;
+// }
 
 export {
   update,

@@ -37,7 +37,7 @@ module.exports = function (app) {
       wallet_address,
       address,
       db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
-      db_wallet.SINGER_TYPE_NONE,
+      db_wallet.SINGER_STATUS_NONE,
       ""
     );
     for (let signer of signers) {
@@ -50,7 +50,7 @@ module.exports = function (app) {
         wallet_address,
         signer,
         db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-        db_wallet.SINGER_TYPE_TO_BE_CONFIRMED,
+        db_wallet.SINGER_STATUS_TO_BE_CONFIRMED,
         ""
       );
     }
@@ -225,6 +225,9 @@ module.exports = function (app) {
               status,
             }
           );
+
+          // Check if the signers is greater than
+
           return res.json(util.Succ(result));
         } else {
           console.log("Update signer: ", req.body);
@@ -263,6 +266,9 @@ module.exports = function (app) {
               status,
             }
           );
+
+          // Check if the signers is greater than
+
           return res.json(util.Succ(result));
         } else {
           console.log("Update signer: ", req.body);
