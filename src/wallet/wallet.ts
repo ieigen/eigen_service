@@ -188,10 +188,21 @@ module.exports = function (app) {
 
       if (wallet === null) {
         console.log(
-          `It is the signer (user_id: ${user_id}) update the signer (which belongs to wallet_id; ${wallet_id}) status`
+          `It is the signer (user_id: ${user_id}) update the signer (which belongs to wallet_id: ${wallet_id}) status`
         );
 
-        const wallet_address = wallet["dataValues"]["wallet_address"];
+        let found_wallet = await db_wallet.findOne({
+          wallet_id,
+          role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
+        });
+
+        if (found_wallet === null) {
+          console.log("wallet does not exist: ", wallet_id);
+          res.json(util.Err(util.ErrCode.Unknown, "wallet does not exist"));
+          return;
+        }
+
+        const wallet_address = found_wallet["dataValues"]["wallet_address"];
         console.log("Wallet address found: ", wallet_address);
         console.log("Req body: ", req.body);
         const sign_message = req.body.sign_message;
@@ -225,7 +236,7 @@ module.exports = function (app) {
         }
       } else {
         console.log(
-          `It is the owner (user_id: ${user_id}) update the signer (which belongs to wallet_id; ${wallet_id}) status`
+          `It is the owner (user_id: ${user_id}) update the signer (which belongs to wallet_id: ${wallet_id}) status`
         );
         const wallet_address = wallet["dataValues"]["wallet_address"];
         console.log("Wallet address found: ", wallet_address);
