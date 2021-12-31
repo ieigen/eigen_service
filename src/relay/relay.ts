@@ -41,7 +41,7 @@ module.exports = function(app) {
         }
 
         const c1 = req.body.c1; //  encrypted private key by relay public key
-        const cc1 = req.body.c1; // encrypted password by relay public key
+        const cc1 = req.body.cc1; // encrypted password by relay public key
 
         // encrypt by kms
         let encryptMsg = `encrypt|${c1}|${cc1}|`
