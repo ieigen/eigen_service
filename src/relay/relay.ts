@@ -1,19 +1,33 @@
 import express from "express";
 import * as util from "../util";
+//TODO use the ecies from relay_sdk
 import * as ecies from "../crypto/ecies";
 import * as elliptic from "elliptic"
 const EC = elliptic.ec;
 const ec = new EC("p256");
 
-// FOR DEBUG
-const debug_pub = "04a52438a5c1bba393d167994974b6d299bbdb078263144c9d9429bb65bb151fa3718657caea7bb5adef04a8cf8d40ff20bbc3a9330f04c2acb5b209cd25a2d863";
-const debug_priv = "404a7d7eb5f367ba756dfd1c4f3b14fad4b1000a7cbac2497edac02eb078aab9"
-const PUBK = process.env.PUBK || debug_pub
-const PRIK = process.env.PRIK || debug_priv
+const relay_sdk = require("relay_sdk");
+let relayutil = relay_sdk.util
+let relaysdk = relay_sdk.sdk
+
+relayutil.require_env_variables([
+  "TEESDK_AUDITOR_BASE_DIR",
+  "TEESDK_AUDITOR_NAME",
+  "TEESDK_ENCLAVE_INFO_PATH",
+  "RELAY_ADDRESS",
+  "RELAY_PORT"
+]);
+
+const AUDITOR_BASE_DIR = process.env.TEESDK_AUDITOR_BASE_DIR;
+// auditor_name, e.g., "godzilla"
+const AUDITOR_NAME = process.env.TEESDK_AUDITOR_NAME;
+const ENCLAVE_INFO_PATH = process.env.TEESDK_ENCLAVE_INFO_PATH;
+const PUB = `${AUDITOR_BASE_DIR}/${AUDITOR_NAME}/${AUDITOR_NAME}.public.der`;
+const SIG = `${AUDITOR_BASE_DIR}/${AUDITOR_NAME}/${AUDITOR_NAME}.sign.sha256`;
+const ROOTCA = `deps/ias_root_ca_cert.pem`;
 
 module.exports = function(app) {
 
-    // FOR DEBUG, never use on production
     app.post("/kms/:user_id/enc", async(req, res) => {
         const user_id = req.params.user_id;
         if (!util.check_user_id(req, user_id)) {
@@ -25,26 +39,27 @@ module.exports = function(app) {
             );
             return;
         }
-        const keyPair = ec.keyFromPublic(PUBK, "hex");
-        const publicKey = keyPair.getPublic();
 
-        const options = {
-            hashName: 'sha512',
-            hashLength: 64,
-            macName: 'sha256',
-            macLength: 32,
-            curveName: 'prime256v1',
-            symmetricCypherName: 'aes-256-gcm',
-            keyFormat: 'uncompressed',
-            s1: null, // optional shared information1
-            s2: null // optional shared information2
-        }
-        console.log(req.body)
-        let ret = ecies.encrypt(publicKey, req.body.plain_key, options)
-        res.json(util.Succ(ret.toString("hex")));
+        const c1 = req.body.c1; //  encrypted private key by relay public key
+        const cc1 = req.body.cc1; // encrypted password by relay public key
+
+        // encrypt by kms
+        let encryptMsg = `encrypt|${c1}|${cc1}|`
+        const client = new relaysdk.EigenRelayClient(
+            "fns",
+            PUB,
+            SIG,
+            ROOTCA,
+            ENCLAVE_INFO_PATH,
+            process.env.RELAY_ADDRESS,
+            Number(process.env.RELAY_PORT)
+        );
+        client.submit_task("relay", encryptMsg, async (c2) => {
+            // console.log(c2)
+            res.json(util.Succ(c2));
+        })
     })
 
-    // FOR DEBUG, never use on production
     app.post("/kms/:user_id/dec", async(req, res) => {
         const user_id = req.params.user_id;
         if (!util.check_user_id(req, user_id)) {
@@ -56,22 +71,29 @@ module.exports = function(app) {
             );
             return;
         }
-        const options = {
-            hashName: 'sha512',
-            hashLength: 64,
-            macName: 'sha256',
-            macLength: 32,
-            curveName: 'prime256v1',
-            symmetricCypherName: 'aes-256-gcm',
-            keyFormat: 'uncompressed',
-            s1: null, // optional shared information1
-            s2: null // optional shared information2
-        }
-        console.log(req.body)
-        const keyPair = ec.keyFromPrivate(PRIK, "hex");
-        let cipher_key = Buffer.from(req.body.cipher_key, "hex");
-        let ret = ecies.decrypt(keyPair, cipher_key, options)
-        res.json(util.Succ(ret));
+
+        const cr1 = req.body.cr1; // encrypted aes secret by relay public key
+        const cc1 = req.body.c1; // encrypted password by relay public key
+        const cc2 = req.body.cc2; // encrypted private key by kms
+
+        // decrypt by kms
+        let encryptMsg = `decrypt|${cc2}|${cc1}|${cr1}`
+
+        const client = new relaysdk.EigenRelayClient(
+            "fns",
+            PUB,
+            SIG,
+            ROOTCA,
+            ENCLAVE_INFO_PATH,
+            process.env.RELAY_ADDRESS,
+            Number(process.env.RELAY_PORT)
+        );
+        client.submit_task("relay", encryptMsg, async (decryptedPrivateKey) => {
+            //const privateKey2 = ecies.aes_dec('aes-256-gcm', aesKey, Buffer.from(decryptedPrivateKey, "base64"))
+            //chai.expect(privateKey).to.eq(privateKey2)
+            res.json(util.Succ(decryptedPrivateKey));
+        })
+        //res.json(util.Succ(ret.toString("hex")));
     })
 
 }
