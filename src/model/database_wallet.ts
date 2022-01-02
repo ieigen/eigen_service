@@ -132,25 +132,27 @@ const isWalletBelongUser = function (user_id, wallet_id) {
     });
 };
 
-const update = function (wallet_id, signer_address, information) {
+const updateOwnerAddress = function (user_id, wallet_id, owner_address) {
   return walletdb
-    .findOne({ where: { wallet_id, address: signer_address } })
+    .findOne({ where: { wallet_id, user_id } })
     .then(function (row: any) {
       console.log(row);
       if (row === null) {
         return false;
       }
       return row
-        .update(information)
+        .update({
+          address: owner_address,
+        })
         .then(function (result) {
-          console.log("Update signer information success: ", information);
+          console.log("Update owner address success: ", owner_address);
           return true;
         })
         .catch(function (err) {
           console.log(
-            "Update signer information error (" + err,
+            "Update owner address error (" + err,
             "): ",
-            information
+            owner_address
           );
           return false;
         });
@@ -372,7 +374,7 @@ const checkSingers = function (wallet_id) {
 // }
 
 export {
-  update,
+  updateOwnerAddress,
   add,
   isWalletBelongUser,
   findOne,

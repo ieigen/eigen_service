@@ -57,6 +57,52 @@ module.exports = function (app) {
     res.json(util.Succ(result));
   });
 
+  app.post("/user/:user_id/wallet/:wallet_id", async function (req, res) {
+    const user_id = req.params.user_id;
+    const wallet_id = req.params.wallet_id;
+    if (!util.check_user_id(req, user_id)) {
+      console.log("user_id does not match with decoded JWT");
+      res.json(
+        util.Err(
+          util.ErrCode.InvalidAuth,
+          "user_id does not match, you can't see any other people's information"
+        )
+      );
+      return;
+    }
+
+    let wallet = await db_wallet.findOwnerWalletById(user_id, wallet_id);
+
+    if (wallet === null) {
+      console.log(
+        `The wallet (${wallet_id}) does not belong to (user_id: ${user_id})`
+      );
+      res.json(
+        util.Err(
+          util.ErrCode.Unknown,
+          `The wallet (${wallet_id}) does not belong to (user_id: ${user_id})`
+        )
+      );
+      return;
+    }
+
+    const owner_address = req.body.owner_address;
+    if (owner_address === undefined) {
+      console.log("owner_address should be given");
+      res.json(util.Err(util.ErrCode.Unknown, "owner_address should be given"));
+      return;
+    }
+
+    let result = await db_wallet.updateOwnerAddress(
+      user_id,
+      wallet_id,
+      owner_address
+    );
+
+    res.json(util.Succ(result));
+    return;
+  });
+
   app.get("/user/:user_id/wallets", async function (req, res) {
     const user_id = req.params.user_id;
     if (!util.check_user_id(req, user_id)) {
