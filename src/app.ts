@@ -383,7 +383,6 @@ app.get("/user/:user_id", async function (req, res) {
         console.log("Filter the status of guardians: ", filter_status);
       }
       if (user_id === undefined) {
-        //res.json(util.Err(-1, "invalid argument"));
         var all_relationships = await friend_list.findAll();
         res.json(util.Succ(all_relationships));
         return;

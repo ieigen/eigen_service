@@ -33,7 +33,7 @@
     "googleapis": "^88.2.0",
     "jsonwebtoken": "^8.5.1",
     "log4js": "^6.3.0",
-    "relay_sdk": "0.0.5",
+    "relay_sdk": "0.0.8",
     "secrets.js-grempe": "^2.0.0",
     "sequelize": "^6.7.0",
     "sqlite3": "^5.0.2",
