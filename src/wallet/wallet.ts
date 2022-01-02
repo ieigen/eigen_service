@@ -277,11 +277,12 @@ module.exports = function (app) {
           return res.json(util.Succ(result));
         } else {
           console.log("Update signer: ", req.body);
-          const result = await db_wallet.updateOrAddBySigner(
+          await db_wallet.updateOrAddBySigner(
             wallet_address,
             address,
             req.body
           );
+          const result = db_wallet.checkSingers(wallet_id);
           return res.json(util.Succ(result));
         }
       } else {
@@ -303,7 +304,7 @@ module.exports = function (app) {
             return;
           }
           // Update status
-          const result = await db_wallet.updateOrAddByOwner(
+          await db_wallet.updateOrAddByOwner(
             user_id,
             wallet_address,
             address,
@@ -313,18 +314,19 @@ module.exports = function (app) {
             }
           );
 
-          // Check if the signers is greater than
+          const result = db_wallet.checkSingers(wallet_id);
 
           return res.json(util.Succ(result));
         } else {
           console.log("Update signer: ", req.body);
-          const result = await db_wallet.updateOrAddByOwner(
+          await db_wallet.updateOrAddByOwner(
             user_id,
             wallet_address,
             address,
             db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
             req.body
           );
+          const result = db_wallet.checkSingers(wallet_id);
           return res.json(util.Succ(result));
         }
       }

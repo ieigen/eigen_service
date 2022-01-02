@@ -342,36 +342,33 @@ const checkSingers = function (wallet_id) {
     });
 
     if (agree_recover_signers.length >= all_recover_signers.length / 2) {
-      // TODO:
-      return "";
+      let sigs = getSignatures(agree_recover_signers);
+      return sigs;
     }
 
     return "";
   })(wallet_id);
 };
 
-// export async function getSignatures(
-//   messageHash,
-//   signers,
-//   returnBadSignatures = false
-// ) {
-//   // Sort the signers
-//   let sortedSigners = signers;
+function getSignatures(signers, returnBadSignatures = false) {
+  // Sort the signers
+  // Sorted when get from database
+  let sortedSigners = signers;
 
-//   let sigs = "0x";
-//   for (let index = 0; index < sortedSigners.length; index += 1) {
-//     const signer = sortedSigners[index];
-//     let sig = await signer.signMessage(messageHash);
+  let sigs = "0x";
+  for (let index = 0; index < sortedSigners.length; index += 1) {
+    const signer = sortedSigners[index];
+    let sig = signer["dataValues"]["sign_message"];
 
-//     if (returnBadSignatures) {
-//       sig += "a1";
-//     }
+    if (returnBadSignatures) {
+      sig += "a1";
+    }
 
-//     sig = sig.slice(2);
-//     sigs += sig;
-//   }
-//   return sigs;
-// }
+    sig = sig.slice(2);
+    sigs += sig;
+  }
+  return sigs;
+}
 
 export {
   updateOwnerAddress,
@@ -385,4 +382,5 @@ export {
   updateOrAddByOwner,
   findOwnerWalletById,
   updateOrAddBySigner,
+  checkSingers,
 };
