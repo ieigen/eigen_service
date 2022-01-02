@@ -42,9 +42,14 @@ module.exports = function(app) {
 
         const c1 = req.body.c1; //  encrypted private key by relay public key
         const cc1 = req.body.cc1; // encrypted password by relay public key
+        if (c1 == undefined || cc1 == undefined) {
+            res.json(util.Err(util.ErrCode.InvalidInput, "Invalid parameters"));
+            return;
+        }
 
         // encrypt by kms
         let encryptMsg = `encrypt|${c1}|${cc1}|`
+        console.log(encryptMsg)
         const client = new relaysdk.EigenRelayClient(
             "fns",
             PUB,
@@ -73,11 +78,16 @@ module.exports = function(app) {
         }
 
         const cr1 = req.body.cr1; // encrypted aes secret by relay public key
-        const cc1 = req.body.c1; // encrypted password by relay public key
+        const c1 = req.body.c1; // encrypted password by relay public key
         const cc2 = req.body.cc2; // encrypted private key by kms
+        if (c1 == undefined || cr1 == undefined || cc2 == undefined) {
+            res.json(util.Err(util.ErrCode.InvalidInput, "Invalid parameters"));
+            return;
+        }
 
         // decrypt by kms
-        let encryptMsg = `decrypt|${cc2}|${cc1}|${cr1}`
+        let encryptMsg = `decrypt|${cc2}|${c1}|${cr1}`
+        console.log(encryptMsg)
 
         const client = new relaysdk.EigenRelayClient(
             "fns",
