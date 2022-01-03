@@ -100,26 +100,27 @@ const findByEmail = function (email: string) {
 };
 
 const updateOrAdd = function (user_id, new_info) {
-  userdb.findOne({ where: { user_id: user_id } }).then(function (row: any) {
-    console.log(row);
-    if (row === null) {
-      add(new_info);
-      return true;
-    }
-    var concatenated = new Map([...row].concat([...new_info]));
-    return row
-      .update({
-        concatenated,
-      })
-      .then(function (result) {
-        console.log("Update success: " + result);
+  return userdb
+    .findOne({ where: { user_id: user_id } })
+    .then(function (row: any) {
+      console.log("Find one user: ", row);
+      if (row === null) {
+        add(new_info);
         return true;
-      })
-      .catch(function (err) {
-        console.log("Update error: " + err);
-        return false;
-      });
-  });
+      }
+      var concatenated = { ...row["dataVaules"], ...new_info };
+      console.log("Concatenated: ", concatenated);
+      return row
+        .update(concatenated)
+        .then(function (result) {
+          console.log("Update success: " + JSON.stringify(result));
+          return true;
+        })
+        .catch(function (err) {
+          console.log("Update error: " + err);
+          return false;
+        });
+    });
 };
 
 const updateSecret = function (user_id, secret) {

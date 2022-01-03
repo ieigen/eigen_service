@@ -447,9 +447,9 @@ app.get("/user/:user_id", async function (req, res) {
 
 // TODO: Just for test
 app.post("/user", async function (req, res) {
-  var result: any = await db_user.add(req.body);
-  console.log("Create a new user, id = ", result.unique_id);
-  console.log(result);
+  console.log("Update or Add: ", req.body.user_id, req.body);
+  var result: any = await db_user.updateOrAdd(req.body.user_id, req.body);
+  console.log("Create a new user, id = ", result.user_id, result);
   const user_info = {
     unique_id: result.unique_id,
     email: result.email,
