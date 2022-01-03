@@ -264,15 +264,12 @@ module.exports = function (app) {
             return;
           }
           // Update status
-          const result = await db_wallet.updateOrAddBySigner(
-            wallet_address,
-            address,
-            {
-              status,
-            }
-          );
+          await db_wallet.updateOrAddBySigner(wallet_address, address, {
+            status,
+          });
 
           // Check if the signers is greater than
+          const result = db_wallet.checkSingers(wallet_id);
 
           return res.json(util.Succ(result));
         } else {
