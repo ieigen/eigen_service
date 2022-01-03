@@ -21,7 +21,8 @@ export enum ErrCode {
   Unknown = -1,
   Success = 0,
   InvalidAuth = 1,
-  InvalidInput = 2
+  InvalidInput = 2,
+  CryptoError = 3
 }
 
 const has_value = function (variable) {

@@ -59,10 +59,14 @@ module.exports = function(app) {
             process.env.RELAY_ADDRESS,
             Number(process.env.RELAY_PORT)
         );
-        client.submit_task("relay", encryptMsg, async (c2) => {
-            // console.log(c2)
-            res.json(util.Succ(c2));
-        })
+        try {
+            client.submit_task("relay", encryptMsg, async (c2) => {
+                // console.log(c2)
+                res.json(util.Succ(c2));
+            })
+        } catch (e) {
+            res.json(util.Err(util.ErrCode.CryptoError, "Invalid encryption"));
+        }
     })
 
     app.post("/kms/:user_id/dec", async(req, res) => {
@@ -98,12 +102,15 @@ module.exports = function(app) {
             process.env.RELAY_ADDRESS,
             Number(process.env.RELAY_PORT)
         );
-        client.submit_task("relay", encryptMsg, async (decryptedPrivateKey) => {
-            //const privateKey2 = ecies.aes_dec('aes-256-gcm', aesKey, Buffer.from(decryptedPrivateKey, "base64"))
-            //chai.expect(privateKey).to.eq(privateKey2)
-            res.json(util.Succ(decryptedPrivateKey));
-        })
-        //res.json(util.Succ(ret.toString("hex")));
+        try {
+            client.submit_task("relay", encryptMsg, async (decryptedPrivateKey) => {
+                //const privateKey2 = ecies.aes_dec('aes-256-gcm', aesKey, Buffer.from(decryptedPrivateKey, "base64"))
+                //chai.expect(privateKey).to.eq(privateKey2)
+                res.json(util.Succ(decryptedPrivateKey));
+            })
+        } catch (e) {
+            res.json(util.Err(util.ErrCode.CryptoError, "Invalid decryption"));
+        }
     })
 
 }
