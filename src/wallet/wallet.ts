@@ -351,6 +351,37 @@ module.exports = function (app) {
   );
 
   app.get(
+    "/user/:user_id/wallet/:wallet_id/sign_message",
+    async function (req, res) {
+      const user_id = req.params.user_id;
+      const wallet_id = req.params.wallet_id;
+      if (!util.check_user_id(req, user_id)) {
+        console.log("user_id does not match with decoded JWT");
+        res.json(
+          util.Err(
+            util.ErrCode.InvalidAuth,
+            "user_id does not match, you can't see any other people's information"
+          )
+        );
+        return;
+      }
+
+      db_wallet.findOne({
+        wallet_id,
+      });
+
+      // TODO: Check the user_id can check this!
+
+      console.log("Request sign_mesage for a given wallet");
+
+      // Check if the signers is greater than
+      const result = await db_wallet.checkSingers(wallet_id);
+
+      return res.json(util.Succ(result));
+    }
+  );
+
+  app.get(
     "/user/:user_id/wallet/:wallet_id/signers",
     async function (req, res) {
       const user_id = req.params.user_id;
