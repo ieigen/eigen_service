@@ -366,11 +366,39 @@ module.exports = function (app) {
         return;
       }
 
-      db_wallet.findOne({
+      const address = req.query.address;
+
+      let wallet = await db_wallet.findOne({
         wallet_id,
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       });
 
-      // TODO: Check the user_id can check this!
+      if (wallet === null) {
+        console.log("wallet_id does not exist");
+        res.json(util.Err(util.ErrCode.Unknown, "wallet_id does not exist"));
+        return;
+      }
+
+      let wallet_address = wallet["dataValues"]["wallet_address"];
+
+      let signer = await db_wallet.findOne({
+        wallet_address,
+        address,
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+      });
+
+      if (signer === null) {
+        console.log(
+          "The signer couldn't get sign_message, because it doesn't belong to the wallet"
+        );
+        res.json(
+          util.Err(
+            util.ErrCode.Unknown,
+            "the signer couldn't get sign_message, because it doesn't belong to the wallet!"
+          )
+        );
+        return;
+      }
 
       console.log("Request sign_mesage for a given wallet");
 
