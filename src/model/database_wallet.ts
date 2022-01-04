@@ -166,7 +166,7 @@ const updateOrAddByOwner = function (
   role,
   update_dict
 ) {
-  walletdb
+  return walletdb
     .findOne({
       where: {
         wallet_address: wallet_address,
@@ -227,7 +227,7 @@ const updateOrAddBySigner = function (
   signer_address,
   update_dict
 ) {
-  walletdb
+  return walletdb
     .findOne({
       where: {
         wallet_address: wallet_address,
