@@ -264,9 +264,16 @@ module.exports = function (app) {
             return;
           }
           // Update status
-          await db_wallet.updateOrAddBySigner(wallet_address, address, {
-            status,
-          });
+          if (sign_message === undefined) {
+            await db_wallet.updateOrAddBySigner(wallet_address, address, {
+              status,
+            });
+          } else {
+            await db_wallet.updateOrAddBySigner(wallet_address, address, {
+              status,
+              sign_message,
+            });
+          }
 
           // Check if the signers is greater than
           const result = db_wallet.checkSingers(wallet_id);
@@ -301,15 +308,28 @@ module.exports = function (app) {
             return;
           }
           // Update status
-          await db_wallet.updateOrAddByOwner(
-            user_id,
-            wallet_address,
-            address,
-            db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-            {
-              status,
-            }
-          );
+          if (sign_message === undefined) {
+            await db_wallet.updateOrAddByOwner(
+              user_id,
+              wallet_address,
+              address,
+              db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+              {
+                status,
+              }
+            );
+          } else {
+            await db_wallet.updateOrAddByOwner(
+              user_id,
+              wallet_address,
+              address,
+              db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+              {
+                sign_message,
+                status,
+              }
+            );
+          }
 
           const result = db_wallet.checkSingers(wallet_id);
 

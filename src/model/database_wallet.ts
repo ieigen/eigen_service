@@ -332,6 +332,11 @@ const checkSingers = function (wallet_id) {
       },
     });
 
+    console.log(
+      "checkSingers [all_recover_signers]: ",
+      JSON.stringify(all_recover_signers)
+    );
+
     let agree_recover_signers = await walletdb.findAll({
       where: {
         wallet_address: wallet_address,
@@ -341,8 +346,14 @@ const checkSingers = function (wallet_id) {
       order: [["address", "DESC"]],
     });
 
+    console.log(
+      "checkSingers [agree_recover_signers]: ",
+      JSON.stringify(agree_recover_signers)
+    );
+
     if (agree_recover_signers.length >= all_recover_signers.length / 2) {
       let sigs = getSignatures(agree_recover_signers);
+      console.log("The recover sign_message could be return: ", sigs);
       return sigs;
     }
 
