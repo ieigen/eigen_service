@@ -305,7 +305,7 @@ const remove = function (wallet_address, signer_address, role) {
 
 const checkSingers = function (wallet_id) {
   return (async function (wallet_id) {
-    let wallet = walletdb.findOne({
+    let wallet = await walletdb.findOne({
       where: {
         wallet_id: wallet_id,
         role: WALLET_USER_ADDRESS_ROLE_OWNER,

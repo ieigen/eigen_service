@@ -276,7 +276,7 @@ module.exports = function (app) {
           }
 
           // Check if the signers is greater than
-          const result = db_wallet.checkSingers(wallet_id);
+          const result = await db_wallet.checkSingers(wallet_id);
 
           return res.json(util.Succ(result));
         } else {
@@ -286,7 +286,7 @@ module.exports = function (app) {
             address,
             req.body
           );
-          const result = db_wallet.checkSingers(wallet_id);
+          const result = await db_wallet.checkSingers(wallet_id);
           return res.json(util.Succ(result));
         }
       } else {
@@ -331,7 +331,7 @@ module.exports = function (app) {
             );
           }
 
-          const result = db_wallet.checkSingers(wallet_id);
+          const result = await db_wallet.checkSingers(wallet_id);
 
           return res.json(util.Succ(result));
         } else {
@@ -343,7 +343,7 @@ module.exports = function (app) {
             db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
             req.body
           );
-          const result = db_wallet.checkSingers(wallet_id);
+          const result = await db_wallet.checkSingers(wallet_id);
           return res.json(util.Succ(result));
         }
       }
