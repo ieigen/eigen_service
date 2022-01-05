@@ -92,7 +92,7 @@ const findByOpenID = function (id: string, kind: number) {
 
 const findByEmail = function (email: string) {
   return userdb
-    .findOne({ where: { email: email.trim() } })
+    .findOne({ where: { email: email.trim() }, raw: true })
     .then(function (row: any) {
       console.log(row);
       return row;
@@ -101,14 +101,14 @@ const findByEmail = function (email: string) {
 
 const updateOrAdd = function (user_id, new_info) {
   return userdb
-    .findOne({ where: { user_id: user_id } })
+    .findOne({ where: { user_id: user_id }, raw: true })
     .then(function (row: any) {
       console.log("Find one user: ", row);
       if (row === null) {
         add(new_info);
         return true;
       }
-      var concatenated = { ...row["dataVaules"], ...new_info };
+      var concatenated = { ...row, ...new_info };
       console.log("Concatenated: ", concatenated);
       return row
         .update(concatenated)

@@ -572,7 +572,7 @@ module.exports = function (app) {
           if (row === null) {
             return [];
           }
-          let found_user_id = row["dataValues"]["user_id"];
+          let found_user_id = row["user_id"];
           console.log("Find user id: ", found_user_id);
           return db_address
             .findAll({

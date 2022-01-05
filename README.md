@@ -193,7 +193,7 @@ curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user
 # Upload sign_message for a signer
 curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"address": "0x123", "sign_message": "abc"}'
 
-# Get sign_message if available (The signer address should be given to assure that it can get sign_message)
+# Get sign_message if available (The signer address should be given to ensure that it can get sign_message)
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/sign_message?address=0x123"
 
 # Detele a signer

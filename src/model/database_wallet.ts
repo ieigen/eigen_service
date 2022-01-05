@@ -233,6 +233,7 @@ const updateOrAddBySigner = function (
         wallet_address: wallet_address,
         role: WALLET_USER_ADDRESS_ROLE_OWNER,
       },
+      raw: true,
     })
     .then(function (row: any) {
       if (row === null) {
@@ -243,8 +244,8 @@ const updateOrAddBySigner = function (
         return false;
       }
 
-      let user_id = row["dataValues"]["user_id"];
-      walletdb
+      let user_id = row["user_id"];
+      return walletdb
         .findOne({
           where: {
             wallet_address: wallet_address,
@@ -310,6 +311,7 @@ const checkSingers = function (wallet_id) {
         wallet_id: wallet_id,
         role: WALLET_USER_ADDRESS_ROLE_OWNER,
       },
+      raw: true,
     });
 
     if (wallet === null) {
@@ -320,7 +322,7 @@ const checkSingers = function (wallet_id) {
       return false;
     }
 
-    let wallet_address = wallet["dataValues"]["wallet_address"];
+    let wallet_address = wallet["wallet_address"];
 
     let all_recover_signers = await walletdb.findAll({
       where: {

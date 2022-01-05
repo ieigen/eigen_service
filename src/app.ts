@@ -1053,7 +1053,7 @@ app.get("/user/:user_id/addresses", async function (req, res) {
       return;
     }
     console.log(user);
-    let found_user_id = user["dataValues"]["user_id"];
+    let found_user_id = user["user_id"];
     filter = { user_id: found_user_id };
   } else {
     // Nothing given, then return all the addresses the user has
@@ -1064,12 +1064,6 @@ app.get("/user/:user_id/addresses", async function (req, res) {
   let addresses_array: any = await db_address.findAll(filter);
   res.json(util.Succ(addresses_array));
 
-  // let addresses_array: any = await db_address.findAll(filter);
-  // let addresses = addresses_array.map((a) => a["dataValues"]["user_address"]);
-
-  // console.log("Return all addresses:", addresses);
-
-  // res.json(util.Succ(addresses));
   return;
 });
 
@@ -1107,7 +1101,7 @@ app.get("/user/:user_id/friends_addresses", async function (req, res) {
       return;
     }
     console.log(user);
-    let found_user_id = user["dataValues"]["user_id"];
+    let found_user_id = user["user_id"];
     filter = { user_id: found_user_id };
   } else {
     // Nothing given, then return all the addresses the user has
@@ -1117,7 +1111,7 @@ app.get("/user/:user_id/friends_addresses", async function (req, res) {
   }
 
   let addresses_array: any = await db_address.findAll(filter);
-  let addresses = addresses_array.map((a) => a["dataValues"]["user_address"]);
+  let addresses = addresses_array.map((a) => a.user_address);
 
   console.log("Return all addresses:", addresses);
 
