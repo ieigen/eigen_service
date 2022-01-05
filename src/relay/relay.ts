@@ -1,7 +1,5 @@
 import express from "express";
 import * as util from "../util";
-//TODO use the ecies from relay_sdk
-import * as ecies from "../crypto/ecies";
 import * as elliptic from "elliptic"
 const EC = elliptic.ec;
 const ec = new EC("p256");

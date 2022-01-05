@@ -1,6 +1,5 @@
 import express from "express";
 import * as util from "../util";
-import * as ecies from "../crypto/ecies";
 import * as db_wallet from "../model/database_wallet";
 import * as db_address from "../model/database_address";
 import * as db_user from "../model/database_id";
