@@ -115,7 +115,7 @@ module.exports = function (app) {
       return;
     }
 
-    console.log(req.query);
+    console.log("Query wallets with ", req.query);
 
     const address = req.query.address;
 
@@ -136,7 +136,7 @@ module.exports = function (app) {
 
     let wallets: any = await db_wallet.findAll(filter);
 
-    console.log(wallets);
+    console.log("Find wallets: ", wallets);
 
     res.json(util.Succ(wallets));
     return;
@@ -176,6 +176,7 @@ module.exports = function (app) {
       };
     } else {
       let address_map_array: any = await db_address.findAll({ user_id });
+      // TODO: This may effect other interface, we could use "raw" search
       let addresses = address_map_array.map(
         (a) => a["dataValues"]["user_address"]
       );
@@ -205,9 +206,9 @@ module.exports = function (app) {
         wallet_address,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       });
-      let owner_address = owner["dataValues"]["address"];
+      let owner_address = owner["address"];
       signers[i]["owner_address"] = owner_address;
-      signers[i]["wallet_id"] = owner["dataValues"]["wallet_id"];
+      signers[i]["wallet_id"] = owner["wallet_id"];
     }
 
     res.json(util.Succ(signers));
@@ -248,7 +249,7 @@ module.exports = function (app) {
           return;
         }
 
-        const wallet_address = found_wallet["dataValues"]["wallet_address"];
+        const wallet_address = found_wallet["wallet_address"];
         console.log("Wallet address found: ", wallet_address);
         console.log("Req body: ", req.body);
         const sign_message = req.body.sign_message;
@@ -292,7 +293,7 @@ module.exports = function (app) {
         console.log(
           `It is the owner (user_id: ${user_id}) update the signer (which belongs to wallet_id: ${wallet_id}) status`
         );
-        const wallet_address = wallet["dataValues"]["wallet_address"];
+        const wallet_address = wallet["wallet_address"];
         console.log("Wallet address found: ", wallet_address);
         console.log("Req body: ", req.body);
         const sign_message = req.body.sign_message;
@@ -378,7 +379,7 @@ module.exports = function (app) {
         return;
       }
 
-      let wallet_address = wallet["dataValues"]["wallet_address"];
+      let wallet_address = wallet["wallet_address"];
 
       let signer = await db_wallet.findOne({
         wallet_address,
@@ -450,7 +451,7 @@ module.exports = function (app) {
         return;
       }
 
-      let wallet_address = wallet["dataValues"]["wallet_address"];
+      let wallet_address = wallet["wallet_address"];
 
       const singer_filter = {
         wallet_address: wallet_address,
@@ -510,7 +511,7 @@ module.exports = function (app) {
         return;
       }
 
-      const wallet_address = wallet["dataValues"]["wallet_address"];
+      const wallet_address = wallet["wallet_address"];
 
       console.log("Wallet address found: ", wallet_address);
 
@@ -602,7 +603,7 @@ module.exports = function (app) {
           if (row === null) {
             return [""];
           }
-          return row["dataValues"]["address"];
+          return row["address"];
         });
 
       res.json(util.Succ([addresses]));

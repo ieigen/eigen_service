@@ -100,7 +100,7 @@ const findAllAddresses = function (user_id) {
 };
 
 const findOne = function (filter_dict) {
-  return walletdb.findOne({ where: filter_dict });
+  return walletdb.findOne({ where: filter_dict, raw: true });
 };
 
 const findOwnerWalletById = function (user_id, wallet_id) {
@@ -110,6 +110,7 @@ const findOwnerWalletById = function (user_id, wallet_id) {
       wallet_id: wallet_id,
       role: WALLET_USER_ADDRESS_ROLE_OWNER,
     },
+    raw: true,
   });
 };
 
@@ -332,6 +333,7 @@ const checkSingers = function (wallet_id) {
           [Op.gte]: SINGER_STATUS_START_RECOVER,
         },
       },
+      raw: true,
     });
 
     console.log(
@@ -346,6 +348,7 @@ const checkSingers = function (wallet_id) {
         status: SINGER_STATUS_AGREE_RECOVER,
       },
       order: [["address", "DESC"]],
+      raw: true,
     });
 
     console.log(
@@ -371,7 +374,7 @@ function getSignatures(signers, returnBadSignatures = false) {
   let sigs = "0x";
   for (let index = 0; index < sortedSigners.length; index += 1) {
     const signer = sortedSigners[index];
-    let sig = signer["dataValues"]["sign_message"];
+    let sig = signer["sign_message"];
 
     if (returnBadSignatures) {
       sig += "a1";
