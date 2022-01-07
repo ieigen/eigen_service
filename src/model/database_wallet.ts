@@ -182,7 +182,7 @@ const updateOrAddByOwner = function (
           update_dict.status ||
           (role == WALLET_USER_ADDRESS_ROLE_OWNER
             ? SINGER_STATUS_NONE
-            : SINGER_STATUS_TO_BE_CONFIRMED);
+            : SINGER_STATUS_ACTIVE); // Now we do not need confirm
         let sign_message = update_dict.sign_message || "";
         add(
           user_id,
@@ -257,7 +257,7 @@ const updateOrAddBySigner = function (
         .then(function (row: any) {
           if (row === null) {
             let name = update_dict.name || "";
-            let status = update_dict.status || SINGER_STATUS_TO_BE_CONFIRMED;
+            let status = update_dict.status || SINGER_STATUS_ACTIVE; // now we do not need confirm
             let sign_message = update_dict.sign_message || "";
             add(
               user_id,
