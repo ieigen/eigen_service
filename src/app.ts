@@ -1113,9 +1113,12 @@ app.get("/user/:user_id/friends_addresses", async function (req, res) {
   let addresses_array: any = await db_address.findAll(filter);
   let addresses = addresses_array.map((a) => a.user_address);
 
-  console.log("Return all addresses:", addresses);
+  // should remove duplicate addresses
+  let unique_addresses = [...new Set(addresses)];
 
-  res.json(util.Succ(addresses));
+  console.log("Return all addresses:", unique_addresses);
+
+  res.json(util.Succ(unique_addresses));
   return;
 });
 
