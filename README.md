@@ -3,6 +3,7 @@
 - PKCS
 - Transaction History
 - Secret recovery by TSS with Share Refresh
+- Eigen Dashboard
 
 ## Usage
 
@@ -268,4 +269,15 @@ docker build -t ieigen/service:v1 .
 
 docker run --name=eigen-service -p 3000:3000 -d ieigen/service:v1
 
+```
+
+## Local full cluster
+
+To run the whole cluster, we provide `docker-compose.yml` to launch it as below.
+
+```
+docker network inspect eigen-network >/dev/null 2>&1 || \
+    docker network create --driver bridge eigen-network
+
+docker-compose up
 ```
