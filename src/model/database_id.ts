@@ -101,14 +101,14 @@ const findByEmail = function (email: string) {
 
 const updateOrAdd = function (user_id, new_info) {
   return userdb
-    .findOne({ where: { user_id: user_id }, raw: true })
+    .findOne({ where: { user_id: user_id } })
     .then(function (row: any) {
       console.log("Find one user: ", row);
       if (row === null) {
         add(new_info);
         return true;
       }
-      var concatenated = { ...row, ...new_info };
+      var concatenated = { ...row["dataValues"], ...new_info };
       console.log("Concatenated: ", concatenated);
       return row
         .update(concatenated)
