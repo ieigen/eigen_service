@@ -24,7 +24,7 @@ const addressdb = sequelize.define("address_st", {
   },
 
   user_address: {
-    type: DataTypes.STRING(64),
+    type: DataTypes.CITEXT,
     allowNull: false,
     primaryKey: true,
   },
