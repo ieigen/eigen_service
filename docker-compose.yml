@@ -17,17 +17,24 @@ services:
         image: ieigen/fns:v4
         working_dir: '/app/release/services'
         command:
-            - bash
-            - -c
-            - |
-                source /opt/sgxsdk/environment
-                ./fns
+          - bash
+          - -c
+          - |
+            source /opt/sgxsdk/environment
+            ./fns
         ports:
-            - '8082:8082'
+          - '8082:8082'
+        environment:
+          - IAS_SPID=replace_me
+          - IAS_KEY=replace_me
+          - RUST_LOG=debug
+          - KMS_KEY_ID=replace_me
+          - KMS_CLIENT_ID=replace_me
+          - KMS_CLIENT_SK=replace_me
+          - KMS_CLIENT_REGION=replace_me
         networks:
           - default
 
 networks:
   default:
-    external:
-      name: eigen-network
+    driver: bridge

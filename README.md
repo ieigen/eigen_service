@@ -273,11 +273,8 @@ docker run --name=eigen-service -p 3000:3000 -d ieigen/service:v1
 
 ## Local full cluster
 
-To run the whole cluster, we provide `docker-compose.yml` to launch it as below.
+To run the whole cluster, edit `docker-compose.yml` and update the `replace_me`, then run
 
 ```
-docker network inspect eigen-network >/dev/null 2>&1 || \
-    docker network create --driver bridge eigen-network
-
-docker-compose up
+docker-compose up -d
 ```
