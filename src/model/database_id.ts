@@ -26,7 +26,7 @@ const userdb = sequelize.define("user_st", {
   },
   kind: DataTypes.INTEGER, // 0: google, 1, twitter,,
   unique_id: DataTypes.STRING, // id from third-paty
-  email: DataTypes.STRING,
+  email: DataTypes.CITEXT,
   name: DataTypes.STRING,
   given_name: DataTypes.STRING,
   family_name: DataTypes.STRING,

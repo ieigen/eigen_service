@@ -19,16 +19,16 @@ const pkdb = sequelize.define("transaction_history_st", {
     unique: true,
   },
   network_id: DataTypes.STRING(64),
-  from: DataTypes.STRING,
+  from: DataTypes.CITEXT,
   to_network_id: DataTypes.STRING(64), // Could be empty since L1 -> L1 or L2 -> L2 should be occured on the same network
-  to: DataTypes.STRING,
+  to: DataTypes.CITEXT,
   name: DataTypes.STRING,
   value: DataTypes.INTEGER,
   type: DataTypes.INTEGER,
   block_num: DataTypes.INTEGER,
   status: DataTypes.INTEGER,
-  sub_txid: DataTypes.STRING,
-  operation: DataTypes.STRING, // Transaction operation (e.g., send, exchange, approve, etc.)
+  sub_txid: DataTypes.CITEXT,
+  operation: DataTypes.CITEXT, // Transaction operation (e.g., send, exchange, approve, etc.)
 });
 
 export const TX_TYPE_L1ToL1 = 0x0;
