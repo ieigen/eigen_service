@@ -49,7 +49,7 @@ module.exports = function (app) {
         wallet_address,
         signer,
         db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-        db_wallet.SINGER_STATUS_TO_BE_CONFIRMED,
+        db_wallet.SINGER_STATUS_ACTIVE, // Now we do not need confirm
         ""
       );
     }
