@@ -21,7 +21,7 @@ const PUB = `${AUDITOR_BASE_DIR}/${AUDITOR_NAME}/${AUDITOR_NAME}.public.der`;
 const SIG = `${AUDITOR_BASE_DIR}/${AUDITOR_NAME}/${AUDITOR_NAME}.sign.sha256`;
 const ROOTCA = `deps/ias_root_ca_cert.pem`;
 
-const main = async () => {
+const main = () => {
   const client = new relaysdk.EigenRelayClient(
     "fns",
     PUB,
@@ -36,7 +36,7 @@ const main = async () => {
 
   try {
     console.log("Going to submit task");
-    client.submit_task("EigenTEERegister", "", async (public_key) => {
+    client.submit_task("EigenTEERegister", "", (public_key) => {
       if (public_key.length === 0) {
         throw new Error("Get public key failed");
       }
@@ -69,9 +69,4 @@ const main = async () => {
   console.log("OK");
 };
 
-main()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  });
+main();
