@@ -32,9 +32,13 @@ const main = async () => {
     Number(process.env.RELAY_PORT)
   );
 
+  console.log("Client created: ", client);
+
   try {
     client.submit_task("EigenTEERegister", "", async (public_key) => {
-      console.log("Returns: ", public_key);
+      if (public_key.length === 0) {
+        throw new Error("Get public key failed");
+      }
 
       axios
         .post(
