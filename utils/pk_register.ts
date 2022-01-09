@@ -28,21 +28,24 @@ const main = async () => {
     SIG,
     ROOTCA,
     ENCLAVE_INFO_PATH,
-    process.env.RELAY_ADDRESS,
+    "localhost",
     Number(process.env.RELAY_PORT)
   );
 
   console.log("Client created: ", client);
 
   try {
+    console.log("Going to submit task");
     client.submit_task("EigenTEERegister", "", async (public_key) => {
       if (public_key.length === 0) {
         throw new Error("Get public key failed");
       }
 
+      console.log("Get public key from fns: ", public_key);
+
       axios
         .post(
-          "host.docker.internal:3000/store",
+          "localhost:3000/store",
           querystring.stringify({
             digest: "1",
             public_key: public_key,
@@ -62,6 +65,8 @@ const main = async () => {
   } catch (e) {
     console.log("Fail to submit task: ", e);
   }
+
+  console.log("OK");
 };
 
 main()
