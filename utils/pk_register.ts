@@ -56,7 +56,7 @@ const main = () => {
             },
           }
         )
-        .then((res) => {
+        .then(function (res) {
           console.log("Success post, and return: ", res.data);
           process.exit(0);
         })
