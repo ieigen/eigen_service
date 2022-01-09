@@ -45,11 +45,11 @@ const main = () => {
 
       axios
         .post(
-          "localhost:3000/store",
-          querystring.stringify({
+          "http://localhost:3000/store",
+          {
             digest: "1",
             public_key: public_key,
-          }),
+          },
           {
             headers: {
               "Content-Type": "application/json",
