@@ -56,7 +56,9 @@ const main = () => {
             },
           }
         )
-        .then((res) => res.data)
+        .then((res) => {
+          console.log(res.data);
+        })
         .catch((error) => {
           console.error(`Failed to post public key`, error);
           throw new Error(error.message);
