@@ -14,7 +14,7 @@ const sequelize = new Sequelize({
 
 const pkdb = sequelize.define("transaction_history_st", {
   txid: {
-    type: DataTypes.STRING(64),
+    type: DataTypes.CITEXT,
     allowNull: false,
     unique: true,
   },
