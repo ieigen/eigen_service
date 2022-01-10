@@ -20,6 +20,7 @@ const pkdb = sequelize.define("transaction_history_st", {
   },
   network_id: DataTypes.STRING(64),
   from: DataTypes.CITEXT,
+  from_type: DataTypes.INTEGER,
   to_network_id: DataTypes.STRING(64), // Could be empty since L1 -> L1 or L2 -> L2 should be occured on the same network
   to: DataTypes.CITEXT,
   name: DataTypes.STRING,
@@ -36,6 +37,9 @@ export const TX_TYPE_L1ToL2 = 0x1;
 export const TX_TYPE_L2ToL1 = 0x2;
 export const TX_TYPE_L2ToL2 = 0x3;
 
+export const FROM_TYPE_ACCOUNT = 0x0;
+export const FROM_TYPE_WALLET = 0x1;
+
 sequelize
   .sync()
   .then(function () {
@@ -43,6 +47,7 @@ sequelize
       txid: "_txid",
       network_id: "1",
       from: "0xID",
+      from_type: FROM_TYPE_ACCOUNT,
       to_network_id: "1",
       to: "0xID",
       value: 0,
@@ -71,6 +76,7 @@ const add = function (dict) {
     txid: dict.txid,
     network_id: dict.network_id,
     from: dict.from,
+    from_type: dict.from_type || FROM_TYPE_ACCOUNT,
     to_network_id: dict.network_id,
     to: dict.to,
     value: dict.value,
@@ -280,6 +286,7 @@ const transaction_count_l2 = function () {
     },
   });
 };
+
 export {
   account_count_l2,
   transaction_count_l2,
