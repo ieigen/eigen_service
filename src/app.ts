@@ -13,7 +13,7 @@ import * as db_recovery from "./model/database_recovery";
 import * as friend_list from "./model/database_friend_relationship";
 import * as db_address from "./model/database_address";
 import * as util from "./util";
-import * as userdb from "./model/database_id";
+import * as db_user from "./model/database_id";
 import { Session } from "./session";
 import * as TOKEN_CONSTANS from "./token/constants";
 import * as db_allowance from "./token/allowance";
@@ -370,7 +370,7 @@ app.get("/user/:user_id", async function (req, res) {
   const action = req.query.action;
 
   if (action === undefined) {
-    const result = await userdb.findByID(user_id);
+    const result = await db_user.findByID(user_id);
     console.log(result);
     res.json(util.Succ(result));
     return;
@@ -387,7 +387,7 @@ app.get("/user/:user_id", async function (req, res) {
         res.json(util.Succ(all_relationships));
         return;
       }
-      if (!(await userdb.findByID(user_id))) {
+      if (!(await db_user.findByID(user_id))) {
         console.log("The user does not exist ", user_id);
         res.json(util.Err(util.ErrCode.Unknown, "user does not exist"));
         return;
@@ -403,7 +403,7 @@ app.get("/user/:user_id", async function (req, res) {
         }
       }
       console.log(status, ids);
-      var information_without_status: any = await userdb.findUsersInformation(
+      var information_without_status: any = await db_user.findUsersInformation(
         Array.from(ids)
       );
       console.log("Infomation without status: ", information_without_status);
@@ -424,17 +424,17 @@ app.get("/user/:user_id", async function (req, res) {
         res.json(util.Err(util.ErrCode.Unknown, "invalid argument"));
         return;
       }
-      if (!(await userdb.findByID(user_id))) {
+      if (!(await db_user.findByID(user_id))) {
         console.log("The user does not exist ", user_id);
         res.json(util.Err(util.ErrCode.Unknown, "user does not exist"));
         return;
       }
-      var ids = await userdb.findAllUserIDs();
+      var ids = await db_user.findAllUserIDs();
       var known = await friend_list.getKnownByUserId(user_id);
       var strangers = new Set([...ids].filter((x) => !known.has(x)));
       strangers.delete(Number(user_id));
       var result = Array.from(strangers);
-      var information = await userdb.findUsersInformation(result);
+      var information = await db_user.findUsersInformation(result);
 
       console.log(`Stranger list of ${user_id}: `, information);
       res.json(util.Succ(information));
@@ -447,9 +447,9 @@ app.get("/user/:user_id", async function (req, res) {
 
 // TODO: Just for test
 app.post("/user", async function (req, res) {
-  var result: any = await userdb.add(req.body);
-  console.log("Create a new user, id = ", result.unique_id);
-  console.log(result);
+  console.log("Update or Add: ", req.body.user_id, req.body);
+  var result: any = await db_user.updateOrAdd(req.body.user_id, req.body);
+  console.log("Create a new user, id = ", result.user_id, result);
   const user_info = {
     unique_id: result.unique_id,
     email: result.email,
@@ -499,7 +499,7 @@ app.post("/user/:user_id/guardian", async function (req, res) {
   }
 
   if (util.has_value(guardian_email)) {
-    var guardian = await userdb.findByEmail(guardian_email);
+    var guardian = await db_user.findByEmail(guardian_email);
     if (guardian) {
       guardian_id = guardian.user_id;
     } else {
@@ -524,8 +524,8 @@ app.post("/user/:user_id/guardian", async function (req, res) {
   }
 
   if (
-    !(await userdb.findByID(user_id)) ||
-    !(await userdb.findByID(guardian_id))
+    !(await db_user.findByID(user_id)) ||
+    !(await db_user.findByID(guardian_id))
   ) {
     console.log("One of the users does not exist", user_id, guardian_id);
     res.json(util.Err(util.ErrCode.Unknown, "one of the users does not exist"));
@@ -582,7 +582,7 @@ app.put("/user/:user_id/guardian", async function (req, res) {
   }
 
   if (util.has_value(guardian_email)) {
-    var guardian = await userdb.findByEmail(guardian_email);
+    var guardian = await db_user.findByEmail(guardian_email);
     if (guardian) {
       guardian_id = guardian.user_id;
     } else {
@@ -607,8 +607,8 @@ app.put("/user/:user_id/guardian", async function (req, res) {
   }
 
   if (
-    !(await userdb.findByID(user_id)) ||
-    !(await userdb.findByID(guardian_id))
+    !(await db_user.findByID(user_id)) ||
+    !(await db_user.findByID(guardian_id))
   ) {
     console.log("One of the users does not exist", user_id, guardian_id);
     res.json(util.Err(util.ErrCode.Unknown, "one of the users does not exist"));
@@ -680,7 +680,7 @@ app.delete("/user/:user_id/guardian", async function (req, res) {
   }
 
   if (util.has_value(guardian_email)) {
-    var guardian = await userdb.findByEmail(guardian_email);
+    var guardian = await db_user.findByEmail(guardian_email);
     if (guardian) {
       guardian_id = guardian.user_id;
     } else {
@@ -705,8 +705,8 @@ app.delete("/user/:user_id/guardian", async function (req, res) {
   }
 
   if (
-    !(await userdb.findByID(user_id)) ||
-    !(await userdb.findByID(guardian_id))
+    !(await db_user.findByID(user_id)) ||
+    !(await db_user.findByID(guardian_id))
   ) {
     console.log("One of the users does not exist", user_id, guardian_id);
     res.json(util.Err(util.ErrCode.Unknown, "one of the users does not exist"));
@@ -743,7 +743,7 @@ app.put("/user/:user_id/otpauth", async function (req, res) {
     return;
   }
 
-  const result = await userdb.updateSecret(user_id, secret);
+  const result = await db_user.updateSecret(user_id, secret);
 
   if (result) {
     console.log("Save a otpauth secret success!");
@@ -774,7 +774,7 @@ app.post("/user/:user_id/otpauth", async function (req, res) {
     return res.json(util.Err(1, "missing fields"));
   }
   console.log(req.body);
-  const user = await userdb.findByID(user_id);
+  const user = await db_user.findByID(user_id);
   if (user) {
     if (user.secret) {
       const totp = new TOTP(user.secret);
@@ -1009,9 +1009,14 @@ app.post("/user/:user_id/address", async function (req, res) {
   if (!util.has_value(user_address) || !util.has_value(network_id)) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
   }
-  console.log(req.body);
+  console.log("Add address information: ", req.body);
 
-  const result = db_address.updateOrAdd(user_id, network_id, user_address, cipher_key);
+  const result = db_address.updateOrAdd(
+    user_id,
+    network_id,
+    user_address,
+    cipher_key
+  );
   res.json(util.Succ(result));
 });
 
@@ -1029,22 +1034,97 @@ app.get("/user/:user_id/addresses", async function (req, res) {
   }
 
   console.log(req.query);
+  let filter;
 
-  const filter = {
-    user_id: user_id,
-    network_id: req.query.network_id,
-  };
+  if (util.has_value(req.query.address) && util.has_value(req.query.email)) {
+    console.log("address and emial can not both exist");
+    res.json(
+      util.Err(util.ErrCode.InvalidAuth, "address and emial can not both exist")
+    );
+    return;
+  } else if (util.has_value(req.query.address)) {
+    filter = {
+      user_address: req.query.address,
+    };
+  } else if (util.has_value(req.query.email)) {
+    let user = await db_user.findByEmail(req.query.email);
+    if (user === null) {
+      res.json(util.Succ([]));
+      return;
+    }
+    console.log(user);
+    let found_user_id = user["user_id"];
+    filter = { user_id: found_user_id };
+  } else {
+    // Nothing given, then return all the addresses the user has
+    filter = {
+      user_id: user_id,
+    };
+  }
+  let addresses_array: any = await db_address.findAll(filter);
+  res.json(util.Succ(addresses_array));
 
-  let addresses: any = await db_address.search(filter);
+  return;
+});
 
-  console.log(addresses);
+app.get("/user/:user_id/friends_addresses", async function (req, res) {
+  // TODO: search friends and then return addresses
+  const user_id = req.params.user_id;
+  if (!util.check_user_id(req, user_id)) {
+    console.log("user_id does not match with decoded JWT");
+    res.json(
+      util.Err(
+        util.ErrCode.InvalidAuth,
+        "user_id does not match, you can't see any other people's information"
+      )
+    );
+    return;
+  }
 
-  res.json(util.Succ(addresses));
+  console.log(req.query);
+  let filter;
+
+  if (util.has_value(req.query.address) && util.has_value(req.query.email)) {
+    console.log("address and emial can not both exist");
+    res.json(
+      util.Err(util.ErrCode.InvalidAuth, "address and emial can not both exist")
+    );
+    return;
+  } else if (util.has_value(req.query.address)) {
+    filter = {
+      user_address: req.query.address,
+    };
+  } else if (util.has_value(req.query.email)) {
+    let user = await db_user.findByEmail(req.query.email);
+    if (user === null) {
+      res.json(util.Succ([]));
+      return;
+    }
+    console.log(user);
+    let found_user_id = user["user_id"];
+    filter = { user_id: found_user_id };
+  } else {
+    // Nothing given, then return all the addresses the user has
+    filter = {
+      user_id: user_id,
+    };
+  }
+
+  let addresses_array: any = await db_address.findAll(filter);
+  let addresses = addresses_array.map((a) => a.user_address);
+
+  // should remove duplicate addresses
+  let unique_addresses = [...new Set(addresses)];
+
+  console.log("Return all addresses:", unique_addresses);
+
+  res.json(util.Succ(unique_addresses));
   return;
 });
 
 require("./login/google")(app);
 require("./relay/relay")(app);
+require("./wallet/wallet")(app);
 
 app.listen(3000, function () {
   console.log("Eigen Service listening on port 3000!");

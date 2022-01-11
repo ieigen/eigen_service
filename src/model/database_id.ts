@@ -26,7 +26,7 @@ const userdb = sequelize.define("user_st", {
   },
   kind: DataTypes.INTEGER, // 0: google, 1, twitter,,
   unique_id: DataTypes.STRING, // id from third-paty
-  email: DataTypes.STRING,
+  email: DataTypes.CITEXT,
   name: DataTypes.STRING,
   given_name: DataTypes.STRING,
   family_name: DataTypes.STRING,
@@ -92,7 +92,7 @@ const findByOpenID = function (id: string, kind: number) {
 
 const findByEmail = function (email: string) {
   return userdb
-    .findOne({ where: { email: email.trim() } })
+    .findOne({ where: { email: email.trim() }, raw: true })
     .then(function (row: any) {
       console.log(row);
       return row;
@@ -100,26 +100,27 @@ const findByEmail = function (email: string) {
 };
 
 const updateOrAdd = function (user_id, new_info) {
-  userdb.findOne({ where: { user_id: user_id } }).then(function (row: any) {
-    console.log(row);
-    if (row === null) {
-      add(new_info);
-      return true;
-    }
-    var concatenated = new Map([...row].concat([...new_info]));
-    return row
-      .update({
-        concatenated,
-      })
-      .then(function (result) {
-        console.log("Update success: " + result);
+  return userdb
+    .findOne({ where: { user_id: user_id } })
+    .then(function (row: any) {
+      console.log("Find one user: ", row);
+      if (row === null) {
+        add(new_info);
         return true;
-      })
-      .catch(function (err) {
-        console.log("Update error: " + err);
-        return false;
-      });
-  });
+      }
+      var concatenated = { ...row["dataValues"], ...new_info };
+      console.log("Concatenated: ", concatenated);
+      return row
+        .update(concatenated)
+        .then(function (result) {
+          console.log("Update success: " + JSON.stringify(result));
+          return true;
+        })
+        .catch(function (err) {
+          console.log("Update error: " + err);
+          return false;
+        });
+    });
 };
 
 const updateSecret = function (user_id, secret) {

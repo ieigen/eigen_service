@@ -3,6 +3,7 @@
 - PKCS
 - Transaction History
 - Secret recovery by TSS with Share Refresh
+- Eigen Dashboard
 
 ## Usage
 
@@ -76,8 +77,11 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txh?action=
 # query the count of all accounts on L2 ('from' on L2 -> L1, 'from' and 'to' on L2 -> L2)
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txh?action=account_count_l2"
 
-# add
+# add (Normal account transaction, we do not need give "from_type", the default value is 0, aka, account type)
 curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/txh" -d '{"txid": "2", "network_id": "1", "from": "0x2", "to_network_id": "1", "to": "0x2", "type":0, "value": 1, "block_num": 1027, "name": "ERC20", "operation": "send"}'
+
+# add with from_type (0: account type, 1: wallet type)
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/txh" -d '{"txid": "2", "network_id": "1", "from": "0x2", "from_type": 1, "to_network_id": "1", "to": "0x2", "type":0, "value": 1, "block_num": 1027, "name": "ERC20", "operation": "send"}'
 
 # update
 curl -XPUT -H "Content-Type:application/json"  --url "localhost:3000/txh/{txid}" -d '{"status": 1, "sub_txid": "2121"}'
@@ -152,11 +156,64 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_
 # Save user's address
 curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/address" -d '{ "network_id": "1", "user_address": "0x2" , "cipher_key": "0x"}'
 
-# Get user's addresses on all networks
-curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/addresses'
+# Search addresses by email
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/addresses?email=abc@google.com'
 
-# Get user's addresses on all networks (We can filter the network_id)
-curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/addresses?network_id=1'
+# Search addresses by address
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/addresses?address=0x123'
+
+# Add a wallet (returns the corresponding wallet id)
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet" -d '{"name": "test", "address": "0x123", "wallet_address": "0x999", "signers": ["0x456", "0x789"]}'
+
+# Update owner address for a wallet 
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}" -d '{"owner_address": "0x123"}'
+
+# Get all wallets
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallets"
+
+# Get all wallets for a given address
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallets&address=0x123"
+
+# Add a signer for a wallet
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"name": "name1", "address": "0x123"}'
+
+# Get all signers for a wallet (including states)
+# Status:
+#         1 to be confirmed
+#         2 rejected
+#         3 active
+#         4 freeze
+#         5 start recover
+#         6 agree recover
+#         7 ignore recover
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signers"
+
+# Update status for a signer
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"address": "0x123", "status": 2}'
+
+# Update name for a signer
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"address": "0x123", "name": "test"}'
+
+# Upload sign_message for a signer
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"address": "0x123", "sign_message": "abc"}'
+
+# Get sign_message if available (The signer address should be given to ensure that it can get sign_message)
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/sign_message?address=0x123"
+
+# Detele a signer
+curl -XDELETE -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer"  -d '{"address": "0x123"}'
+
+# Get all information as singers
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/as_signers"
+
+# Get all information as singers for a given address
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/as_signers?address=0x123"
+
+# Search friends addresses by email
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/friends_addresses?email=abc@google.com'
+
+# Search friends addresses by address
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/friends_addresses?address=0x123'
 ```
 
 ### Login by Oauth
@@ -215,4 +272,12 @@ docker build -t ieigen/service:v1 .
 
 docker run --name=eigen-service -p 3000:3000 -d ieigen/service:v1
 
+```
+
+## Local full cluster
+
+To run the whole cluster, edit `docker-compose.yml` and update the `replace_me`, then run
+
+```
+docker-compose up -d
 ```

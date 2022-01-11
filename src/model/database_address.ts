@@ -24,15 +24,16 @@ const addressdb = sequelize.define("address_st", {
   },
 
   user_address: {
-    type: DataTypes.STRING(64),
+    type: DataTypes.CITEXT,
     allowNull: false,
     primaryKey: true,
   },
 
   cipher_key: {
-      allowNull: false,
-      type: DataTypes.STRING,
-  }
+    allowNull: false,
+
+    type: DataTypes.STRING,
+  },
 });
 
 sequelize
@@ -70,12 +71,15 @@ const add = function (user_id, network_id, user_address, cipher_key) {
     user_id,
     network_id,
     user_address,
-    cipher_key
+    cipher_key,
   });
 };
 
-const search = function (filter_dict) {
-  return addressdb.findAll({ where: filter_dict });
+const findOne = function (filter_dict) {
+  return addressdb.findOne({ where: filter_dict });
+};
+const findAll = function (dict) {
+  return addressdb.findAll({ where: dict });
 };
 
 const updateOrAdd = function (user_id, network_id, user_address, cipher_key) {
@@ -90,4 +94,4 @@ const updateOrAdd = function (user_id, network_id, user_address, cipher_key) {
     });
 };
 
-export { updateOrAdd, search, add };
+export { updateOrAdd, add, findOne, findAll };
