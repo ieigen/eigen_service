@@ -22,10 +22,11 @@ services:
     volumes:
       - "./data:/app/data"
   pkcs:
-    build: .
+    build:
+      context: .
+      dockerfile: ./utils/Dockerfile
     networks:
       - default
-    command: utils/wait_for_it.sh eigen_service_eigen_service_1:3000 -- node build/utils/pk_register.js
     depends_on:
       - fns
       - eigen_service
