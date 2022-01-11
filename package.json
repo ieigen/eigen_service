@@ -37,6 +37,7 @@
     "relay_sdk": "0.0.10",
     "secrets.js-grempe": "^2.0.0",
     "sequelize": "^6.7.0",
+    "socket.io": "^4.4.1",
     "sqlite3": "^5.0.2",
     "standard-ecies": "^2.0.0",
     "totp.js": "^0.0.1",
