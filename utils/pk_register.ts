@@ -28,7 +28,7 @@ const main = () => {
     SIG,
     ROOTCA,
     ENCLAVE_INFO_PATH,
-    "localhost",
+    process.env.RELAY_ADDRESS,
     Number(process.env.RELAY_PORT)
   );
 
@@ -45,7 +45,7 @@ const main = () => {
 
       axios
         .post(
-          "http://localhost:3000/store",
+          "http://eigen_service_eigen_service_1:3000/store",
           {
             digest: "1",
             public_key: public_key,

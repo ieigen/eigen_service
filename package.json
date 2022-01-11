@@ -11,8 +11,7 @@
     "clean": "rm -f ./data/db_*.sqlite",
     "build_image": "docker build -t ieigen/service:v1 .",
     "deploy": "yarn build_image && docker run --name=eigen-service -p 3000:3000 -v $PWD/data:/app/data  -d ieigen/service:v1",
-    "deploy_test": "docker-compose up && yarn register_pk",
-    "register_pk": "node ./build/utils/pk_register.js"
+    "deploy_test": "docker-compose up -d"
   },
   "devDependencies": {
     "@types/mocha": "^9.0.0",

@@ -19,6 +19,17 @@ services:
       - "3000:3000"
     networks:
       - default
+    volumes:
+      - "./data:/app/data"
+  pkcs:
+    build: .
+    networks:
+      - default
+    command: node build/utils/pk_register.js
+    depends_on:
+      - fns
+      - eigen_service
+      - proxy
   fns:
     image: ieigen/fns:v4
     working_dir: "/app/release/services"
