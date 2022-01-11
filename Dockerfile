@@ -4,6 +4,8 @@ MAINTAINER Eigen
 
 EXPOSE 3000
 
+RUN apk add --no-cache bash
+
 WORKDIR /app
 COPY . /app
 RUN yarn build
