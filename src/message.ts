@@ -4,7 +4,7 @@ import * as txh from "./model/database_transaction_history";
 
 module.exports = function (app) {
     //const server = http.createServer(app);
-    const io = new Server(8080);
+    const io = new Server(8080, { cors: true });
 
     io.on('connection', (socket) => {
         console.log('a user connected');
