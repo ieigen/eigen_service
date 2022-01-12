@@ -3,8 +3,8 @@ const { Server } = require("socket.io");
 import * as txh from "./model/database_transaction_history";
 
 module.exports = function (app) {
-    const server = http.createServer(app);
-    const io = new Server(server);
+    //const server = http.createServer(app);
+    const io = new Server(8080);
 
     io.on('connection', (socket) => {
         console.log('a user connected');
