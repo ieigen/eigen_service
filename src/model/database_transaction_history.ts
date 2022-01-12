@@ -14,8 +14,10 @@ const sequelize = new Sequelize({
 
 
 export enum TransactionStatus {
+  Failed = -1,
   Success = 0,
   Sent = 1,
+  Confirming = 2,
 }
 
 const pkdb = sequelize.define("transaction_history_st", {

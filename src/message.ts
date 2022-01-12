@@ -1,6 +1,7 @@
 const http = require('http');
 const { Server } = require("socket.io");
 import * as txh from "./model/database_transaction_history";
+import {Session} from "./session";
 
 module.exports = function (app) {
     //const server = http.createServer(app);
@@ -13,8 +14,12 @@ module.exports = function (app) {
 
         socket.on('confirmed', async (data) => {
             console.log(data)
-            // {network_id, user_id, token, confirmed_txlist}
-            // FIXME check token
+            // {network_id, from, token, confirmed_txlist}
+            // check token
+            if (Session.check_token(data.token) == null) {
+                console.log("Invalid token in socket")
+                return
+            }
             //update status
             let confirmed_list: string[] = data.confirmed_txlist;
             for (var txid in confirmed_list) {
@@ -22,8 +27,11 @@ module.exports = function (app) {
             }
 
             // get unconfirmed tx list
-            // FIXME query per user_id
-            let confirming_list = await txh.search({network_id: data.network_id, status: txh.TransactionStatus.Sent}, 0, 10, false);
+            let confirming_list = await txh.search({
+                    network_id: data.network_id,
+                    from: data.from,
+                    status: txh.TransactionStatus.Sent
+                },0, 10, false);
             let txid_list: string[] = []
             for (let tx in confirming_list.transactions) {
                 txid_list.push(tx["txid"])
