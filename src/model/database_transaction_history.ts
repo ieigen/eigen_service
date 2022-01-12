@@ -142,6 +142,7 @@ const search = async function (filter_dict, page, page_size, order) {
       let list = await pkdb.findAll({
         where: filter_dict,
         order: [["updatedAt", "DESC"]],
+        raw: true,
       });
       return {
           transactions: list,
@@ -150,6 +151,7 @@ const search = async function (filter_dict, page, page_size, order) {
     } else {
       let list = await pkdb.findAll({
         where: filter_dict,
+        raw: true,
       });
       return {
           transactions: list,
