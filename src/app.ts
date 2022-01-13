@@ -1125,6 +1125,7 @@ app.get("/user/:user_id/friends_addresses", async function (req, res) {
 require("./login/google")(app);
 require("./relay/relay")(app);
 require("./wallet/wallet")(app);
+require("./message")(app);
 
 app.listen(3000, function () {
   console.log("Eigen Service listening on port 3000!");

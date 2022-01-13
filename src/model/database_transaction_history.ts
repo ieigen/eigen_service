@@ -12,6 +12,14 @@ const sequelize = new Sequelize({
   storage: "./data/db_transaction_history.sqlite",
 });
 
+
+export enum TransactionStatus {
+  Failed = -1,
+  Success = 0,
+  Sent = 1,
+  Confirming = 2,
+}
+
 const pkdb = sequelize.define("transaction_history_st", {
   txid: {
     type: DataTypes.CITEXT,
@@ -54,7 +62,7 @@ sequelize
       type: TX_TYPE_L1ToL1,
       block_num: 0,
       name: "ETH",
-      status: 0, // 1 success, 0 init
+      status: TransactionStatus.Success,
       sub_txid: "",
       operation: "send",
     });
@@ -83,7 +91,7 @@ const add = function (dict) {
     type: dict.type,
     name: dict.name || "ETH",
     block_num: dict.block_num || -1, // `block_num` can be empty when `send` is called
-    status: dict.status || 0,
+    status: dict.status || TransactionStatus.Success,
     sub_txid: dict.sub_txid || "",
     operation: dict.operation,
   });
@@ -93,7 +101,7 @@ const getByTxid = function (txid) {
   return pkdb.findOne({ where: { txid } });
 };
 
-const search = function (filter_dict, page, page_size, order) {
+const search = async function (filter_dict, page, page_size, order) {
   console.log("Search filter: ", filter_dict);
 
   if (page) {
@@ -101,7 +109,6 @@ const search = function (filter_dict, page, page_size, order) {
     console.log("page_size = ", page_size);
     if (order) {
       console.log("Reverse order is enabled");
-      return (async () => {
         const { count, rows } = await pkdb.findAndCountAll({
           where: filter_dict,
           order: [["updatedAt", "DESC"]],
@@ -115,9 +122,7 @@ const search = function (filter_dict, page, page_size, order) {
           transactions: rows,
           total_page,
         };
-      })();
     } else {
-      return (async () => {
         const { count, rows } = await pkdb.findAndCountAll({
           where: filter_dict,
           limit: page_size,
@@ -130,19 +135,28 @@ const search = function (filter_dict, page, page_size, order) {
           transactions: rows,
           total_page,
         };
-      })();
     }
   } else {
     if (order) {
       console.log("Reverse order is enabled");
-      return pkdb.findAll({
+      let list = await pkdb.findAll({
         where: filter_dict,
         order: [["updatedAt", "DESC"]],
+        raw: true,
       });
+      return {
+          transactions: list,
+          total_page: list.length
+      }
     } else {
-      return pkdb.findAll({
+      let list = await pkdb.findAll({
         where: filter_dict,
+        raw: true,
       });
+      return {
+          transactions: list,
+          total_page: list.length
+      }
     }
   }
 };
@@ -228,7 +242,7 @@ const updateOrAdd = function (txid, update_dict) {
     }
     return row
       .update({
-        status: update_dict.status || 0,
+        status: update_dict.status || TransactionStatus.Success,
         sub_txid: update_dict.sub_txid || "",
       })
       .then(function (result) {
