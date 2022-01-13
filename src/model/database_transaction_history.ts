@@ -240,11 +240,10 @@ const updateOrAdd = function (txid, update_dict) {
       add(update_dict);
       return true;
     }
+    var concatenated = { ...row["dataValues"], ...update_dict};
+    console.log("Concatenated: ", concatenated);
     return row
-      .update({
-        status: update_dict.status || TransactionStatus.Success,
-        sub_txid: update_dict.sub_txid || "",
-      })
+      .update(concatenated)
       .then(function (result) {
         console.log("Update success: " + result);
         return true;
