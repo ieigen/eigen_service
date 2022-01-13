@@ -32,6 +32,7 @@ module.exports = function (app) {
                     from: data.from,
                     status: txh.TransactionStatus.Sent
                 },0, 10, false);
+            console.log(confirming_list)
             let txid_list: string[] = []
             for (let tx in confirming_list.transactions) {
                 txid_list.push(tx["txid"])
