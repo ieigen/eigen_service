@@ -34,8 +34,9 @@ module.exports = function (app) {
                 },0, 10, false);
             console.log(confirming_list)
             let txid_list: string[] = []
-            for (let tx in confirming_list.transactions) {
-                txid_list.push(tx["txid"])
+            for (var i = 0; i < confirming_list.transactions.length; i ++) {
+                console.log(confirming_list.transactions[i])
+                txid_list.push(confirming_list.transactions[i]["txid"])
             }
             console.log("Comfirming", txid_list)
             socket.emit('confirming', { unconfirmed_txlist: txid_list, id: socket.id });
