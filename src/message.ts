@@ -22,8 +22,11 @@ module.exports = function (app) {
             }
             //update status
             let confirmed_list: string[] = data.confirmed_txlist;
-            for (var txid in confirmed_list) {
-                await txh.updateOrAdd(txid, {status: txh.TransactionStatus.Success})
+            console.log("confirmed_list", confirmed_list)
+            for (var i = 0; i < confirmed_list.length; i ++) {
+                let tx = confirmed_list[i];
+                let res = await txh.updateOrAdd(tx["txid"], {status: txh.TransactionStatus.Success, block_num: tx["block_num"]})
+                console.log(res)
             }
 
             // get unconfirmed tx list
