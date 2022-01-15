@@ -116,3 +116,5 @@ data
 # yarn.lock needs to be ignored
 yarn.lock
 package-lock.json
+
+docker-compose.yml
