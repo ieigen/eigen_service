@@ -42,6 +42,7 @@
     "standard-ecies": "^2.0.0",
     "totp.js": "^0.0.1",
     "typings": "^2.1.1",
-    "vue-axios": "^3.3.7"
+    "vue-axios": "^3.3.7",
+    "pubsub-js": "^1.9.4"
   }
 }

@@ -163,9 +163,9 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/addresses?address=0x123'
 
 # Add a wallet (returns the corresponding wallet id)
-curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet" -d '{"name": "test", "address": "0x123", "wallet_address": "0x999", "signers": ["0x456", "0x789"]}'
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet" -d '{"name": "test", "address": "0x123", "wallet_address": "0x999", "signers": ["0x456", "0x789"], "txid": "0x1234"}'
 
-# Update owner address for a wallet 
+# Update owner address for a wallet
 curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}" -d '{"owner_address": "0x123"}'
 
 # Get all wallets

@@ -23,6 +23,15 @@ export const SINGER_STATUS_START_RECOVER = 0x5;
 export const SINGER_STATUS_AGREE_RECOVER = 0x6;
 export const SINGER_STATUS_IGNORE_RECOVER = 0x7;
 
+export const WALLET_STATUS_NONE = 0x0;
+export const WALLET_STATUS_SUBMITED = 0x1;
+export const WALLET_STATUS_CREATED_SUCCESS = 0x2;
+export const WALLET_STATUS_CREATED_FAIL = 0x3;
+export const WALLET_STATUS_FREEZED = 0x4;
+export const WALLET_STATUS_RECOVER_TO_BE_CONFIRMED = 0x5;
+export const WALLET_STATUS_RECOVERED_SUCCESS = 0x6;
+export const WALLET_STATUS_RECOVERED_FAIL = 0x7;
+
 const walletdb = sequelize.define("wallet_st", {
   wallet_id: {
     type: DataTypes.INTEGER,
@@ -34,7 +43,8 @@ const walletdb = sequelize.define("wallet_st", {
   wallet_address: DataTypes.CITEXT,
   address: DataTypes.CITEXT,
   role: DataTypes.INTEGER,
-  status: DataTypes.INTEGER,
+  status: DataTypes.INTEGER, // signer status
+  wallet_status: DataTypes.INTEGER,
   sign_message: DataTypes.STRING,
 });
 
@@ -76,6 +86,7 @@ const add = function (
   address,
   role,
   status,
+  wallet_status,
   sign_message
 ) {
   return walletdb.create({
@@ -85,6 +96,7 @@ const add = function (
     address,
     role,
     status,
+    wallet_status,
     sign_message,
   });
 };
@@ -191,6 +203,7 @@ const updateOrAddByOwner = function (
           signer_address,
           role,
           status,
+          WALLET_STATUS_SUBMITED,
           sign_message
         );
         return true;
@@ -266,6 +279,7 @@ const updateOrAddBySigner = function (
               signer_address,
               WALLET_USER_ADDRESS_ROLE_SIGNER,
               status,
+              WALLET_STATUS_NONE,
               sign_message
             );
             return true;

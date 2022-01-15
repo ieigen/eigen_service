@@ -1,10 +1,57 @@
 import express from "express";
+import PubSub from "pubsub-js";
+import { Op } from "sequelize";
+
 import * as util from "../util";
 import * as db_wallet from "../model/database_wallet";
 import * as db_address from "../model/database_address";
 import * as db_user from "../model/database_id";
+import * as db_txh from "../model/database_transaction_history";
 
-import { Op } from "sequelize";
+// Records txid => wallet, wallet is a Sequelize model which can be used to update status
+let TRANSACTION_MAP = new Map();
+
+function addWalletSubscriber(txid, wallet) {
+  console.log("Add subscriber: ", txid, wallet);
+  TRANSACTION_MAP[txid] = wallet;
+  return function (msg, transaction) {
+    var [_, txid] = msg.split(".");
+
+    let wallet = TRANSACTION_MAP[txid];
+    if (wallet === undefined) {
+      console.log(`Transaction ${txid} is not related to wallet`);
+    }
+
+    const wallet_status = wallet["dataValues"]["wallet_status"];
+    const transaction_status = transaction["status"];
+
+    if (
+      wallet_status == db_wallet.WALLET_STATUS_SUBMITED &&
+      transaction_status == db_txh.TransactionStatus.Success
+    ) {
+      return wallet
+        .update({
+          wallet_status: db_wallet.WALLET_STATUS_CREATED_SUCCESS,
+        })
+        .then(function (result) {
+          console.log(
+            "Update wallet status success: " + JSON.stringify(result)
+          );
+          return true;
+        })
+        .catch(function (err) {
+          console.log("Update wallet statuserror: " + err);
+          return false;
+        });
+    }
+
+    console.log(
+      `Do not handle Transaction (${txid}) and Wallet (${wallet["dataValues"]["wallet_id"]})`
+    );
+
+    return false;
+  };
+}
 
 module.exports = function (app) {
   app.post("/user/:user_id/wallet", async function (req, res) {
@@ -25,7 +72,12 @@ module.exports = function (app) {
     const name = req.body.name;
     const ens = req.body.ens || "";
     const signers = req.body.signers;
-    if (!util.has_value(address) || !util.has_value(name)) {
+    const txid = req.body.txid;
+    if (
+      !util.has_value(address) ||
+      !util.has_value(name) ||
+      !util.has_value(txid)
+    ) {
       return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
     }
     console.log(req.body);
@@ -37,8 +89,12 @@ module.exports = function (app) {
       address,
       db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       db_wallet.SINGER_STATUS_NONE,
+      db_wallet.WALLET_STATUS_SUBMITED, // Wallet status is submited at first
       ""
     );
+
+    PubSub.subscribe(`Transaction.${txid}`, addWalletSubscriber(txid, result));
+
     for (let signer of signers) {
       console.log(
         `Add ${signer} into wallet ${result["dataValues"]["wallet_id"]}`
@@ -50,6 +106,7 @@ module.exports = function (app) {
         signer,
         db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
         db_wallet.SINGER_STATUS_ACTIVE, // Now we do not need confirm
+        db_wallet.WALLET_STATUS_NONE, // Wallet status is meaningless for signer
         ""
       );
     }

@@ -1,4 +1,5 @@
 import { Sequelize, Op, DataTypes } from "sequelize";
+import PubSub from "pubsub-js";
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
@@ -239,6 +240,7 @@ const updateOrAdd = function (txid, update_dict) {
     }
     var concatenated = { ...row["dataValues"], ...update_dict };
     console.log("Concatenated: ", concatenated);
+    PubSub.publish(`Transaction.${row["dataValues"].txid}`, concatenated);
     return row
       .update(concatenated)
       .then(function (result) {
