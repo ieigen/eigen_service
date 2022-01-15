@@ -45,7 +45,7 @@ const main = () => {
 
       axios
         .post(
-          "http://eigen_service_eigen_service_1:3000/store",
+          `http://eigen_service:3000/store`,
           {
             digest: "1",
             public_key: public_key,

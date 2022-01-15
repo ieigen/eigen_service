@@ -276,8 +276,9 @@ docker run --name=eigen-service -p 3000:3000 -d ieigen/service:v1
 
 ## Local full cluster
 
-To run the whole cluster, edit `docker-compose.yml` and update the `replace_me`, then run
+To run the whole cluster, edit `script/deploy.py` and update the `replace_me`, then run
 
 ```
-docker-compose up -d
+python script/deploy.py --PORT_OFFSET=0 --NODE_ENV=preview
+yarn deploy_prod
 ```

@@ -12,4 +12,4 @@ RUN yarn build
 
 RUN npm install
 
-CMD utils/wait_for_it.sh eigen_service_eigen_service_1:3000 -- node build/utils/pk_register.js
+CMD utils/wait_for_it.sh eigen_service:3000 -- node build/utils/pk_register.js

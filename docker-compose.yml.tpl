@@ -2,21 +2,25 @@ version: "3"
 
 services:
   secret:
-    image: secret:v2
+    build: ../secret
+    environment:
+      - NODE_ENV={{NODE_ENV}}
     ports:
-      - "8090:80"
+      - "{{EIGEN_SECRET_PORT}}:80"
     networks:
       - default
   proxy:
     build: ./proxy/
     ports:
-      - "8443:8443"
+      - "{{EIGEN_PROXY_PORT}}:8443"
     networks:
       - default
+    external_links:
+      - {{EIGEN_SERVICE_ADDR}}_1:eigen_service
   eigen_service:
     build: .
     ports:
-      - "3000:3000"
+      - "{{EIGEN_SERVICE_PORT}}:3000"
     networks:
       - default
     volumes:
@@ -25,6 +29,8 @@ services:
     build:
       context: .
       dockerfile: ./utils/Dockerfile
+    external_links:
+      - {{EIGEN_SERVICE_ADDR}}_1:eigen_service
     networks:
       - default
     depends_on:
@@ -41,15 +47,15 @@ services:
         source /opt/sgxsdk/environment
         ./fns
     ports:
-      - "8082:8082"
+      - "{{EIGEN_FNS_PORT}}:8082"
     environment:
-      - IAS_SPID=replace_me
-      - IAS_KEY=replace_me
+      - IAS_SPID={{IAS_SPID}}
+      - IAS_KEY={{IAS_KEY}}
       - RUST_LOG=debug
-      - KMS_KEY_ID=replace_me
-      - KMS_CLIENT_ID=replace_me
-      - KMS_CLIENT_SK=replace_me
-      - KMS_CLIENT_REGION=replace_me
+      - KMS_KEY_ID={{KMS_KEY_ID}}
+      - KMS_CLIENT_ID={{KMS_CLIENT_ID}}
+      - KMS_CLIENT_SK={{KMS_CLIENT_SK}}
+      - KMS_CLIENT_REGION={{KMS_CLIENT_REGION}}
     networks:
       - default
 
