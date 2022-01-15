@@ -11,7 +11,7 @@ import * as db_txh from "../model/database_transaction_history";
 // Records txid => wallet, wallet is a Sequelize model which can be used to update status
 let TRANSACTION_MAP = new Map();
 
-function addWalletSubscriber(txid, wallet) {
+function addWalletStatusSubscriber(txid, wallet) {
   console.log("Add subscriber: ", txid, wallet);
   TRANSACTION_MAP[txid] = wallet;
   return function (msg, transaction) {
@@ -93,7 +93,10 @@ module.exports = function (app) {
       ""
     );
 
-    PubSub.subscribe(`Transaction.${txid}`, addWalletSubscriber(txid, result));
+    PubSub.subscribe(
+      `Transaction.${txid}`,
+      addWalletStatusSubscriber(txid, result)
+    );
 
     for (let signer of signers) {
       console.log(
