@@ -15,8 +15,8 @@ const sequelize = new Sequelize({
 
 export enum TransactionStatus {
   Failed = -1,
-  Success = 0,
-  Sent = 1,
+  Sent = 0,
+  Success = 1,
   Confirming = 2,
 }
 
