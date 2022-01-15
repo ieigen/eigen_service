@@ -12,7 +12,6 @@ const sequelize = new Sequelize({
   storage: "./data/db_transaction_history.sqlite",
 });
 
-
 export enum TransactionStatus {
   Failed = -1,
   Sent = 0,
@@ -109,32 +108,32 @@ const search = async function (filter_dict, page, page_size, order) {
     console.log("page_size = ", page_size);
     if (order) {
       console.log("Reverse order is enabled");
-        const { count, rows } = await pkdb.findAndCountAll({
-          where: filter_dict,
-          order: [["updatedAt", "DESC"]],
-          limit: page_size,
-          offset: (page - 1) * page_size,
-        });
-        console.log("count = ", count);
-        console.log("rows = ", rows);
-        const total_page = Math.ceil(count / page_size);
-        return {
-          transactions: rows,
-          total_page,
-        };
+      const { count, rows } = await pkdb.findAndCountAll({
+        where: filter_dict,
+        order: [["updatedAt", "DESC"]],
+        limit: page_size,
+        offset: (page - 1) * page_size,
+      });
+      console.log("count = ", count);
+      console.log("rows = ", rows);
+      const total_page = Math.ceil(count / page_size);
+      return {
+        transactions: rows,
+        total_page,
+      };
     } else {
-        const { count, rows } = await pkdb.findAndCountAll({
-          where: filter_dict,
-          limit: page_size,
-          offset: (page - 1) * page_size,
-        });
-        console.log("count = ", count);
-        console.log("transactions = ", rows);
-        const total_page = Math.ceil(count / page_size);
-        return {
-          transactions: rows,
-          total_page,
-        };
+      const { count, rows } = await pkdb.findAndCountAll({
+        where: filter_dict,
+        limit: page_size,
+        offset: (page - 1) * page_size,
+      });
+      console.log("count = ", count);
+      console.log("transactions = ", rows);
+      const total_page = Math.ceil(count / page_size);
+      return {
+        transactions: rows,
+        total_page,
+      };
     }
   } else {
     if (order) {
@@ -145,23 +144,23 @@ const search = async function (filter_dict, page, page_size, order) {
         raw: true,
       });
       return {
-          transactions: list,
-          total_page: list.length
-      }
+        transactions: list,
+        total_page: list.length,
+      };
     } else {
       let list = await pkdb.findAll({
         where: filter_dict,
         raw: true,
       });
       return {
-          transactions: list,
-          total_page: list.length
-      }
+        transactions: list,
+        total_page: list.length,
+      };
     }
   }
 };
 
-const search_both_sizes = function (filter_dict, page, page_size, order) {
+const search_both_sizes = async function (filter_dict, page, page_size, order) {
   console.log("Search both sizes filter: ", filter_dict);
   const address = filter_dict.address;
   delete filter_dict.address;
@@ -226,7 +225,7 @@ const search_both_sizes = function (filter_dict, page, page_size, order) {
       };
     }
 
-    return pkdb.findAll(filter);
+    return await pkdb.findAll(filter);
   }
 };
 
@@ -236,12 +235,12 @@ const findAll = function () {
 
 const updateOrAdd = function (txid, update_dict) {
   pkdb.findOne({ where: { txid } }).then(function (row: any) {
-    console.log("find: ", row)
+    console.log("find: ", row);
     if (row === null) {
       add(update_dict);
       return true;
     }
-    var concatenated = { ...row["dataValues"], ...update_dict};
+    var concatenated = { ...row["dataValues"], ...update_dict };
     console.log("Concatenated: ", concatenated);
     return row
       .update(concatenated)
