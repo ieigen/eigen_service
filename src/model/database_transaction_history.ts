@@ -183,36 +183,33 @@ const search_both_sizes = async function (filter_dict, page, page_size, order) {
     console.log("page_size = ", page_size);
     if (order) {
       console.log("Reverse order is enabled");
-      return (async () => {
-        const { count, rows } = await pkdb.findAndCountAll({
-          ...address_filter,
-          order: [["updatedAt", "DESC"]],
-          limit: page_size,
-          offset: (page - 1) * page_size,
-        });
-        console.log("count = ", count);
-        console.log("rows = ", rows);
-        const total_page = Math.ceil(count / page_size);
-        return {
-          transactions: rows,
-          total_page,
-        };
-      })();
+
+      const { count, rows } = await pkdb.findAndCountAll({
+        ...address_filter,
+        order: [["updatedAt", "DESC"]],
+        limit: page_size,
+        offset: (page - 1) * page_size,
+      });
+      console.log("count = ", count);
+      console.log("rows = ", rows);
+      const total_page = Math.ceil(count / page_size);
+      return {
+        transactions: rows,
+        total_page,
+      };
     } else {
-      return (async () => {
-        const { count, rows } = await pkdb.findAndCountAll({
-          ...address_filter,
-          limit: page_size,
-          offset: (page - 1) * page_size,
-        });
-        console.log("count = ", count);
-        console.log("transactions = ", rows);
-        const total_page = Math.ceil(count / page_size);
-        return {
-          transactions: rows,
-          total_page,
-        };
-      })();
+      const { count, rows } = await pkdb.findAndCountAll({
+        ...address_filter,
+        limit: page_size,
+        offset: (page - 1) * page_size,
+      });
+      console.log("count = ", count);
+      console.log("transactions = ", rows);
+      const total_page = Math.ceil(count / page_size);
+      return {
+        transactions: rows,
+        total_page,
+      };
     }
   } else {
     let filter: any = address_filter;
