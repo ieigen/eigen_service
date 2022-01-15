@@ -90,7 +90,7 @@ const add = function (dict) {
     type: dict.type,
     name: dict.name || "ETH",
     block_num: dict.block_num || -1, // `block_num` can be empty when `send` is called
-    status: dict.status || TransactionStatus.Success,
+    status: dict.status,
     sub_txid: dict.sub_txid || "",
     operation: dict.operation,
   });
@@ -152,6 +152,7 @@ const search = async function (filter_dict, page, page_size, order) {
         where: filter_dict,
         raw: true,
       });
+      console.log("Find all and returns list: ", list);
       return {
         transactions: list,
         total_page: list.length,

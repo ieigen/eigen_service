@@ -27,12 +27,12 @@ module.exports = function (app) {
       for (var i = 0; i < confirmed_list.length; i++) {
         let tx = confirmed_list[i];
 
-        PubSub.publish(`Transaction.${tx["txid"]}`, {
+        let res = await txh.updateOrAdd(tx["txid"], {
           status: tx["status"],
           block_num: tx["block_num"],
         });
 
-        let res = await txh.updateOrAdd(tx["txid"], {
+        PubSub.publish(`Transaction.${tx["txid"]}`, {
           status: tx["status"],
           block_num: tx["block_num"],
         });
