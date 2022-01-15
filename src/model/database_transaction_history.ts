@@ -15,8 +15,8 @@ const sequelize = new Sequelize({
 
 export enum TransactionStatus {
   Failed = -1,
-  Success = 0,
-  Sent = 1,
+  Sent = 0,
+  Success = 1,
   Confirming = 2,
 }
 
@@ -236,6 +236,7 @@ const findAll = function () {
 
 const updateOrAdd = function (txid, update_dict) {
   pkdb.findOne({ where: { txid } }).then(function (row: any) {
+    console.log("find: ", row)
     if (row === null) {
       add(update_dict);
       return true;
