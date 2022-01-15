@@ -236,6 +236,7 @@ const findAll = function () {
 
 const updateOrAdd = function (txid, update_dict) {
   pkdb.findOne({ where: { txid } }).then(function (row: any) {
+    console.log("find: ", row)
     if (row === null) {
       add(update_dict);
       return true;
