@@ -75,35 +75,27 @@ function addSignerByOwnerSubscriber(txid, data) {
 
     console.log(`[addSignerByOwnerSubscriber]: ${txid}, ${data}`);
 
-    if (data.status == db_wallet.SignerStatus.ToBeConfirmed) {
-      if (transaction.status == db_txh.TransactionStatus.Success) {
-        return db_wallet.updateOrAddByOwner(
-          data.user_id,
-          data.wallet_address,
-          data.address,
-          db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-          {
-            status: db_wallet.SignerStatus.Active,
-          }
-        );
-      } else {
-        return db_wallet.updateOrAddByOwner(
-          data.user_id,
-          data.wallet_address,
-          data.address,
-          db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-          {
-            status: db_wallet.SignerStatus.Rejected,
-          }
-        );
-      }
+    if (transaction.status == db_txh.TransactionStatus.Success) {
+      return db_wallet.updateOrAddByOwner(
+        data.user_id,
+        data.wallet_address,
+        data.address,
+        db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+        {
+          status: db_wallet.SignerStatus.Active,
+        }
+      );
+    } else {
+      return db_wallet.updateOrAddByOwner(
+        data.user_id,
+        data.wallet_address,
+        data.address,
+        db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+        {
+          status: db_wallet.SignerStatus.Rejected,
+        }
+      );
     }
-
-    console.log(
-      `Do not handle Transaction (${txid}) and Signer by owner (${data.user_id})`
-    );
-
-    return false;
   };
 }
 
@@ -123,27 +115,15 @@ function addSignerBySignerSubscriber(txid, data) {
 
     console.log(`[addSignerBySignerSubscriber]: ${txid}, ${data}`);
 
-    if (data.status == db_wallet.SignerStatus.ToBeConfirmed) {
-      if (transaction.status == db_txh.TransactionStatus.Success) {
-        return db_wallet.updateOrAddBySigner(
-          data.wallet_address,
-          data.address,
-          { status: db_wallet.SignerStatus.Active }
-        );
-      } else {
-        return db_wallet.updateOrAddBySigner(
-          data.wallet_address,
-          data.address,
-          { status: db_wallet.SignerStatus.Rejected }
-        );
-      }
+    if (transaction.status == db_txh.TransactionStatus.Success) {
+      return db_wallet.updateOrAddBySigner(data.wallet_address, data.address, {
+        status: db_wallet.SignerStatus.Active,
+      });
+    } else {
+      return db_wallet.updateOrAddBySigner(data.wallet_address, data.address, {
+        status: db_wallet.SignerStatus.Rejected,
+      });
     }
-
-    console.log(
-      `Do not handle Transaction (${txid}) and Signer by signer (address: ${data.address})`
-    );
-
-    return false;
   };
 }
 
@@ -450,7 +430,8 @@ module.exports = function (app) {
         const address = req.body.address;
         const txid = req.body.txid;
 
-        if (status !== undefined) {
+        // status is undefined means add a signer
+        if (status === undefined) {
           if (!util.has_value(address)) {
             console.log("address should be given");
             res.json(util.Err(util.ErrCode.Unknown, "missing fields: address"));
@@ -461,7 +442,6 @@ module.exports = function (app) {
             `[[addSignerBySignerSubscriber]]: PubSub.subscribe(Transaction.${txid}, ${{
               wallet_address,
               address,
-              status,
             }})`
           );
           PubSub.subscribe(
@@ -469,7 +449,6 @@ module.exports = function (app) {
             addSignerBySignerSubscriber(txid, {
               wallet_address,
               address,
-              status,
             })
           );
 
@@ -497,7 +476,8 @@ module.exports = function (app) {
         const address = req.body.address;
         const txid = req.body.txid;
 
-        if (status !== undefined) {
+        // Status is undefined means add a signer!
+        if (status === undefined) {
           if (!util.has_value(address) || !util.has_value(txid)) {
             console.log("address should be given");
             res.json(
@@ -511,7 +491,6 @@ module.exports = function (app) {
               user_id,
               wallet_address,
               address,
-              status,
             }})`
           );
 
@@ -521,7 +500,6 @@ module.exports = function (app) {
               user_id,
               wallet_address,
               address,
-              status,
             })
           );
 
