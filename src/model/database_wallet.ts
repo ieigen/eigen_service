@@ -14,23 +14,44 @@ const sequelize = new Sequelize({
 export const WALLET_USER_ADDRESS_ROLE_OWNER = 0x0;
 export const WALLET_USER_ADDRESS_ROLE_SIGNER = 0x1;
 
-export const SINGER_STATUS_NONE = 0x0;
-export const SINGER_STATUS_TO_BE_CONFIRMED = 0x1;
-export const SINGER_STATUS_REJECTED = 0x2;
-export const SINGER_STATUS_ACTIVE = 0x3;
-export const SINGER_STATUS_FREEZE = 0x4;
-export const SINGER_STATUS_START_RECOVER = 0x5;
-export const SINGER_STATUS_AGREE_RECOVER = 0x6;
-export const SINGER_STATUS_IGNORE_RECOVER = 0x7;
+export enum SignerStatus {
+  None = 0,
+  ToBeConfirmed = 1,
+  Rejected = 2,
+  Active = 3,
+  Freeze = 4,
+  StartRecover = 5,
+  AgreeRecover = 6,
+  IgnoreRecover = 7,
+}
+// export const SINGER_STATUS_NONE = 0x0;
+// export const SINGER_STATUS_TO_BE_CONFIRMED = 0x1;
+// export const SINGER_STATUS_REJECTED = 0x2;
+// export const SINGER_STATUS_ACTIVE = 0x3;
+// export const SINGER_STATUS_FREEZE = 0x4;
+// export const SINGER_STATUS_START_RECOVER = 0x5;
+// export const SINGER_STATUS_AGREE_RECOVER = 0x6;
+// export const SINGER_STATUS_IGNORE_RECOVER = 0x7;
 
-export const WALLET_STATUS_NONE = 0x0;
-export const WALLET_STATUS_SUBMITED = 0x1;
-export const WALLET_STATUS_CREATED_SUCCESS = 0x2;
-export const WALLET_STATUS_CREATED_FAIL = 0x3;
-export const WALLET_STATUS_FREEZED = 0x4;
-export const WALLET_STATUS_RECOVER_TO_BE_CONFIRMED = 0x5;
-export const WALLET_STATUS_RECOVERED_SUCCESS = 0x6;
-export const WALLET_STATUS_RECOVERED_FAIL = 0x7;
+export enum WalletStatus {
+  None = 0,
+  Submitted = 1,
+  CreatedSuccess = 2,
+  CreatedFail = 3,
+  Freeze = 4,
+  RecoverToBeConfirmed = 5,
+  RecoveredSuccess = 6,
+  RecoveredFail = 7,
+}
+
+// export const WALLET_STATUS_NONE = 0x0;
+// export const WALLET_STATUS_SUBMITED = 0x1;
+// export const WALLET_STATUS_CREATED_SUCCESS = 0x2;
+// export const WALLET_STATUS_CREATED_FAIL = 0x3;
+// export const WALLET_STATUS_FREEZED = 0x4;
+// export const WALLET_STATUS_RECOVER_TO_BE_CONFIRMED = 0x5;
+// export const WALLET_STATUS_RECOVERED_SUCCESS = 0x6;
+// export const WALLET_STATUS_RECOVERED_FAIL = 0x7;
 
 const walletdb = sequelize.define("wallet_st", {
   wallet_id: {
@@ -57,7 +78,7 @@ sequelize
       wallet_address: "0x",
       address: "0x", // Owner or signer's address
       role: WALLET_USER_ADDRESS_ROLE_OWNER,
-      status: SINGER_STATUS_NONE,
+      status: SignerStatus.None,
       sign_message: "",
     });
   })
@@ -193,8 +214,8 @@ const updateOrAddByOwner = function (
         let status =
           update_dict.status ||
           (role == WALLET_USER_ADDRESS_ROLE_OWNER
-            ? SINGER_STATUS_NONE
-            : SINGER_STATUS_ACTIVE); // Now we do not need confirm
+            ? SignerStatus.None
+            : SignerStatus.ToBeConfirmed);
         let sign_message = update_dict.sign_message || "";
         add(
           user_id,
@@ -203,7 +224,7 @@ const updateOrAddByOwner = function (
           signer_address,
           role,
           status,
-          WALLET_STATUS_SUBMITED,
+          WalletStatus.Submitted,
           sign_message
         );
         return true;
@@ -270,7 +291,7 @@ const updateOrAddBySigner = function (
         .then(function (row: any) {
           if (row === null) {
             let name = update_dict.name || "";
-            let status = update_dict.status || SINGER_STATUS_ACTIVE; // now we do not need confirm
+            let status = update_dict.status || SignerStatus.ToBeConfirmed;
             let sign_message = update_dict.sign_message || "";
             add(
               user_id,
@@ -279,7 +300,7 @@ const updateOrAddBySigner = function (
               signer_address,
               WALLET_USER_ADDRESS_ROLE_SIGNER,
               status,
-              WALLET_STATUS_NONE,
+              WalletStatus.None,
               sign_message
             );
             return true;
@@ -344,7 +365,7 @@ const checkSingers = function (wallet_id) {
         wallet_address: wallet_address,
         role: WALLET_USER_ADDRESS_ROLE_SIGNER,
         status: {
-          [Op.gte]: SINGER_STATUS_START_RECOVER,
+          [Op.gte]: SignerStatus.StartRecover,
         },
       },
       raw: true,
@@ -359,7 +380,7 @@ const checkSingers = function (wallet_id) {
       where: {
         wallet_address: wallet_address,
         role: WALLET_USER_ADDRESS_ROLE_SIGNER,
-        status: SINGER_STATUS_AGREE_RECOVER,
+        status: SignerStatus.AgreeRecover,
       },
       order: [["address", "DESC"]],
       raw: true,

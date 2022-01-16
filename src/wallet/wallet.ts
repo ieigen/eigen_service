@@ -44,7 +44,7 @@ function addWalletStatusSubscriber(txid, wallet) {
           return true;
         })
         .catch(function (err) {
-          console.log("Update wallet statuserror: " + err);
+          console.log("Update wallet status error: " + err);
           return false;
         });
     }
