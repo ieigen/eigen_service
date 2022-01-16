@@ -489,6 +489,8 @@ module.exports = function (app) {
             return;
           }
           // Update status subscribe
+          console.log("Subscribe 'addSignerByOwnerSubscriber': ", txid);
+
           PubSub.subscribe(
             `Transaction.${txid}`,
             addSignerByOwnerSubscriber(txid, {
