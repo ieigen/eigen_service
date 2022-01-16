@@ -19,6 +19,7 @@
     "chai": "^4.3.4",
     "mocha": "^9.1.3",
     "tslint": "^6.1.3",
+    "@ieigen/ecies-js": "^0.0.2",
     "typescript": "^4.4.3"
   },
   "dependencies": {
@@ -39,7 +40,6 @@
     "sequelize": "^6.7.0",
     "socket.io": "^4.4.1",
     "sqlite3": "^5.0.2",
-    "standard-ecies": "^2.0.0",
     "totp.js": "^0.0.1",
     "typings": "^2.1.1",
     "vue-axios": "^3.3.7"

@@ -1,29 +1,29 @@
-declare const Buffer;
-import * as elliptic from "elliptic"
-const EC = elliptic.ec;
-const ec = new EC("p256");
+import * as ecies from '@ieigen/ecies-js';
+//import * as ecies from "../src/crypto/ecies";
+//import * as elliptic from "elliptic"
+//const EC = elliptic.ec;
+//const ec = new EC("p256");
+const ec = ecies.ec;
 import * as mocha from 'mocha';
 import {expect} from 'chai';
 
-import * as ecies from "../src/crypto/ecies";
 import * as crypto from "crypto";
 
 const msg = "Hello, Eigen, Privacy Computing!";
 function test_aes() {
     //const KEY = Buffer.from(crypto.randomBytes(32), 'utf8');
-    let KEY = Buffer.from("01234567890123456789123456123456");
-    const iv2 = Buffer.from(crypto.randomBytes(12), 'utf8');
+    let KEY = ecies.Buffer.from("01234567890123456789123456123456");
+    const iv2 = crypto.randomBytes(12);
     let encrypted2 = ecies.aes_enc('aes-256-gcm', iv2, KEY, msg)
     console.log("encrypt", encrypted2)
     let base64Cipher = encrypted2.toString('hex');
     console.log("encrypt", base64Cipher)
-    let encrypted2_ = Buffer.from(base64Cipher, "hex")
+    let encrypted2_ = ecies.Buffer.from(base64Cipher, "hex")
     let decrypted2 = ecies.aes_dec('aes-256-gcm', KEY, encrypted2_)
     expect(decrypted2 == msg, "decrypt failed")
 
-
     let cipherHex = "e2dcefd63b20ea2edeb0850749c24f8ed68cac831f5ac3d4a0e57dded9f30019e3173b21408239673d9ddb3f23ee2a223f847c307fcb7c8ef2d65058";
-    decrypted2 = ecies.aes_dec('aes-256-gcm', KEY, Buffer.from(cipherHex, "hex"))
+    decrypted2 = ecies.aes_dec('aes-256-gcm', KEY, ecies.Buffer.from(cipherHex, "hex"))
     expect(decrypted2 == msg, "decrypt failed")
 }
 // console.log("aes worker well", decrypted2, iv2);
@@ -79,7 +79,7 @@ describe('ecies library', () => {
     it('ecies with rs' , () => {
         test_ecies_with_rs();
     });
-    it('ecies with js' , () => {
+    it.only('ecies with js' , () => {
         test_ecies();
     });
     it('aes with js' , () => {
