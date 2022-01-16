@@ -32,11 +32,12 @@ module.exports = function (app) {
           block_num: tx["block_num"],
         });
 
+        console.log("Publish transaction: ", tx["txid"]);
+
         PubSub.publish(`Transaction.${tx["txid"]}`, {
           status: tx["status"],
           block_num: tx["block_num"],
         });
-        console.log(res);
       }
 
       // get unconfirmed tx list

@@ -9,17 +9,21 @@ import * as db_user from "../model/database_id";
 import * as db_txh from "../model/database_transaction_history";
 
 // Records txid => wallet, wallet is a Sequelize model which can be used to update status
-let TRANSACTION_MAP = new Map();
+let TRANSACTION_WALLET_MAP = new Map();
+let TRANSACTION_ADD_SIGNER_BY_OWNER_MAP = new Map();
+let TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP = new Map();
+let TRANSACTION_DELETE_SIGNER_MAP = new Map();
 
 function addWalletStatusSubscriber(txid, wallet) {
-  console.log("Add subscriber: ", txid, wallet);
-  TRANSACTION_MAP[txid] = wallet;
+  console.log("Add wallet status subscriber: ", txid, wallet);
+  TRANSACTION_WALLET_MAP[txid] = wallet;
   return function (msg, transaction) {
     var [_, txid] = msg.split(".");
 
-    let wallet = TRANSACTION_MAP[txid];
+    let wallet = TRANSACTION_WALLET_MAP[txid];
     if (wallet === undefined) {
       console.log(`Transaction ${txid} is not related to wallet`);
+      return false;
     }
 
     const wallet_status = wallet["dataValues"]["wallet_status"];
@@ -50,6 +54,124 @@ function addWalletStatusSubscriber(txid, wallet) {
     );
 
     return false;
+  };
+}
+
+function addSignerByOwnerSubscriber(txid, data) {
+  console.log("Add signer by owner add subscriber: ", txid, data);
+  TRANSACTION_ADD_SIGNER_BY_OWNER_MAP[txid] = data;
+  return function (msg, transaction) {
+    var [_, txid] = msg.split(".");
+
+    let signer_data = TRANSACTION_ADD_SIGNER_BY_OWNER_MAP[txid];
+    if (signer_data === undefined) {
+      console.log(`Transaction ${txid} is not related to signer`);
+      return false;
+    }
+
+    const transaction_status = transaction["status"];
+
+    if (data.status == db_wallet.SINGER_STATUS_TO_BE_CONFIRMED) {
+      if (transaction.status == db_txh.TransactionStatus.Success) {
+        return db_wallet.updateOrAddByOwner(
+          data.user_id,
+          data.wallet_address,
+          data.address,
+          db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+          {
+            status: db_wallet.SINGER_STATUS_ACTIVE,
+          }
+        );
+      } else {
+        return db_wallet.updateOrAddByOwner(
+          data.user_id,
+          data.wallet_address,
+          data.address,
+          db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+          {
+            status: db_wallet.SINGER_STATUS_REJECTED,
+          }
+        );
+      }
+    }
+
+    console.log(
+      `Do not handle Transaction (${txid}) and Signer by owner (${data.user_id})`
+    );
+
+    return false;
+  };
+}
+
+function addSignerBySignerSubscriber(txid, data) {
+  console.log("Add signer by signer add subscriber: ", txid, data);
+  TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP[txid] = data;
+  return function (msg, transaction) {
+    var [_, txid] = msg.split(".");
+
+    let signer_data = TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP[txid];
+    if (signer_data === undefined) {
+      console.log(`Transaction ${txid} is not related to signer`);
+      return false;
+    }
+
+    const transaction_status = transaction["status"];
+
+    if (data.status == db_wallet.SINGER_STATUS_TO_BE_CONFIRMED) {
+      if (transaction.status == db_txh.TransactionStatus.Success) {
+        return db_wallet.updateOrAddBySigner(
+          data.wallet_address,
+          data.address,
+          { status: db_wallet.SINGER_STATUS_ACTIVE }
+        );
+      } else {
+        return db_wallet.updateOrAddBySigner(
+          data.wallet_address,
+          data.address,
+          { status: db_wallet.SINGER_STATUS_REJECTED }
+        );
+      }
+    }
+
+    console.log(
+      `Do not handle Transaction (${txid}) and Signer by signer (address: ${data.address})`
+    );
+
+    return false;
+  };
+}
+
+function addDeleteSubscriber(txid, data) {
+  console.log("Delete signer by signer add subscriber: ", txid, data);
+  TRANSACTION_DELETE_SIGNER_MAP[txid] = data;
+  return function (msg, transaction) {
+    var [_, txid] = msg.split(".");
+
+    let signer_data = TRANSACTION_DELETE_SIGNER_MAP[txid];
+    if (signer_data === undefined) {
+      console.log(`Transaction ${txid} is not related to signer`);
+      return false;
+    }
+
+    const transaction_status = transaction["status"];
+
+    if (transaction_status == db_txh.TransactionStatus.Success) {
+      console.log(
+        `Going to remove: wallet_address: ${data.wallet_address}, address: ${data.address}`
+      );
+      return db_wallet.remove(
+        data.wallet_address,
+        data.address,
+        db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER
+      );
+    } else {
+      console.log(
+        `Fail to remove: wallet_address: ${data.wallet_address}, address: ${data.address}, mark it rejected`
+      );
+      return db_wallet.updateOrAddBySigner(data.wallet_address, data.address, {
+        status: db_wallet.SINGER_STATUS_REJECTED,
+      });
+    }
   };
 }
 
@@ -108,7 +230,7 @@ module.exports = function (app) {
         wallet_address,
         signer,
         db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-        db_wallet.SINGER_STATUS_ACTIVE, // Now we do not need confirm
+        db_wallet.SINGER_STATUS_ACTIVE, // Signers added when wallet is added do not need to be confirmed
         db_wallet.WALLET_STATUS_NONE, // Wallet status is meaningless for signer
         ""
       );
@@ -316,6 +438,7 @@ module.exports = function (app) {
         const name = req.body.name;
         const status = req.body.status;
         const address = req.body.address;
+        const txid = req.body.txid;
 
         if (status !== undefined) {
           if (!util.has_value(address)) {
@@ -323,22 +446,17 @@ module.exports = function (app) {
             res.json(util.Err(util.ErrCode.Unknown, "missing fields: address"));
             return;
           }
-          // Update status
-          if (sign_message === undefined) {
-            await db_wallet.updateOrAddBySigner(wallet_address, address, {
+          // Update status subscribe
+          PubSub.subscribe(
+            `Transaction.${txid}`,
+            addSignerBySignerSubscriber(txid, {
+              wallet_address,
+              address,
               status,
-            });
-          } else {
-            await db_wallet.updateOrAddBySigner(wallet_address, address, {
-              status,
-              sign_message,
-            });
-          }
+            })
+          );
 
-          // Check if the signers is greater than
-          const result = await db_wallet.checkSingers(wallet_id);
-
-          return res.json(util.Succ(result));
+          return res.json(util.Succ(false));
         } else {
           console.log("Update signer: ", req.body);
           await db_wallet.updateOrAddBySigner(
@@ -360,6 +478,7 @@ module.exports = function (app) {
         const name = req.body.name;
         const status = req.body.status;
         const address = req.body.address;
+        const txid = req.body.txid;
 
         if (status !== undefined) {
           if (!util.has_value(address)) {
@@ -367,33 +486,18 @@ module.exports = function (app) {
             res.json(util.Err(util.ErrCode.Unknown, "missing fields: address"));
             return;
           }
-          // Update status
-          if (sign_message === undefined) {
-            await db_wallet.updateOrAddByOwner(
+          // Update status subscribe
+          PubSub.subscribe(
+            `Transaction.${txid}`,
+            addSignerByOwnerSubscriber(txid, {
               user_id,
               wallet_address,
               address,
-              db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-              {
-                status,
-              }
-            );
-          } else {
-            await db_wallet.updateOrAddByOwner(
-              user_id,
-              wallet_address,
-              address,
-              db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-              {
-                sign_message,
-                status,
-              }
-            );
-          }
+              status,
+            })
+          );
 
-          const result = await db_wallet.checkSingers(wallet_id);
-
-          return res.json(util.Succ(result));
+          return res.json(util.Succ(false));
         } else {
           console.log("Update signer: ", req.body);
           await db_wallet.updateOrAddByOwner(
@@ -576,18 +680,21 @@ module.exports = function (app) {
       console.log("Wallet address found: ", wallet_address);
 
       const address = req.body.address;
+      const txid = req.body.txid;
 
-      if (!util.has_value(address)) {
+      if (!util.has_value(address) || !util.has_value(txid)) {
         return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
       }
 
-      const result = await db_wallet.remove(
-        wallet_address,
-        address,
-        db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER
+      PubSub.subscribe(
+        `Transaction.${txid}`,
+        addDeleteSubscriber(txid, {
+          wallet_address,
+          address,
+        })
       );
-      console.log(result);
-      res.json(util.Succ(result));
+
+      res.json(util.Succ(true));
     }
   );
 
