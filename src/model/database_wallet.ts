@@ -24,14 +24,6 @@ export enum SignerStatus {
   AgreeRecover = 6,
   IgnoreRecover = 7,
 }
-// export const SINGER_STATUS_NONE = 0x0;
-// export const SINGER_STATUS_TO_BE_CONFIRMED = 0x1;
-// export const SINGER_STATUS_REJECTED = 0x2;
-// export const SINGER_STATUS_ACTIVE = 0x3;
-// export const SINGER_STATUS_FREEZE = 0x4;
-// export const SINGER_STATUS_START_RECOVER = 0x5;
-// export const SINGER_STATUS_AGREE_RECOVER = 0x6;
-// export const SINGER_STATUS_IGNORE_RECOVER = 0x7;
 
 export enum WalletStatus {
   None = 0,
@@ -43,15 +35,6 @@ export enum WalletStatus {
   RecoveredSuccess = 6,
   RecoveredFail = 7,
 }
-
-// export const WALLET_STATUS_NONE = 0x0;
-// export const WALLET_STATUS_SUBMITED = 0x1;
-// export const WALLET_STATUS_CREATED_SUCCESS = 0x2;
-// export const WALLET_STATUS_CREATED_FAIL = 0x3;
-// export const WALLET_STATUS_FREEZED = 0x4;
-// export const WALLET_STATUS_RECOVER_TO_BE_CONFIRMED = 0x5;
-// export const WALLET_STATUS_RECOVERED_SUCCESS = 0x6;
-// export const WALLET_STATUS_RECOVERED_FAIL = 0x7;
 
 const walletdb = sequelize.define("wallet_st", {
   wallet_id: {

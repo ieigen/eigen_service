@@ -30,12 +30,12 @@ function addWalletStatusSubscriber(txid, wallet) {
     const transaction_status = transaction["status"];
 
     if (
-      wallet_status == db_wallet.WALLET_STATUS_SUBMITED &&
+      wallet_status == db_wallet.WalletStatus.Submitted &&
       transaction_status == db_txh.TransactionStatus.Success
     ) {
       return wallet
         .update({
-          wallet_status: db_wallet.WALLET_STATUS_CREATED_SUCCESS,
+          wallet_status: db_wallet.WalletStatus.CreatedSuccess,
         })
         .then(function (result) {
           console.log(
@@ -71,7 +71,7 @@ function addSignerByOwnerSubscriber(txid, data) {
 
     const transaction_status = transaction["status"];
 
-    if (data.status == db_wallet.SINGER_STATUS_TO_BE_CONFIRMED) {
+    if (data.status == db_wallet.SignerStatus.ToBeConfirmed) {
       if (transaction.status == db_txh.TransactionStatus.Success) {
         return db_wallet.updateOrAddByOwner(
           data.user_id,
@@ -79,7 +79,7 @@ function addSignerByOwnerSubscriber(txid, data) {
           data.address,
           db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
           {
-            status: db_wallet.SINGER_STATUS_ACTIVE,
+            status: db_wallet.SignerStatus.Active,
           }
         );
       } else {
@@ -89,7 +89,7 @@ function addSignerByOwnerSubscriber(txid, data) {
           data.address,
           db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
           {
-            status: db_wallet.SINGER_STATUS_REJECTED,
+            status: db_wallet.SignerStatus.Rejected,
           }
         );
       }
@@ -117,18 +117,18 @@ function addSignerBySignerSubscriber(txid, data) {
 
     const transaction_status = transaction["status"];
 
-    if (data.status == db_wallet.SINGER_STATUS_TO_BE_CONFIRMED) {
+    if (data.status == db_wallet.SignerStatus.ToBeConfirmed) {
       if (transaction.status == db_txh.TransactionStatus.Success) {
         return db_wallet.updateOrAddBySigner(
           data.wallet_address,
           data.address,
-          { status: db_wallet.SINGER_STATUS_ACTIVE }
+          { status: db_wallet.SignerStatus.Active }
         );
       } else {
         return db_wallet.updateOrAddBySigner(
           data.wallet_address,
           data.address,
-          { status: db_wallet.SINGER_STATUS_REJECTED }
+          { status: db_wallet.SignerStatus.Rejected }
         );
       }
     }
@@ -169,7 +169,7 @@ function addDeleteSubscriber(txid, data) {
         `Fail to remove: wallet_address: ${data.wallet_address}, address: ${data.address}, mark it rejected`
       );
       return db_wallet.updateOrAddBySigner(data.wallet_address, data.address, {
-        status: db_wallet.SINGER_STATUS_REJECTED,
+        status: db_wallet.SignerStatus.Rejected,
       });
     }
   };
@@ -210,8 +210,8 @@ module.exports = function (app) {
       wallet_address,
       address,
       db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
-      db_wallet.SINGER_STATUS_NONE,
-      db_wallet.WALLET_STATUS_SUBMITED, // Wallet status is submited at first
+      db_wallet.SignerStatus.None,
+      db_wallet.WalletStatus.Submitted, // Wallet status is submited at first
       ""
     );
 
@@ -230,8 +230,8 @@ module.exports = function (app) {
         wallet_address,
         signer,
         db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-        db_wallet.SINGER_STATUS_ACTIVE, // Signers added when wallet is added do not need to be confirmed
-        db_wallet.WALLET_STATUS_NONE, // Wallet status is meaningless for signer
+        db_wallet.SignerStatus.Active, // Signers added when wallet is added do not need to be confirmed
+        db_wallet.WalletStatus.None, // Wallet status is meaningless for signer
         ""
       );
     }
