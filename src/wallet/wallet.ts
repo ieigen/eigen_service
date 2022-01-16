@@ -481,9 +481,11 @@ module.exports = function (app) {
         const txid = req.body.txid;
 
         if (status !== undefined) {
-          if (!util.has_value(address)) {
+          if (!util.has_value(address) || !util.has_value(txid)) {
             console.log("address should be given");
-            res.json(util.Err(util.ErrCode.Unknown, "missing fields: address"));
+            res.json(
+              util.Err(util.ErrCode.Unknown, "missing fields: address or txid")
+            );
             return;
           }
           // Update status subscribe
