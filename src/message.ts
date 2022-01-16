@@ -32,12 +32,14 @@ module.exports = function (app) {
           block_num: tx["block_num"],
         });
 
-        console.log("Publish transaction: ", tx["txid"]);
+        if (tx["txid"] !== undefined) {
+          console.log("Publish transaction: ", tx["txid"]);
 
-        PubSub.publish(`Transaction.${tx["txid"]}`, {
-          status: tx["status"],
-          block_num: tx["block_num"],
-        });
+          PubSub.publish(`Transaction.${tx["txid"]}`, {
+            status: tx["status"],
+            block_num: tx["block_num"],
+          });
+        }
       }
 
       // get unconfirmed tx list

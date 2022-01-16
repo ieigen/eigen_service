@@ -221,6 +221,10 @@ module.exports = function (app) {
       ""
     );
 
+    console.log(
+      `[[addWalletStatusSubscriber]]: PubSub.subscribe(Transaction.${txid}, ${result})`
+    );
+
     PubSub.subscribe(
       `Transaction.${txid}`,
       addWalletStatusSubscriber(txid, result)
@@ -453,6 +457,13 @@ module.exports = function (app) {
             return;
           }
           // Update status subscribe
+          console.log(
+            `[[addSignerBySignerSubscriber]]: PubSub.subscribe(Transaction.${txid}, ${{
+              wallet_address,
+              address,
+              status,
+            }})`
+          );
           PubSub.subscribe(
             `Transaction.${txid}`,
             addSignerBySignerSubscriber(txid, {
@@ -495,7 +506,14 @@ module.exports = function (app) {
             return;
           }
           // Update status subscribe
-          console.log("Subscribe 'addSignerByOwnerSubscriber': ", txid);
+          console.log(
+            `[[addSignerByOwnerSubscriber]]: PubSub.subscribe(Transaction.${txid}, ${{
+              user_id,
+              wallet_address,
+              address,
+              status,
+            }})`
+          );
 
           PubSub.subscribe(
             `Transaction.${txid}`,
@@ -695,6 +713,13 @@ module.exports = function (app) {
       if (!util.has_value(address) || !util.has_value(txid)) {
         return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
       }
+
+      console.log(
+        `[[addDeleteSubscriber]]: PubSub.subscribe(Transaction.${txid}, ${{
+          wallet_address,
+          address,
+        }})`
+      );
 
       PubSub.subscribe(
         `Transaction.${txid}`,

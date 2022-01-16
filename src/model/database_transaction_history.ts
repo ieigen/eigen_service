@@ -244,7 +244,7 @@ const updateOrAdd = function (txid, update_dict) {
     return row
       .update(concatenated)
       .then(function (result) {
-        console.log("Update success: " + result);
+        console.log("Update success: " + JSON.stringify(result));
         return true;
       })
       .catch(function (err) {
