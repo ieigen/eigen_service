@@ -29,6 +29,8 @@ function addWalletStatusSubscriber(txid, wallet) {
     const wallet_status = wallet["dataValues"]["wallet_status"];
     const transaction_status = transaction["status"];
 
+    console.log(`[addWalletStatusSubscriber]: ${txid}, ${wallet}`);
+
     if (
       wallet_status == db_wallet.WalletStatus.Submitted &&
       transaction_status == db_txh.TransactionStatus.Success
@@ -70,6 +72,8 @@ function addSignerByOwnerSubscriber(txid, data) {
     }
 
     const transaction_status = transaction["status"];
+
+    console.log(`[addSignerByOwnerSubscriber]: ${txid}, ${data}`);
 
     if (data.status == db_wallet.SignerStatus.ToBeConfirmed) {
       if (transaction.status == db_txh.TransactionStatus.Success) {
@@ -116,6 +120,8 @@ function addSignerBySignerSubscriber(txid, data) {
     }
 
     const transaction_status = transaction["status"];
+
+    console.log(`[addSignerBySignerSubscriber]: ${txid}, ${data}`);
 
     if (data.status == db_wallet.SignerStatus.ToBeConfirmed) {
       if (transaction.status == db_txh.TransactionStatus.Success) {
