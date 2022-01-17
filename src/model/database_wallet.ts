@@ -29,10 +29,11 @@ export enum WalletStatus {
   None = 0,
   Creating = 1,
   Active = 2,
-  Fail = 3,
-  Freezing = 4,
-  Frozen = 5,
-  Unlocking = 6,
+  Reovering = 3,
+  Fail = 4,
+  Freezing = 5,
+  Frozen = 6,
+  Unlocking = 7,
 }
 
 const walletdb = sequelize.define("wallet_st", {
