@@ -32,12 +32,12 @@ function addWalletStatusSubscriber(txid, wallet) {
     console.log(`[addWalletStatusSubscriber]: ${txid}, ${wallet}`);
 
     if (
-      wallet_status == db_wallet.WalletStatus.Submitted &&
+      wallet_status == db_wallet.WalletStatus.Creating &&
       transaction_status == db_txh.TransactionStatus.Success
     ) {
       return wallet
         .update({
-          wallet_status: db_wallet.WalletStatus.CreatedSuccess,
+          wallet_status: db_wallet.WalletStatus.Active,
         })
         .then(function (result) {
           console.log(
@@ -197,7 +197,7 @@ module.exports = function (app) {
       address,
       db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       db_wallet.SignerStatus.None,
-      db_wallet.WalletStatus.Submitted, // Wallet status is submited at first
+      db_wallet.WalletStatus.Creating, // Wallet status is submited at first
       ""
     );
 

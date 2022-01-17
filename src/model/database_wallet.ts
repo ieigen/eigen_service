@@ -27,13 +27,12 @@ export enum SignerStatus {
 
 export enum WalletStatus {
   None = 0,
-  Submitted = 1,
-  CreatedSuccess = 2,
-  CreatedFail = 3,
-  Freeze = 4,
-  RecoverToBeConfirmed = 5,
-  RecoveredSuccess = 6,
-  RecoveredFail = 7,
+  Creating = 1,
+  Active = 2,
+  Fail = 3,
+  Freezing = 4,
+  Frozen = 5,
+  Unlocking = 6,
 }
 
 const walletdb = sequelize.define("wallet_st", {
@@ -207,7 +206,7 @@ const updateOrAddByOwner = function (
           signer_address,
           role,
           status,
-          WalletStatus.Submitted,
+          WalletStatus.Creating,
           sign_message
         );
         return true;
