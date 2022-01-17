@@ -4,6 +4,10 @@ import { Op } from "sequelize";
 
 import * as util from "../util";
 import * as db_wallet from "../model/database_wallet";
+import {
+  WALLET_STATUS_MACHINE_STATE_TRANSACTION_NEXT,
+  WalletStatusTransactionResult,
+} from "../model/database_wallet";
 import * as db_address from "../model/database_address";
 import * as db_user from "../model/database_id";
 import * as db_txh from "../model/database_transaction_history";
@@ -31,24 +35,48 @@ function addWalletStatusSubscriber(txid, wallet) {
 
     console.log(`[addWalletStatusSubscriber]: ${txid}, ${wallet}`);
 
-    if (
-      wallet_status == db_wallet.WalletStatus.Creating &&
-      transaction_status == db_txh.TransactionStatus.Success
-    ) {
-      return wallet
-        .update({
-          wallet_status: db_wallet.WalletStatus.Active,
-        })
-        .then(function (result) {
-          console.log(
-            "Update wallet status success: " + JSON.stringify(result)
-          );
-          return true;
-        })
-        .catch(function (err) {
-          console.log("Update wallet status error: " + err);
-          return false;
-        });
+    const next_status_success =
+      WALLET_STATUS_MACHINE_STATE_TRANSACTION_NEXT[wallet_status][
+        WalletStatusTransactionResult.Success
+      ];
+
+    const next_status_fail =
+      WALLET_STATUS_MACHINE_STATE_TRANSACTION_NEXT[wallet_status][
+        WalletStatusTransactionResult.Fail
+      ];
+
+    if (next_status_success) {
+      if (transaction_status == db_txh.TransactionStatus.Success) {
+        return wallet
+          .update({
+            wallet_status: next_status_success,
+          })
+          .then(function (result) {
+            console.log(
+              "Update wallet status success: " + JSON.stringify(result)
+            );
+            return true;
+          })
+          .catch(function (err) {
+            console.log("Update wallet status error: " + err);
+            return false;
+          });
+      } else if (transaction_status == db_txh.TransactionStatus.Failed) {
+        return wallet
+          .update({
+            wallet_status: next_status_fail,
+          })
+          .then(function (result) {
+            console.log(
+              "Update wallet status success: " + JSON.stringify(result)
+            );
+            return true;
+          })
+          .catch(function (err) {
+            console.log("Update wallet status error: " + err);
+            return false;
+          });
+      }
     }
 
     console.log(
@@ -258,20 +286,75 @@ module.exports = function (app) {
     }
 
     const owner_address = req.body.owner_address;
-    if (owner_address === undefined) {
-      console.log("owner_address should be given");
-      res.json(util.Err(util.ErrCode.Unknown, "owner_address should be given"));
+    const txid = req.body.txid;
+    const status = req.body.status;
+    if (util.has_value(owner_address)) {
+      if (util.has_value(txid) || util.has_value(status)) {
+        console.log("owner_address cannot co-exists with txid or status");
+        res.json(
+          util.Err(
+            util.ErrCode.Unknown,
+            "owner_address cannot co-exists with txid or status"
+          )
+        );
+        return;
+      }
+
+      let result = await db_wallet.updateOwnerAddress(
+        user_id,
+        wallet_id,
+        owner_address
+      );
+
+      res.json(util.Succ(result));
+      return;
+    } else {
+      if (!util.has_value(txid) || !util.has_value(status)) {
+        console.log("mising txid or status");
+        res.json(util.Err(util.ErrCode.Unknown, "mising txid or status"));
+        return;
+      }
+
+      let wallet = await db_wallet.findByWalletId(wallet_id);
+
+      if (wallet === null) {
+        console.log("wallet does not exist: ", wallet_id);
+        res.json(util.Err(util.ErrCode.Unknown, "wallet does not exist"));
+        return;
+      }
+
+      let wallet_status = wallet["dataValues"]["wallet_status"];
+
+      if (!db_wallet.WALLET_STATUS_MACHINE_STATE_CHECK[wallet_status][status]) {
+        console.log(
+          `wallet status transition invalid: ${db_wallet.WalletStatus[wallet_status]} -> ${db_wallet.WalletStatus[status]}`
+        );
+        res.json(
+          util.Err(
+            util.ErrCode.Unknown,
+            `wallet status transition invalid: ${db_wallet.WalletStatus[wallet_status]} -> ${db_wallet.WalletStatus[status]}`
+          )
+        );
+        return;
+      }
+
+      // Update wallet_status -> status
+      await wallet.update({
+        wallet_status: status,
+      });
+
+      console.log(
+        `[[addWalletStatusSubscriber]]: PubSub.subscribe(Transaction.${txid}, ${wallet}): ${db_wallet.WalletStatus[wallet_status]} -> ${db_wallet.WalletStatus[status]}`
+      );
+
+      PubSub.subscribe(
+        `Transaction.${txid}`,
+        addWalletStatusSubscriber(txid, wallet)
+      );
+
+      res.json(util.Succ(true));
       return;
     }
-
-    let result = await db_wallet.updateOwnerAddress(
-      user_id,
-      wallet_id,
-      owner_address
-    );
-
-    res.json(util.Succ(result));
-    return;
   });
 
   app.get("/user/:user_id/wallets", async function (req, res) {

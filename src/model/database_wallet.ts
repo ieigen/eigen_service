@@ -29,12 +29,41 @@ export enum WalletStatus {
   None = 0,
   Creating = 1,
   Active = 2,
-  Reovering = 3,
+  Recovering = 3,
   Fail = 4,
   Freezing = 5,
   Frozen = 6,
   Unlocking = 7,
 }
+
+export const WALLET_STATUS_MACHINE_STATE_CHECK = [
+  /* Non, Cre,  Act,   Rec,   Fai,   Fre,   Froz   Unl */
+  [false, true, false, false, false, false, false, false] /* None */,
+  [false, false, true, false, true, false, false, false] /* Creating */,
+  [false, false, false, true, false, true, false, false] /* Active */,
+  [false, false, true, false, false, false, false, false] /* Recovering */,
+  [false, false, false, false, false, false, false, false] /* Fail */,
+  [false, false, true, false, false, false, false, false] /* Freezing */,
+  [false, false, false, false, false, false, false, true] /* Frozen */,
+  [false, false, true, false, false, false, false, false] /* Unlocking */,
+];
+
+export enum WalletStatusTransactionResult {
+  Success = 0,
+  Fail = 1,
+}
+
+export const WALLET_STATUS_MACHINE_STATE_TRANSACTION_NEXT = [
+  /* Succ, Fail */
+  [undefined, undefined] /* None */,
+  [WalletStatus.Active, WalletStatus.Fail] /* Creating */,
+  [undefined, undefined] /* Active */,
+  [WalletStatus.Active, WalletStatus.Fail] /* Recovering */,
+  [undefined, undefined] /* Fail */,
+  [WalletStatus.Frozen, WalletStatus.Active] /* Freezing */,
+  [undefined, undefined] /* Frozen */,
+  [WalletStatus.Active, WalletStatus.Frozen] /* Unlocking */,
+];
 
 const walletdb = sequelize.define("wallet_st", {
   wallet_id: {
@@ -117,6 +146,16 @@ const findAllAddresses = function (user_id) {
 
 const findOne = function (filter_dict) {
   return walletdb.findOne({ where: filter_dict, raw: true });
+};
+
+// TODO: Some code should be refactored
+const findByWalletId = function (wallet_id) {
+  return walletdb.findOne({
+    where: {
+      wallet_id: wallet_id,
+      role: WALLET_USER_ADDRESS_ROLE_OWNER,
+    },
+  });
 };
 
 const findOwnerWalletById = function (user_id, wallet_id) {
@@ -409,6 +448,7 @@ export {
   add,
   isWalletBelongUser,
   findOne,
+  findByWalletId,
   findAll,
   findAllAddresses,
   remove,
