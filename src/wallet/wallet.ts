@@ -11,6 +11,7 @@ import {
 import * as db_address from "../model/database_address";
 import * as db_user from "../model/database_id";
 import * as db_txh from "../model/database_transaction_history";
+import * as db_wh from "../model/database_wallet_history";
 
 // Records txid => wallet, wallet is a Sequelize model which can be used to update status
 let TRANSACTION_WALLET_MAP = new Map();

@@ -1,4 +1,4 @@
-import { Sequelize, DataTypes, Op } from "sequelize";
+import { Sequelize, DataTypes } from "sequelize";
 
 import { WalletStatus } from "./database_wallet";
 
@@ -99,8 +99,19 @@ const findLatestByWalletId = function (wallet_id) {
   });
 };
 
-const search = function (dict) {
-  return whdb.findAll(dict);
+const findLatestByTxid = function (txid) {
+  return whdb.findAll({
+    where: {
+      txid,
+    },
+    order: [["updatedAt", "DESC"]],
+  });
 };
 
-export { add, findOne, findAllByWalletId, findLatestByWalletId };
+export {
+  add,
+  findOne,
+  findAllByWalletId,
+  findLatestByWalletId,
+  findLatestByTxid,
+};
