@@ -18,6 +18,8 @@ let TRANSACTION_ADD_SIGNER_BY_OWNER_MAP = new Map();
 let TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP = new Map();
 let TRANSACTION_DELETE_SIGNER_MAP = new Map();
 
+// TODO: Pubsub.subscribeOnce is better? Maybe we should think about it
+
 function addWalletStatusSubscriber(txid, wallet) {
   console.log("Add wallet status subscriber: ", txid, wallet);
   TRANSACTION_WALLET_MAP[txid] = wallet;

@@ -19,7 +19,7 @@ export enum TransactionStatus {
   Confirming = 2,
 }
 
-const pkdb = sequelize.define("transaction_history_st", {
+const thdb = sequelize.define("transaction_history_st", {
   txid: {
     type: DataTypes.CITEXT,
     allowNull: false,
@@ -50,7 +50,7 @@ export const FROM_TYPE_WALLET = 0x1;
 sequelize
   .sync()
   .then(function () {
-    return pkdb.create({
+    return thdb.create({
       txid: "_txid",
       network_id: "1",
       from: "0xID",
@@ -72,14 +72,14 @@ sequelize
         plain: true,
       })
     );
-    pkdb.destroy({ where: { txid: row.txid } });
+    thdb.destroy({ where: { txid: row.txid } });
   })
   .catch(function (err) {
     console.log("Unable to connect to the database:", err);
   });
 
 const add = function (dict) {
-  return pkdb.create({
+  return thdb.create({
     txid: dict.txid,
     network_id: dict.network_id,
     from: dict.from,
@@ -97,7 +97,7 @@ const add = function (dict) {
 };
 
 const getByTxid = function (txid) {
-  return pkdb.findOne({ where: { txid } });
+  return thdb.findOne({ where: { txid } });
 };
 
 const search = async function (filter_dict, page, page_size, order) {
@@ -108,7 +108,7 @@ const search = async function (filter_dict, page, page_size, order) {
     console.log("page_size = ", page_size);
     if (order) {
       console.log("Reverse order is enabled");
-      const { count, rows } = await pkdb.findAndCountAll({
+      const { count, rows } = await thdb.findAndCountAll({
         where: filter_dict,
         order: [["updatedAt", "DESC"]],
         limit: page_size,
@@ -122,7 +122,7 @@ const search = async function (filter_dict, page, page_size, order) {
         total_page,
       };
     } else {
-      const { count, rows } = await pkdb.findAndCountAll({
+      const { count, rows } = await thdb.findAndCountAll({
         where: filter_dict,
         limit: page_size,
         offset: (page - 1) * page_size,
@@ -138,7 +138,7 @@ const search = async function (filter_dict, page, page_size, order) {
   } else {
     if (order) {
       console.log("Reverse order is enabled");
-      let list = await pkdb.findAll({
+      let list = await thdb.findAll({
         where: filter_dict,
         order: [["updatedAt", "DESC"]],
         raw: true,
@@ -148,7 +148,7 @@ const search = async function (filter_dict, page, page_size, order) {
         total_page: list.length,
       };
     } else {
-      let list = await pkdb.findAll({
+      let list = await thdb.findAll({
         where: filter_dict,
         raw: true,
       });
@@ -185,7 +185,7 @@ const search_both_sizes = async function (filter_dict, page, page_size, order) {
     if (order) {
       console.log("Reverse order is enabled");
 
-      const { count, rows } = await pkdb.findAndCountAll({
+      const { count, rows } = await thdb.findAndCountAll({
         ...address_filter,
         order: [["updatedAt", "DESC"]],
         limit: page_size,
@@ -199,7 +199,7 @@ const search_both_sizes = async function (filter_dict, page, page_size, order) {
         total_page,
       };
     } else {
-      const { count, rows } = await pkdb.findAndCountAll({
+      const { count, rows } = await thdb.findAndCountAll({
         ...address_filter,
         limit: page_size,
         offset: (page - 1) * page_size,
@@ -223,16 +223,16 @@ const search_both_sizes = async function (filter_dict, page, page_size, order) {
       };
     }
 
-    return await pkdb.findAll(filter);
+    return await thdb.findAll(filter);
   }
 };
 
 const findAll = function () {
-  return pkdb.findAll();
+  return thdb.findAll();
 };
 
 const updateOrAdd = function (txid, update_dict) {
-  pkdb.findOne({ where: { txid } }).then(function (row: any) {
+  thdb.findOne({ where: { txid } }).then(function (row: any) {
     console.log("find: ", row);
     if (row === null) {
       add(update_dict);
@@ -256,7 +256,7 @@ const updateOrAdd = function (txid, update_dict) {
 
 const account_count_l2 = function () {
   return (async () => {
-    const l2_to_l1: any = await pkdb.findAll({
+    const l2_to_l1: any = await thdb.findAll({
       attributes: [["from", "account"]],
       where: {
         type: TX_TYPE_L2ToL1,
@@ -269,7 +269,7 @@ const account_count_l2 = function () {
       accounts.add(l2_to_l1[i].account);
     }
 
-    const l2_to_l2: any = await pkdb.findAll({
+    const l2_to_l2: any = await thdb.findAll({
       attributes: [
         ["from", "account"],
         ["to", "account"],
@@ -290,7 +290,7 @@ const account_count_l2 = function () {
 };
 
 const transaction_count_l2 = function () {
-  return pkdb.count({
+  return thdb.count({
     where: {
       type: {
         [Op.or]: [TX_TYPE_L2ToL1, TX_TYPE_L2ToL2],

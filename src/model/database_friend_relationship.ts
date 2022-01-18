@@ -24,7 +24,7 @@ const FRIEND_LIST_STATUS_MUTUAL = 0x1;
 const FRIEND_LIST_STATUS_WAITING = 0x2;
 const FRIEND_LIST_STATUS_CONFIRMING = 0x3;
 
-const friend_relationship_table = sequelize.define("friend_relationship_st", {
+const frdb = sequelize.define("friend_relationship_st", {
   user_first_id: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -41,7 +41,7 @@ const friend_relationship_table = sequelize.define("friend_relationship_st", {
 sequelize
   .sync()
   .then(function () {
-    return friend_relationship_table.create({
+    return frdb.create({
       user_first_id: 1,
       user_second_id: 2,
       type: NOT_FRIENDS,
@@ -53,7 +53,7 @@ sequelize
         plain: true,
       })
     );
-    friend_relationship_table.destroy({
+    frdb.destroy({
       where: {
         user_first_id: row.user_first_id,
         user_second_id: row.user_second_id,
@@ -69,13 +69,13 @@ const getRelationship = function (user1_id, user2_id) {
     [user1_id, user2_id] = [user2_id, user1_id];
   }
 
-  return friend_relationship_table.findOne({
+  return frdb.findOne({
     where: { user_first_id: user1_id, user_second_id: user2_id },
   });
 };
 
 const findAll = function () {
-  return friend_relationship_table.findAll();
+  return frdb.findAll();
 };
 
 const request = function (requester_id, responder_id) {
@@ -83,14 +83,14 @@ const request = function (requester_id, responder_id) {
     .then(function (row: any) {
       if (row === null) {
         if (requester_id < responder_id) {
-          friend_relationship_table.create({
+          frdb.create({
             user_first_id: requester_id,
             user_second_id: responder_id,
             type: PENDING_FIRST_SECOND,
           });
           return true;
         } else if (requester_id > responder_id) {
-          friend_relationship_table.create({
+          frdb.create({
             user_first_id: responder_id,
             user_second_id: requester_id,
             type: PENDING_SECOND_FIRST,
@@ -158,7 +158,7 @@ const request = function (requester_id, responder_id) {
 
 const change_pending_status = function (requester_id, responder_id, status) {
   if (requester_id < responder_id) {
-    return friend_relationship_table
+    return frdb
       .findOne({
         where: { user_first_id: requester_id, user_second_id: responder_id },
       })
@@ -199,7 +199,7 @@ const change_pending_status = function (requester_id, responder_id, status) {
         }
       });
   } else if (requester_id > responder_id) {
-    return friend_relationship_table
+    return frdb
       .findOne({
         where: { user_first_id: responder_id, user_second_id: requester_id },
       })
@@ -255,7 +255,7 @@ const reject = function (requester_id, responder_id) {
 
 const remove = function (requester_id, responder_id) {
   if (requester_id < responder_id) {
-    return friend_relationship_table
+    return frdb
       .findOne({
         where: { user_first_id: requester_id, user_second_id: responder_id },
       })
@@ -296,7 +296,7 @@ const remove = function (requester_id, responder_id) {
         }
       });
   } else if (requester_id > responder_id) {
-    return friend_relationship_table
+    return frdb
       .findOne({
         where: { user_first_id: responder_id, user_second_id: requester_id },
       })
@@ -346,7 +346,7 @@ const remove = function (requester_id, responder_id) {
 
 const getFriendListByUserId = function (user_id) {
   return (async (user_id) => {
-    const first: any = await friend_relationship_table.findAll({
+    const first: any = await frdb.findAll({
       attributes: [["user_second_id", "user_id"]],
       where: {
         user_first_id: user_id,
@@ -360,7 +360,7 @@ const getFriendListByUserId = function (user_id) {
       friends.add(first[i].user_id);
     }
 
-    const second: any = await friend_relationship_table.findAll({
+    const second: any = await frdb.findAll({
       attributes: [["user_first_id", "user_id"]],
       where: {
         user_second_id: user_id,
@@ -379,7 +379,7 @@ const getFriendListByUserId = function (user_id) {
 
 const getKnownByUserId = function (user_id) {
   return (async (user_id) => {
-    const first: any = await friend_relationship_table.findAll({
+    const first: any = await frdb.findAll({
       attributes: [["user_second_id", "user_id"]],
       where: {
         user_first_id: user_id,
@@ -395,7 +395,7 @@ const getKnownByUserId = function (user_id) {
       persons.add(first[i].user_id);
     }
 
-    const second: any = await friend_relationship_table.findAll({
+    const second: any = await frdb.findAll({
       attributes: [["user_first_id", "user_id"]],
       where: {
         user_second_id: user_id,
@@ -416,7 +416,7 @@ const getKnownByUserId = function (user_id) {
 
 const getStatusByUserId = function (user_id) {
   return (async (user_id) => {
-    const first: any = await friend_relationship_table.findAll({
+    const first: any = await frdb.findAll({
       attributes: [
         ["user_second_id", "user_id"],
         ["type", "type"],
@@ -452,7 +452,7 @@ const getStatusByUserId = function (user_id) {
       });
     }
 
-    const second: any = await friend_relationship_table.findAll({
+    const second: any = await frdb.findAll({
       attributes: [
         ["user_first_id", "user_id"],
         ["type", "type"],
