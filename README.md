@@ -168,6 +168,14 @@ curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user
 # Update owner address for a wallet
 curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}" -d '{"owner_address": "0x123"}'
 
+# Update wallet status:
+# Status:
+#         1 creating
+#         3 recovering
+#         5 freezing
+#         7 unlocking
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}" -d '{"txid": "0x123", "status": 1}'
+
 # Get all wallets
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallets"
 

@@ -464,6 +464,7 @@ module.exports = function (app) {
       let owner_address = owner["address"];
       signers[i]["owner_address"] = owner_address;
       signers[i]["wallet_id"] = owner["wallet_id"];
+      signers[i]["wallet_status"] = owner["wallet_status"];
     }
 
     res.json(util.Succ(signers));
