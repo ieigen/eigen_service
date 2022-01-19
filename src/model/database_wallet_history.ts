@@ -81,7 +81,6 @@ const findOne = function (filter_dict) {
   return whdb.findOne({ where: filter_dict, raw: true });
 };
 
-// TODO: Some code should be refactored
 const findAllByWalletId = function (wallet_id) {
   return whdb.findAll({
     where: {

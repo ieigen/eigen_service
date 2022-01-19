@@ -14,79 +14,96 @@ import * as db_txh from "../model/database_transaction_history";
 import * as db_wh from "../model/database_wallet_history";
 
 // Records txid => wallet, wallet is a Sequelize model which can be used to update status
-let TRANSACTION_WALLET_MAP = new Map();
 let TRANSACTION_ADD_SIGNER_BY_OWNER_MAP = new Map();
 let TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP = new Map();
 let TRANSACTION_DELETE_SIGNER_MAP = new Map();
 
 // TODO: Pubsub.subscribeOnce is better? Maybe we should think about it
 
-function addWalletStatusSubscriber(txid, wallet) {
-  console.log("Add wallet status subscriber: ", txid, wallet);
-  TRANSACTION_WALLET_MAP[txid] = wallet;
+function addWalletStatusSubscriber(txid, wallet_id) {
+  console.log("Add wallet status subscriber: ", txid, wallet_id);
+  // TRANSACTION_WALLET_MAP[txid] = wallet;
+
   return function (msg, transaction) {
     var [_, txid] = msg.split(".");
 
-    let wallet = TRANSACTION_WALLET_MAP[txid];
-    if (wallet === undefined) {
-      console.log(`Transaction ${txid} is not related to wallet`);
-      return false;
-    }
-
-    const wallet_status = wallet["dataValues"]["wallet_status"];
-    const transaction_status = transaction["status"];
-
-    console.log(`[addWalletStatusSubscriber]: ${txid}, ${wallet}`);
-
-    const next_status_success =
-      WALLET_STATUS_MACHINE_STATE_TRANSACTION_NEXT[wallet_status][
-        WalletStatusTransactionResult.Success
-      ];
-
-    const next_status_fail =
-      WALLET_STATUS_MACHINE_STATE_TRANSACTION_NEXT[wallet_status][
-        WalletStatusTransactionResult.Fail
-      ];
-
-    if (next_status_success) {
-      if (transaction_status == db_txh.TransactionStatus.Success) {
-        return wallet
-          .update({
-            wallet_status: next_status_success,
-          })
-          .then(function (result) {
-            console.log(
-              "Update wallet status success: " + JSON.stringify(result)
-            );
-            return true;
-          })
-          .catch(function (err) {
-            console.log("Update wallet status error: " + err);
-            return false;
-          });
-      } else if (transaction_status == db_txh.TransactionStatus.Failed) {
-        return wallet
-          .update({
-            wallet_status: next_status_fail,
-          })
-          .then(function (result) {
-            console.log(
-              "Update wallet status success: " + JSON.stringify(result)
-            );
-            return true;
-          })
-          .catch(function (err) {
-            console.log("Update wallet status error: " + err);
-            return false;
-          });
+    db_wallet.findByWalletId(wallet_id).then((wallet) => {
+      if (wallet === null) {
+        console.log(`Transaction ${txid} is not related to wallet`);
+        return false;
       }
-    }
 
-    console.log(
-      `Do not handle Transaction (${txid}) and Wallet (${wallet["dataValues"]["wallet_id"]})`
-    );
+      const wallet_status = wallet["dataValues"]["wallet_status"];
+      const transaction_status = transaction["status"];
 
-    return false;
+      console.log(
+        `[addWalletStatusSubscriber]: ${txid}, ${JSON.stringify(wallet)}`
+      );
+
+      const next_status_success =
+        WALLET_STATUS_MACHINE_STATE_TRANSACTION_NEXT[wallet_status][
+          WalletStatusTransactionResult.Success
+        ];
+
+      const next_status_fail =
+        WALLET_STATUS_MACHINE_STATE_TRANSACTION_NEXT[wallet_status][
+          WalletStatusTransactionResult.Fail
+        ];
+
+      if (next_status_success) {
+        if (transaction_status == db_txh.TransactionStatus.Success) {
+          db_wh.add(
+            wallet_id,
+            txid,
+            wallet_status,
+            next_status_success,
+            db_wh.StatusTransitionCause.TransactionSuccess
+          );
+          return wallet
+            .update({
+              wallet_status: next_status_success,
+            })
+            .then(function (result) {
+              console.log(
+                "Update wallet status success: " + JSON.stringify(result)
+              );
+              return true;
+            })
+            .catch(function (err) {
+              console.log("Update wallet status error: " + err);
+              return false;
+            });
+        } else if (transaction_status == db_txh.TransactionStatus.Failed) {
+          db_wh.add(
+            wallet_id,
+            txid,
+            wallet_status,
+            next_status_success,
+            db_wh.StatusTransitionCause.TransactionFail
+          );
+          return wallet
+            .update({
+              wallet_status: next_status_fail,
+            })
+            .then(function (result) {
+              console.log(
+                "Update wallet status success: " + JSON.stringify(result)
+              );
+              return true;
+            })
+            .catch(function (err) {
+              console.log("Update wallet status error: " + err);
+              return false;
+            });
+        }
+      }
+
+      console.log(
+        `Do not handle Transaction (${txid}) and Wallet (${wallet["dataValues"]["wallet_id"]})`
+      );
+
+      return false;
+    });
   };
 }
 
@@ -232,20 +249,28 @@ module.exports = function (app) {
       ""
     );
 
+    const wallet_id = result["dataValues"]["wallet_id"];
+
+    db_wh.add(
+      wallet_id,
+      txid,
+      db_wallet.WalletStatus.None,
+      db_wallet.WalletStatus.Creating,
+      db_wh.StatusTransitionCause.Create
+    );
+
     console.log(
-      `[[addWalletStatusSubscriber]]: PubSub.subscribe(Transaction.${txid}, ${result})`
+      `[[addWalletStatusSubscriber]]: PubSub.subscribe(Transaction.${txid}, ${wallet_id})`
     );
 
     PubSub.subscribe(
       `Transaction.${txid}`,
-      addWalletStatusSubscriber(txid, result)
+      addWalletStatusSubscriber(txid, wallet_id)
     );
 
     for (let signer of signers) {
-      console.log(
-        `Add ${signer} into wallet ${result["dataValues"]["wallet_id"]}`
-      );
-      await db_wallet.add(
+      console.log(`Add ${signer} into wallet ${wallet_id}]}`);
+      db_wallet.add(
         user_id,
         name,
         wallet_address,
@@ -342,7 +367,28 @@ module.exports = function (app) {
       }
 
       // Update wallet_status -> status
-      await wallet.update({
+      if (
+        status == db_wallet.WalletStatus.Freezing ||
+        status == db_wallet.WalletStatus.Recovering ||
+        status == db_wallet.WalletStatus.Unlocking
+      ) {
+        res.json(
+          util.Err(
+            util.ErrCode.Unknown,
+            `wallet status transition not supported now: ${db_wallet.WalletStatus[wallet_status]} -> ${db_wallet.WalletStatus[status]}`
+          )
+        );
+        return;
+        // TODO:
+        // db_wh.add(
+        //   wallet_id,
+        //   txid,
+        //   wallet_status,
+        //   status,
+        //   db_wh.StatusTransitionCause.Freeze (and so on)
+        // );
+      }
+      wallet.update({
         wallet_status: status,
       });
 
