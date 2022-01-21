@@ -163,10 +163,18 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/addresses?address=0x123'
 
 # Add a wallet (returns the corresponding wallet id)
-curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet" -d '{"name": "test", "address": "0x123", "wallet_address": "0x999", "signers": ["0x456", "0x789"]}'
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet" -d '{"name": "test", "address": "0x123", "wallet_address": "0x999", "signers": ["0x456", "0x789"], "txid": "0x1234"}'
 
-# Update owner address for a wallet 
+# Update owner address for a wallet
 curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}" -d '{"owner_address": "0x123"}'
+
+# Update wallet status:
+# Status:
+#         1 creating
+#         3 recovering
+#         5 freezing
+#         7 unlocking
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}" -d '{"txid": "0x123", "status": 1}'
 
 # Get all wallets
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallets"
@@ -188,8 +196,8 @@ curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user
 #         7 ignore recover
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signers"
 
-# Update status for a signer
-curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"address": "0x123", "status": 2}'
+# Update status for a signer (txid should be given)
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"address": "0x123", "status": 2, "txid": "0x1234"}'
 
 # Update name for a signer
 curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer" -d '{"address": "0x123", "name": "test"}'
@@ -200,8 +208,8 @@ curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user
 # Get sign_message if available (The signer address should be given to ensure that it can get sign_message)
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/sign_message?address=0x123"
 
-# Detele a signer
-curl -XDELETE -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer"  -d '{"address": "0x123"}'
+# Detele a signer (txid should be given)
+curl -XDELETE -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/wallet/{wallet_id}/signer"  -d '{"address": "0x123", "txid": "0x1234"}'
 
 # Get all information as singers
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/as_signers"
