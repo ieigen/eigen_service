@@ -18,8 +18,6 @@ let TRANSACTION_ADD_SIGNER_BY_OWNER_MAP = new Map();
 let TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP = new Map();
 let TRANSACTION_DELETE_SIGNER_MAP = new Map();
 
-// TODO: Pubsub.subscribeOnce is better? Maybe we should think about it
-
 function addWalletStatusSubscriber(txid, wallet_id) {
   console.log("Add wallet status subscriber: ", txid, wallet_id);
   // TRANSACTION_WALLET_MAP[txid] = wallet;
@@ -260,10 +258,10 @@ module.exports = function (app) {
     );
 
     console.log(
-      `[[addWalletStatusSubscriber]]: PubSub.subscribe(Transaction.${txid}, ${wallet_id})`
+      `[[addWalletStatusSubscriber]]: PubSub.subscribeOnce(Transaction.${txid}, ${wallet_id})`
     );
 
-    PubSub.subscribe(
+    PubSub.subscribeOnce(
       `Transaction.${txid}`,
       addWalletStatusSubscriber(txid, wallet_id)
     );
@@ -393,10 +391,10 @@ module.exports = function (app) {
       });
 
       console.log(
-        `[[addWalletStatusSubscriber]]: PubSub.subscribe(Transaction.${txid}, ${wallet}): ${db_wallet.WalletStatus[wallet_status]} -> ${db_wallet.WalletStatus[status]}`
+        `[[addWalletStatusSubscriber]]: PubSub.subscribeOnce(Transaction.${txid}, ${wallet}): ${db_wallet.WalletStatus[wallet_status]} -> ${db_wallet.WalletStatus[status]}`
       );
 
-      PubSub.subscribe(
+      PubSub.subscribeOnce(
         `Transaction.${txid}`,
         addWalletStatusSubscriber(txid, wallet)
       );
@@ -441,6 +439,29 @@ module.exports = function (app) {
     let wallets: any = await db_wallet.findAll(filter);
 
     console.log("Find wallets: ", wallets);
+
+    for (let wallet in wallets) {
+      let wallet_address = wallet["wallet_address"];
+
+      const singer_filter = {
+        wallet_address: wallet_address,
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+      };
+
+      let signers: any = await db_wallet.search({
+        attributes: [
+          "createdAt",
+          "updatedAt",
+          "name",
+          "address",
+          "status",
+          "wallet_address",
+        ],
+        where: singer_filter,
+        raw: true,
+      });
+      wallet["signer_count"] = signers.length;
+    }
 
     res.json(util.Succ(wallets));
     return;
@@ -572,12 +593,12 @@ module.exports = function (app) {
           }
           // Update status subscribe
           console.log(
-            `[[addSignerBySignerSubscriber]]: PubSub.subscribe(Transaction.${txid}, ${{
+            `[[addSignerBySignerSubscriber]]: PubSub.subscribeOnce(Transaction.${txid}, ${{
               wallet_address,
               address,
             }})`
           );
-          PubSub.subscribe(
+          PubSub.subscribeOnce(
             `Transaction.${txid}`,
             addSignerBySignerSubscriber(txid, {
               wallet_address,
@@ -620,14 +641,14 @@ module.exports = function (app) {
           }
           // Update status subscribe
           console.log(
-            `[[addSignerByOwnerSubscriber]]: PubSub.subscribe(Transaction.${txid}, ${{
+            `[[addSignerByOwnerSubscriber]]: PubSub.subscribeOnce(Transaction.${txid}, ${{
               user_id,
               wallet_address,
               address,
             }})`
           );
 
-          PubSub.subscribe(
+          PubSub.subscribeOnce(
             `Transaction.${txid}`,
             addSignerByOwnerSubscriber(txid, {
               user_id,
@@ -826,13 +847,13 @@ module.exports = function (app) {
       }
 
       console.log(
-        `[[addDeleteSubscriber]]: PubSub.subscribe(Transaction.${txid}, ${{
+        `[[addDeleteSubscriber]]: PubSub.subscribeOnce(Transaction.${txid}, ${{
           wallet_address,
           address,
         }})`
       );
 
-      PubSub.subscribe(
+      PubSub.subscribeOnce(
         `Transaction.${txid}`,
         addDeleteSubscriber(txid, {
           wallet_address,

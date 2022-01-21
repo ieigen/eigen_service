@@ -172,7 +172,7 @@ const findOwnerWalletById = function (user_id, wallet_id) {
 };
 
 const findAll = function (filter_dict) {
-  return walletdb.findAll({ where: filter_dict });
+  return walletdb.findAll({ where: filter_dict, raw: true });
 };
 
 const search = function (dict) {
