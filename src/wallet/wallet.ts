@@ -440,7 +440,7 @@ module.exports = function (app) {
 
     console.log("Find wallets: ", wallets);
 
-    for (let wallet in wallets) {
+    for (let wallet of wallets) {
       let wallet_address = wallet["wallet_address"];
 
       const singer_filter = {
