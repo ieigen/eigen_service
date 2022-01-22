@@ -90,9 +90,7 @@ curl -XPUT -H "Content-Type:application/json"  --url "localhost:3000/txh/{txid}"
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txhs?action=search_l2&from=0x1&page=1&page_size=10&order=1"
 ```
 
-### User Management
-
-#### API
+### Multisig Wallet
 
 ```
 # Send a guardian request
@@ -144,6 +142,12 @@ curl -XDELETE -H "Content-Type:application/json"  --url "localhost:3000/recovery
 # Statistics
 curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/statistics" -d '{"kind": "sendemail"}'
 
+
+```
+
+### Dashboard
+
+```
 # Save user's allowance for a token in a network for a swap contract
 curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/allowance" -d '{ "network_id": "1", "token_address": "0x1", "user_address": "0x2", "swap_address": "0x3", "allowance": 4 }'
 
