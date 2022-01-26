@@ -93,6 +93,23 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txhs?action
 ### Multisig Wallet
 
 ```
+# add multi sig tx
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/mtx/meta" -d '{"user_id": 3, "wallet_address": "0x12", "to": "0x23", "value": "0x1", "data": "0xabce"}'
+
+# query multi sig tx
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/mtx/meta/2"
+
+# update txid of multi sig tx
+curl -XPUT -H "Content-Type:application/json"  --url "localhost:3000/mtx/meta" -d '{"id":2, "txid": "0x221"}'
+
+# add signer message
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/mtx/sign" -d '{"mtxid": 2, "signer_address": "0x12", "signer_address": "0x121", "status": 2}'
+the status is defined in `SignerStatus`
+
+# query siger messages
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/mtx/sign/2?status=2"
+the status is defined in `SignerStatus`
+
 # Send a guardian request
 curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/user/{user_id}/guardian" -d '{"guardian_id": 3}'
 
