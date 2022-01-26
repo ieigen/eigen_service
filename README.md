@@ -97,7 +97,7 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/txhs?action
 curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/mtx/meta" -d '{"user_id": 3, "wallet_address": "0x12", "to": "0x23", "value": "0x1", "data": "0xabce"}'
 
 # query multi sig tx
-curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/mtx/meta/2"
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/mtx/meta/{:id}"
 
 # update txid of multi sig tx
 curl -XPUT -H "Content-Type:application/json"  --url "localhost:3000/mtx/meta" -d '{"id":2, "txid": "0x221"}'
