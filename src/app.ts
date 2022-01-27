@@ -381,11 +381,17 @@ app.post("/mtx/meta", async (req, res) => {
 
 // update txid
 app.put("/mtx/meta", async (req, res) => {
+  if (!util.has_value(req.body.id)) {
+    return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'id'"));
+  }
   let ret = await db_multisig.updateMultisigMeta(req.body.id, req.body.txid);
   res.json(util.Succ(ret));
 });
 
 app.get("/mtx/meta/:id", async (req, res) => {
+  if (!util.has_value(req.params.id)) {
+    return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'id'"));
+  }
   let ret = await db_multisig.findMultisigMetaByConds({ id: req.params.id });
   res.json(util.Succ(ret));
 });
@@ -403,6 +409,9 @@ app.post("/mtx/sign", async (req, res) => {
 
 // query sign message
 app.get("/mtx/sign/:mtxid", async (req, res) => {
+  if (!util.has_value(req.params.id)) {
+    return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'mtxid'"));
+  }
   let ret = await db_multisig.findSignHistoryByMtxidAndStatus(
     req.params.mtxid,
     req.query.status
