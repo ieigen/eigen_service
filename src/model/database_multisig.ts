@@ -123,7 +123,7 @@ const addMultisigMeta = function (
         to: to,
         from_type: txhdb.FROM_TYPE_WALLET,
         type: txhdb.TX_TYPE_L1ToL1,
-        status: txhdb.TransactionStatus.Sent,
+        status: txhdb.TransactionStatus.Confirming,
         operation: "Creating"
     })
     return multisigMetaDB.create({

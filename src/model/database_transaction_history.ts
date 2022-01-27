@@ -117,6 +117,7 @@ const search = async function (filter_dict, page, page_size, order) {
         order: [["updatedAt", "DESC"]],
         limit: page_size,
         offset: (page - 1) * page_size,
+        raw: true,
       });
       console.log("count = ", count);
       console.log("rows = ", rows);
@@ -130,6 +131,7 @@ const search = async function (filter_dict, page, page_size, order) {
         where: filter_dict,
         limit: page_size,
         offset: (page - 1) * page_size,
+        raw: true,
       });
       console.log("count = ", count);
       console.log("transactions = ", rows);
@@ -194,6 +196,7 @@ const search_both_sizes = async function (filter_dict, page, page_size, order) {
         order: [["updatedAt", "DESC"]],
         limit: page_size,
         offset: (page - 1) * page_size,
+        raw: true,
       });
       console.log("count = ", count);
       console.log("rows = ", rows);
@@ -207,6 +210,7 @@ const search_both_sizes = async function (filter_dict, page, page_size, order) {
         ...address_filter,
         limit: page_size,
         offset: (page - 1) * page_size,
+        raw: true,
       });
       console.log("count = ", count);
       console.log("transactions = ", rows);
