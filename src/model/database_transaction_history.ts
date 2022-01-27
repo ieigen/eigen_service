@@ -100,6 +100,10 @@ const getByTxid = function (txid) {
   return thdb.findOne({ where: { txid } });
 };
 
+const delByTxid = (txid) => {
+    return thdb.destroy({ where : {txid: txid} })
+}
+
 const search = async function (filter_dict, page, page_size, order) {
   console.log("Search filter: ", filter_dict);
 
@@ -307,5 +311,6 @@ export {
   search,
   getByTxid,
   findAll,
+  delByTxid,
   search_both_sizes,
 };

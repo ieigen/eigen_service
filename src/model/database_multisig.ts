@@ -1,5 +1,7 @@
+import { v4 as uuidv4 } from 'uuid';
 import { Sequelize, DataTypes, Op } from "sequelize";
 import * as walletdb from "./database_wallet";
+import * as txhdb from "./database_transaction_history";
 
 const sequelizeMeta = new Sequelize({
   dialect: "sqlite",
@@ -104,13 +106,25 @@ sequelizeSignHistory
 });
 
 const addMultisigMeta = function (
+    network_id,
     user_id,
     wallet_address,
     to,
     value,
     data
 ) {
-    let txid = ""
+    let txid = uuidv4();
+    // mock a txh
+    console.log("txid", txid)
+    txhdb.add({
+        txid: txid,
+        network_id: network_id,
+        from: wallet_address,
+        to: to,
+        type: txhdb.TX_TYPE_L1ToL1,
+        status: txhdb.TransactionStatus.Sent,
+        operation: "Creating"
+    })
     return multisigMetaDB.create({
         user_id,
         wallet_address,
@@ -139,6 +153,9 @@ const updateMultisigMeta = function (
         if (row === null) {
             return false;
         }
+        // delete the fake txh
+        txhdb.delByTxid(row["txid"])
+
         let actual_update_dict = {txid: txid};
 
         return row

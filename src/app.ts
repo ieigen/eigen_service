@@ -364,6 +364,7 @@ app.put("/txh/:txid", async function (req, res) {
 // add meta
 app.post("/mtx/meta", async (req, res) => {
     let ret = await db_multisig.addMultisigMeta(
+        req.body.network_id,
         req.body.user_id,
         req.body.wallet_address,
         req.body.to,
