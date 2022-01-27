@@ -203,14 +203,14 @@ app.get("/txhs", async function (req, res) {
   const page = dict.page;
   const page_size = dict.page_size;
   const order = dict.order;
-  let result
+  let result;
   switch (action) {
     case "search":
       delete dict.action;
       delete dict.page;
       delete dict.page_size;
       delete dict.order;
-      result = await db_txh.search(req.query, page, page_size, order)
+      result = await db_txh.search(req.query, page, page_size, order);
       break;
     case "search_l2":
       delete dict.action;
@@ -219,7 +219,7 @@ app.get("/txhs", async function (req, res) {
       delete dict.order;
 
       dict.type = [db_txh.TX_TYPE_L2ToL1, db_txh.TX_TYPE_L2ToL2];
-      result = await db_txh.search(req.query, page, page_size, order)
+      result = await db_txh.search(req.query, page, page_size, order);
       break;
     case "search_both_sides":
       delete dict.action;
@@ -245,7 +245,12 @@ app.get("/txhs", async function (req, res) {
         return;
       }
 
-      result = await db_txh.search_both_sizes(req.query, page, page_size, order)
+      result = await db_txh.search_both_sizes(
+        req.query,
+        page,
+        page_size,
+        order
+      );
       break;
     default:
       return res.json(util.Err(util.ErrCode.Unknown, "invalid action"));
@@ -253,15 +258,15 @@ app.get("/txhs", async function (req, res) {
 
   //OPT: use batch
   let transactions = result["transactions"];
-  for (var i = 0; i < transactions.length; i ++) {
-        let txid = transactions[i]["txid"]
-        if (!util.has_value(txid)) continue;
-        let res = await db_multisig.findMultisigMetaByConds({txid: txid})
-        if (res == null) continue;
-        if (!util.has_value(res["id"])) continue;
-        transactions[i]["mtxid"] = res["id"];
+  for (var i = 0; i < transactions.length; i++) {
+    let txid = transactions[i]["txid"];
+    if (!util.has_value(txid)) continue;
+    let res = await db_multisig.findMultisigMetaByConds({ txid: txid });
+    if (res == null) continue;
+    if (!util.has_value(res["id"])) continue;
+    transactions[i]["mtxid"] = res["id"];
   }
-  console.log(transactions)
+  console.log(transactions);
   result["transactions"] = transactions;
   return res.json(util.Succ(result));
 });
@@ -363,50 +368,47 @@ app.put("/txh/:txid", async function (req, res) {
 
 // add meta
 app.post("/mtx/meta", async (req, res) => {
-    let ret = await db_multisig.addMultisigMeta(
-        req.body.network_id,
-        req.body.user_id,
-        req.body.wallet_address,
-        req.body.to,
-        req.body.value,
-        req.body.data
-    ) 
-    res.json(util.Succ(ret))
-})
+  let ret = await db_multisig.addMultisigMeta(
+    req.body.network_id,
+    req.body.user_id,
+    req.body.wallet_address,
+    req.body.to,
+    req.body.value,
+    req.body.data
+  );
+  res.json(util.Succ(ret));
+});
 
 // update txid
 app.put("/mtx/meta", async (req, res) => {
-    let ret = await db_multisig.updateMultisigMeta(
-        req.body.id,
-        req.body.txid
-    )
-    res.json(util.Succ(ret))
-})
+  let ret = await db_multisig.updateMultisigMeta(req.body.id, req.body.txid);
+  res.json(util.Succ(ret));
+});
 
-app.get("/mtx/meta/:id", async(req, res) => {
-    let ret = await db_multisig.findMultisigMetaByConds({id: req.params.id})
-    res.json(util.Succ(ret))
-})
+app.get("/mtx/meta/:id", async (req, res) => {
+  let ret = await db_multisig.findMultisigMetaByConds({ id: req.params.id });
+  res.json(util.Succ(ret));
+});
 
 // add sign message
 app.post("/mtx/sign", async (req, res) => {
-    let ret = await db_multisig.addSignMessage(
-        req.body.mtxid,
-        req.body.signer_address,
-        req.body.signer_message,
-        req.body.status
-    )
-    res.json(util.Succ(ret))
-})
+  let ret = await db_multisig.addSignMessage(
+    req.body.mtxid,
+    req.body.signer_address,
+    req.body.signer_message,
+    req.body.status
+  );
+  res.json(util.Succ(ret));
+});
 
 // query sign message
 app.get("/mtx/sign/:mtxid", async (req, res) => {
-    let ret = await db_multisig.findSignHistoryByMtxidAndStatus(
-        req.params.mtxid,
-        req.query.status
-    )
-    return res.json(util.Succ(ret))
-}) 
+  let ret = await db_multisig.findSignHistoryByMtxidAndStatus(
+    req.params.mtxid,
+    req.query.status
+  );
+  return res.json(util.Succ(ret));
+});
 
 // get user, his/her friends, his/her strangers by id
 app.get("/user/:user_id", async function (req, res) {
