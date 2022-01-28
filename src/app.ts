@@ -426,9 +426,8 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
   if (!util.has_value(req.params.mtxid)) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'mtxid'"));
   }
-  let sm = await db_multisig.findSignHistoryByMtxidAndStatus(
-    req.params.mtxid,
-    req.query.status
+  let sm = await db_multisig.findSignHistoryByMtxid(
+    req.params.mtxid
   );
   console.log(sm);
   if (sm !== null) {

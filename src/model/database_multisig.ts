@@ -178,13 +178,13 @@ const addSignMessage = function (mtxid, signer_address, sign_message, status) {
   });
 };
 
-const findSignHistoryByMtxidAndStatus = function (mtxid, status) {
-  return signHistoryDB.findAll({ where: { mtxid, status }, raw: true });
+const findSignHistoryByMtxid = function (mtxid) {
+  return signHistoryDB.findAll({ where: { mtxid }, raw: true });
 };
 
 export {
   addSignMessage,
-  findSignHistoryByMtxidAndStatus,
+  findSignHistoryByMtxid,
   findMultisigMetaByConds,
   addMultisigMeta,
   updateMultisigMeta,
