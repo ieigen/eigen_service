@@ -409,7 +409,7 @@ app.post("/mtx/sign", async (req, res) => {
 
 // query sign message
 app.get("/mtx/sign/:mtxid", async (req, res) => {
-  if (!util.has_value(req.params.id)) {
+  if (!util.has_value(req.params.mtxid)) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'mtxid'"));
   }
   let ret = await db_multisig.findSignHistoryByMtxidAndStatus(
