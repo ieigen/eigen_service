@@ -394,6 +394,16 @@ app.get("/mtx/meta/:id", async (req, res) => {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'id'"));
   }
   let ret = await db_multisig.findMultisigMetaByConds({ id: req.params.id });
+  // return owner_address and mtx status
+  let mtx = await db_txh.getByTxid(ret["txid"]);
+  if (mtx != null) {
+      ret["status"] = mtx["status"];
+  }
+
+  let walletInfo = await db_wallet.findOne({wallet_address: ret["from"]});
+  if (walletInfo != null) {
+      ret["owner_address"] = walletInfo["address"];
+  }
   res.json(util.Succ(ret));
 });
 
@@ -422,7 +432,7 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
   );
 
   const wallet_filter = {
-    wallet_address: ret["wallet_address"],
+    wallet_address: ret["from"],
     role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
   };
 
