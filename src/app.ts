@@ -426,43 +426,23 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
   if (!util.has_value(req.params.mtxid)) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'mtxid'"));
   }
-  let ret = await db_multisig.findSignHistoryByMtxidAndStatus(
+  let sm = await db_multisig.findSignHistoryByMtxidAndStatus(
     req.params.mtxid,
     req.query.status
   );
+  if (sm !== null) {
+    for (var i = 0; i < sm.length; i ++) {
+      // get user_id
+      let addrInfo = await db_address.findOne({user_address: sm["wallet_address"]})
+      if (addrInfo == null) continue;
+      let userInfo = await db_user.findByID(addrInfo["user_id"])
+      if (userInfo == null) continue;
 
-  const wallet_filter = {
-    wallet_address: ret["from"],
-    role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
-  };
-
-  let wallet: any = await db_wallet.findOne(wallet_filter);
-
-  if (wallet !== null) {
-    let wallet_address = wallet["wallet_address"];
-
-    const singer_filter = {
-      wallet_address: wallet_address,
-      role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-    };
-
-    let signers: any = await db_wallet.search({
-      attributes: [
-        "createdAt",
-        "updatedAt",
-        "name",
-        "address",
-        "status",
-        "wallet_address",
-      ],
-      where: singer_filter,
-      raw: true,
-    });
-
-    ret["signers"] = signers;
+      sm[i]["name"] = userInfo["name"];
+      sm[i]["picture"] = userInfo["picture"];
+    }
   }
-
-  return res.json(util.Succ(ret));
+  return res.json(util.Succ(sm));
 });
 
 // get user, his/her friends, his/her strangers by id
