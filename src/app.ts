@@ -430,10 +430,11 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
     req.params.mtxid,
     req.query.status
   );
+  console.log(sm);
   if (sm !== null) {
     for (var i = 0; i < sm.length; i ++) {
       // get user_id
-      let addrInfo = await db_address.findOne({user_address: sm["wallet_address"]})
+      let addrInfo = await db_address.findOne({user_address: sm[i]["wallet_address"]})
       if (addrInfo == null) continue;
       let userInfo = await db_user.findByID(addrInfo["user_id"])
       if (userInfo == null) continue;
