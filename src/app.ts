@@ -18,6 +18,7 @@ import { Session } from "./session";
 import * as TOKEN_CONSTANS from "./token/constants";
 import * as db_allowance from "./token/allowance";
 import * as db_multisig from "./model/database_multisig";
+import * as db_wallet from "./model/database_wallet";
 
 import bodyParser from "body-parser";
 const app = express();
@@ -419,6 +420,38 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
     req.params.mtxid,
     req.query.status
   );
+
+  const wallet_filter = {
+    wallet_address: ret["wallet_address"],
+    role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
+  };
+
+  let wallet: any = await db_wallet.findOne(wallet_filter);
+
+  if (wallet !== null) {
+    let wallet_address = wallet["wallet_address"];
+
+    const singer_filter = {
+      wallet_address: wallet_address,
+      role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+    };
+
+    let signers: any = await db_wallet.search({
+      attributes: [
+        "createdAt",
+        "updatedAt",
+        "name",
+        "address",
+        "status",
+        "wallet_address",
+      ],
+      where: singer_filter,
+      raw: true,
+    });
+
+    ret["signers"] = signers;
+  }
+
   return res.json(util.Succ(ret));
 });
 

@@ -179,7 +179,7 @@ const addSignMessage = function (mtxid, signer_address, sign_message, status) {
 };
 
 const findSignHistoryByMtxidAndStatus = function (mtxid, status) {
-  return signHistoryDB.findAll({ where: { mtxid, status } });
+  return signHistoryDB.findAll({ where: { mtxid, status }, raw: true });
 };
 
 export {
