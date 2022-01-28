@@ -400,7 +400,7 @@ app.get("/mtx/meta/:id", async (req, res) => {
       ret["status"] = mtx["status"];
   }
 
-  let walletInfo = await db_wallet.findOne({wallet_address: ret["from"]});
+  let walletInfo = await db_wallet.findOne({wallet_address: ret["wallet_address"]});
   if (walletInfo != null) {
       ret["owner_address"] = walletInfo["address"];
   }
