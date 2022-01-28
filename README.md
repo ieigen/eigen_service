@@ -108,7 +108,7 @@ curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/mtx/sign" 
 the status is defined in `SignerStatus`
 
 # query siger messages
-curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/mtx/sign/2?status=2"
+curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/mtx/sign/{:mtxid}?status=2"
 the status is defined in `SignerStatus`
 
 # Send a guardian request
