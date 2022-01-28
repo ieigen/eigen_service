@@ -398,6 +398,9 @@ app.get("/mtx/meta/:id", async (req, res) => {
 
 // add sign message
 app.post("/mtx/sign", async (req, res) => {
+  if (!util.has_value(req.body.mtxid)) {
+    return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'mtxid'"));
+  }
   let ret = await db_multisig.addSignMessage(
     req.body.mtxid,
     req.body.signer_address,
