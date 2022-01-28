@@ -104,7 +104,7 @@ curl -XGET -H "Content-Type:application/json"  --url "localhost:3000/mtx/meta/{:
 curl -XPUT -H "Content-Type:application/json"  --url "localhost:3000/mtx/meta" -d '{"id":2, "txid": "0x221"}'
 
 # add signer message
-curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/mtx/sign" -d '{"mtxid": 2, "signer_address": "0x12", "signer_address": "0x121", "status": 2}'
+curl -XPOST -H "Content-Type:application/json"  --url "localhost:3000/mtx/sign" -d '{"mtxid": 2, "signer_address": "0x12", "signer_message": "0x121", "status": 2}'
 the status is defined in `SignerStatus`
 
 # query siger messages
