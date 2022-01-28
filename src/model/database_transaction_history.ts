@@ -106,6 +106,10 @@ const delByTxid = (txid) => {
 
 const search = async function (filter_dict, page, page_size, order) {
   console.log("Search filter: ", filter_dict);
+  // Seq will throw for all undefined keys in where options.  https://sequelize.org/v5/manual/upgrade-to-v5.html
+  if (filter_dict["txid"] === undefined){
+      filter_dict["txid"] = null;
+  }
 
   if (page) {
     console.log("page = ", page);
