@@ -168,12 +168,12 @@ const search = async function (filter_dict, page, page_size, order) {
   }
 };
 
-// select * from thx where (from == as_owner) or (from in as_signers and status == creating)
-const search_with_multisig = async (as_owner: string, as_signers: string[], page, page_size, order) => {
+// select * from thx where (from in as_owners) or (from in as_signers and status == creating)
+const search_with_multisig = async (as_owners: string[], as_signers: string[], page, page_size, order) => {
     let result = await thdb.findAndCountAll({
         where: {
             [Op.or]: [
-                {from: as_owner},
+                { from: {[Op.in]: as_owners} },
                 {
                     [Op.and]: [
                         {from: {[Op.in]: as_signers}},

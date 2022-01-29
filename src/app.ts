@@ -274,9 +274,9 @@ app.get("/txhs", async function (req, res) {
       });
 
       // select * from thx where from == xxx;
-      let as_owner
+      let as_owners = [address]
       if (wallet !== null) {
-        as_owner = wallet["wallet_address"];
+        as_owners.push(wallet["wallet_address"]);
       }
 
       // Secondly, the address as a signer, and the status is "Creating"
@@ -294,7 +294,7 @@ app.get("/txhs", async function (req, res) {
         as_signers.push(signer["wallet_address"])
       }
 
-      result = await db_txh.search_with_multisig(as_owner, as_signers, page, page_size, order);
+      result = await db_txh.search_with_multisig(as_owners, as_signers, page, page_size, order);
       break;
     default:
       return res.json(util.Err(util.ErrCode.Unknown, "invalid action"));
