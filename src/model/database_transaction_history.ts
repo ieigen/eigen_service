@@ -170,7 +170,7 @@ const search = async function (filter_dict, page, page_size, order) {
 
 // select * from thx where (from in as_owners) or (from in as_signers and status == creating)
 const search_with_multisig = async (as_owners: string[], as_signers: string[], page, page_size, order) => {
-    return thdb.findAndCountAll({
+    let {count, rows} = await thdb.findAndCountAll({
         where: {
             [Op.or]: [
                 { from: {[Op.in]: as_owners} },
@@ -186,6 +186,11 @@ const search_with_multisig = async (as_owners: string[], as_signers: string[], p
         offset: (page - 1) * page_size,
         raw: true
     })
+    const total_page = Math.ceil(count / page_size);
+    return {
+        transactions: rows,
+        total_page,
+    }
 }
 
 const search_both_sizes = async function (filter_dict, page, page_size, order) {
