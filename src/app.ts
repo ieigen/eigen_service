@@ -498,8 +498,8 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
   let allSigners = await db_wallet.findAll({
     wallet_address: meta["wallet_address"],
   });
-  let signedSigners: Map<string, boolean>;
   console.log(allSigners);
+  let signedSigners = new Map<string, boolean>();
 
   if (sm !== null) {
     for (var i = 0; i < sm.length; i++) {
