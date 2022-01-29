@@ -495,7 +495,7 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
     return res.json(util.Succ(sm));
   }
   let allSigners = await db_wallet.findAll({ wallet_address: meta["wallet_address"] });
-  let signedSigners: Map<string, boolean>;
+  let signedSigners = new Map<string, boolean>();
   console.log(allSigners)
 
   if (sm !== null) {
@@ -516,15 +516,15 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
       signInfo["mtxid"] = req.params.mtxid;
       signInfo["signer_address"] = sm[i]["signer_address"];
       signInfo["sign_message"] = null;
-      signInfo["createAt"] = sm[i]["createAt"]
-      signInfo["updateAt"] = sm[i]["updateAt"]
+      //signInfo["createAt"] = sm[i]["createAt"]
+      //signInfo["updateAt"] = sm[i]["updateAt"]
       resultsm.push(signInfo)
     }
 
     let signedSize = resultsm.length;
     for (var i = 0; i < allSigners.length; i++) {
       let signer = allSigners[i];
-      if (signedSigners !== undefined && signedSigners.has(signer["address"])) {
+      if (signedSigners.has(signer["address"])) {
         continue;
       }
 
