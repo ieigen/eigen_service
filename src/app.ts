@@ -429,9 +429,10 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
   let sm = await db_multisig.findSignHistoryByMtxid(
     req.params.mtxid
   );
-  console.log(sm);
+  console.log("signed message", sm);
   // get all sigers
   let meta = await db_multisig.findMultisigMetaByConds({txid: req.params.mtxid})
+  console.log("meta", meta)
   if (meta == null) {
       return res.json(util.Succ(sm));
   }
