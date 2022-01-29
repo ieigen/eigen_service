@@ -202,6 +202,7 @@ app.get("/txhs", async function (req, res) {
 
   const page = req.query.page;
   const page_size = req.query.page_size;
+  //TODO donot use if to query by order, it makes the code ugly
   const order = req.query.order;
   const address = req.query.address;
   let allow_fileds = {
