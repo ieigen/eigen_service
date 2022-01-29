@@ -203,6 +203,7 @@ app.get("/txhs", async function (req, res) {
   const page = req.query.page;
   const page_size = req.query.page_size;
   const order = req.query.order;
+  const address = req.query.address;
   let allow_fileds = {
     from: req.query.from,
     to: req.query.to,
@@ -229,7 +230,6 @@ app.get("/txhs", async function (req, res) {
       result = await db_txh.search(filter, page, page_size, order);
       break;
     case "search_both_sides":
-      const address = req.query.address;
       const from = req.query.from;
       const to = req.query.to;
 
@@ -250,6 +250,63 @@ app.get("/txhs", async function (req, res) {
       filter["address"] = address;
 
       result = await db_txh.search_both_sizes(filter, page, page_size, order);
+      break;
+    case "search_multisig":
+      if (
+        !util.has_value(address) ||
+        util.has_value(from) ||
+        util.has_value(to)
+      ) {
+        res.json(
+          util.Err(
+            util.ErrCode.Unknown,
+            "wrong search pattern for both sized, address should be given, neither from or to should not be given"
+          )
+        );
+        return;
+      }
+
+      // Firstly, the address as an owner,
+      let wallet = await db_wallet.findOne({
+        address,
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
+      });
+
+      if (wallet !== null) {
+        result = await db_txh.search(
+          { from: wallet["wallet_address"] },
+          0, // Disable return with page group
+          page_size,
+          order
+        );
+      }
+
+      // Secondly, the address as a signer, and the status is "Creating"
+
+      let signers = await db_wallet.search({
+        where: {
+          address: address,
+          role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+        },
+        raw: true,
+      });
+
+      for (let signer of signers) {
+        var txhs = await db_txh.search(
+          {
+            from: signer["address"],
+            status: db_txh.TransactionStatus.Creating,
+          },
+          0, // Disable return with page group
+          page_size,
+          order
+        );
+
+        result = result.concat(txhs);
+      }
+
+      // TODO: Page
+
       break;
     default:
       return res.json(util.Err(util.ErrCode.Unknown, "invalid action"));
@@ -431,50 +488,55 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
   );
   console.log("signed message", sm);
   // get all sigers
-  let meta = await db_multisig.findMultisigMetaByConds({txid: req.params.mtxid})
+  let meta = await db_multisig.findMultisigMetaByConds({id: req.params.mtxid})
   console.log("meta", meta)
   if (meta == null) {
-      return res.json(util.Succ(sm));
+    return res.json(util.Succ(sm));
   }
-  let allSigners = await db_wallet.findAll({wallet_address: meta["from"]})
+  let allSigners = await db_wallet.findAll({ wallet_address: meta["from"] });
   let signedSigners: Map<string, boolean>;
 
   if (sm !== null) {
-    for (var i = 0; i < sm.length; i ++) {
+    for (var i = 0; i < sm.length; i++) {
       // get user_id
-      let addrInfo = await db_address.findOne({user_address: sm[i]["signer_address"]})
-      signedSigners.set(sm[i]["signer_address"], true)
+
+      let addrInfo = await db_address.findOne({
+        user_address: sm[i]["signer_address"],
+      });
+      signedSigners.set(sm[i]["signer_address"], true);
       if (addrInfo == null) continue;
-      let userInfo = await db_user.findByID(addrInfo["user_id"])
+      let userInfo = await db_user.findByID(addrInfo["user_id"]);
       if (userInfo == null) continue;
 
       sm[i]["name"] = userInfo["name"];
       sm[i]["picture"] = userInfo["picture"];
     }
 
-    let signedSize = sm.length
-    for (var i = 0; i < allSigners.length; i ++) {
+    let signedSize = sm.length;
+    for (var i = 0; i < allSigners.length; i++) {
       let signer = allSigners[i];
       if (signedSigners.get(signer["address"]) != null) {
-          continue
+        continue;
       }
 
       // FIXME very tricky
       let signInfo = sm[sm.length - 1];
-      signInfo["id"] = i + signedSize
-      signInfo["mtxid"] = req.params.mtxid
-      signInfo["signer_address"] = signer["address"]
-      signInfo["sign_message"] = null
+      signInfo["id"] = i + signedSize;
+      signInfo["mtxid"] = req.params.mtxid;
+      signInfo["signer_address"] = signer["address"];
+      signInfo["sign_message"] = null;
 
-      let addrInfo = await db_address.findOne({user_address: signer["address"]})
-      signedSigners.set(signer["address"], true)
+      let addrInfo = await db_address.findOne({
+        user_address: signer["address"],
+      });
+      signedSigners.set(signer["address"], true);
       if (addrInfo == null) continue;
-      let userInfo = await db_user.findByID(addrInfo["user_id"])
+      let userInfo = await db_user.findByID(addrInfo["user_id"]);
       if (userInfo == null) continue;
 
       signInfo["name"] = userInfo["name"];
       signInfo["picture"] = userInfo["picture"];
-      sm.push(signInfo)
+      sm.push(signInfo);
     }
   }
 
