@@ -199,38 +199,39 @@ app.post("/recovery", async function (req, res) {
 app.get("/txhs", async function (req, res) {
   const action = req.query.action;
   console.log(req.query);
-  const dict = req.query;
 
-  const page = dict.page;
-  const page_size = dict.page_size;
-  const order = dict.order;
+  const page = req.query.page;
+  const page_size = req.query.page_size;
+  const order = req.query.order;
+  let allow_fileds = {
+    from: req.query.from,
+    to: req.query.to,
+    txid: req.query.txid,
+    network_id: req.query.network_id,
+    from_type: req.query.from_type,
+    to_network_id: req.query.to_network_id,
+    block_num: req.query.block_num,
+    operation: req.query.operation,
+  };
+
+  let filter = Object.keys(allow_fileds)
+    .filter(
+      (key) => allow_fileds[key] !== null && allow_fileds[key] !== undefined
+    )
+    .reduce((acc, key) => ({ ...acc, [key]: allow_fileds[key] }), {});
   let result;
   switch (action) {
     case "search":
-      delete dict.action;
-      delete dict.page;
-      delete dict.page_size;
-      delete dict.order;
-      result = await db_txh.search(req.query, page, page_size, order);
+      result = await db_txh.search(filter, page, page_size, order);
       break;
     case "search_l2":
-      delete dict.action;
-      delete dict.page;
-      delete dict.page_size;
-      delete dict.order;
-
-      dict.type = [db_txh.TX_TYPE_L2ToL1, db_txh.TX_TYPE_L2ToL2];
-      result = await db_txh.search(req.query, page, page_size, order);
+      filter["type"] = [db_txh.TX_TYPE_L2ToL1, db_txh.TX_TYPE_L2ToL2];
+      result = await db_txh.search(filter, page, page_size, order);
       break;
     case "search_both_sides":
-      delete dict.action;
-      delete dict.page;
-      delete dict.page_size;
-      delete dict.order;
-
-      const address = dict.address;
-      const from = dict.from;
-      const to = dict.to;
+      const address = req.query.address;
+      const from = req.query.from;
+      const to = req.query.to;
 
       if (
         !util.has_value(address) ||
@@ -246,12 +247,9 @@ app.get("/txhs", async function (req, res) {
         return;
       }
 
-      result = await db_txh.search_both_sizes(
-        req.query,
-        page,
-        page_size,
-        order
-      );
+      filter["address"] = address;
+
+      result = await db_txh.search_both_sizes(filter, page, page_size, order);
       break;
     default:
       return res.json(util.Err(util.ErrCode.Unknown, "invalid action"));
@@ -397,12 +395,14 @@ app.get("/mtx/meta/:id", async (req, res) => {
   // return owner_address and mtx status
   let mtx = await db_txh.getByTxid(ret["txid"]);
   if (mtx != null) {
-      ret["status"] = mtx["status"];
+    ret["status"] = mtx["status"];
   }
 
-  let walletInfo = await db_wallet.findOne({wallet_address: ret["wallet_address"]});
+  let walletInfo = await db_wallet.findOne({
+    wallet_address: ret["wallet_address"],
+  });
   if (walletInfo != null) {
-      ret["owner_address"] = walletInfo["address"];
+    ret["owner_address"] = walletInfo["address"];
   }
   res.json(util.Succ(ret));
 });
