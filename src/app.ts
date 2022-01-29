@@ -273,17 +273,13 @@ app.get("/txhs", async function (req, res) {
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       });
 
+      // select * from thx where from == xxx;
+      let as_owner
       if (wallet !== null) {
-        result = await db_txh.search(
-          { from: wallet["wallet_address"] },
-          0, // Disable return with page group
-          page_size,
-          order
-        );
+        as_owner = wallet["wallet_address"];
       }
 
       // Secondly, the address as a signer, and the status is "Creating"
-
       let signers = await db_wallet.search({
         where: {
           address: address,
@@ -292,22 +288,13 @@ app.get("/txhs", async function (req, res) {
         raw: true,
       });
 
+      let as_signers = []
       for (let signer of signers) {
-        var txhs = await db_txh.search(
-          {
-            from: signer["address"],
-            status: db_txh.TransactionStatus.Creating,
-          },
-          0, // Disable return with page group
-          page_size,
-          order
-        );
-
-        result = result.concat(txhs);
+        // select * from thx where from in (y, y, y) and status = zzz
+        as_signers.push(signer["address"])
       }
 
-      // TODO: Page
-
+      result = await db_txh.search_with_multisig(as_owner, as_signers, page, page_size, order);
       break;
     default:
       return res.json(util.Err(util.ErrCode.Unknown, "invalid action"));

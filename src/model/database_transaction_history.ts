@@ -107,15 +107,12 @@ const delByTxid = (txid) => {
 const search = async function (filter_dict, page, page_size, order) {
   console.log("Search filter: ", filter_dict);
   // Seq will throw for all undefined keys in where options.  https://sequelize.org/v5/manual/upgrade-to-v5.html
-  if (filter_dict["txid"] === undefined){
-      filter_dict["txid"] = null;
-  }
 
   if (page) {
     console.log("page = ", page);
     console.log("page_size = ", page_size);
     if (order) {
-      console.log("Reverse order is enabled");
+      console.log("Reverse order is enabled with page");
       const { count, rows } = await thdb.findAndCountAll({
         where: filter_dict,
         order: [["updatedAt", "DESC"]],
@@ -170,6 +167,27 @@ const search = async function (filter_dict, page, page_size, order) {
     }
   }
 };
+
+// select * from thx where (from == as_owner) or (from in as_signers and status == creating)
+const search_with_multisig = async (as_owner: string, as_signers: string[], page, page_size, order) => {
+    let result = await thdb.findAndCountAll({
+        where: {
+            [Op.or]: [
+                {from: as_owner},
+                {
+                    [Op.and]: [
+                        {from: {[Op.in]: as_signers}},
+                        {status: TransactionStatus.Creating }
+                    ]
+                }
+            ],
+        },
+        limit: page_size,
+        offset: (page - 1) * page_size,
+        raw: true
+    })
+
+}
 
 const search_both_sizes = async function (filter_dict, page, page_size, order) {
   console.log("Search both sizes filter: ", filter_dict);
@@ -321,4 +339,5 @@ export {
   findAll,
   delByTxid,
   search_both_sizes,
+  search_with_multisig
 };
