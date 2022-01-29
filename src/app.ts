@@ -430,10 +430,19 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
     req.params.mtxid
   );
   console.log(sm);
+  // get all sigers
+  let meta = await db_multisig.findMultisigMetaByConds({txid: req.params.mtxid})
+  if (meta == null) {
+      return res.json(util.Succ(sm));
+  }
+  let allSigners = await db_wallet.findAll({wallet_address: meta["from"]})
+  let signedSigners: Map<string, boolean>;
+
   if (sm !== null) {
     for (var i = 0; i < sm.length; i ++) {
       // get user_id
       let addrInfo = await db_address.findOne({user_address: sm[i]["signer_address"]})
+      signedSigners.set(sm[i]["signer_address"], true)
       if (addrInfo == null) continue;
       let userInfo = await db_user.findByID(addrInfo["user_id"])
       if (userInfo == null) continue;
@@ -441,7 +450,34 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
       sm[i]["name"] = userInfo["name"];
       sm[i]["picture"] = userInfo["picture"];
     }
+
+    let signedSize = sm.length
+    for (var i = 0; i < allSigners.length; i ++) {
+      let signer = allSigners[i];
+      if (signedSigners.get(signer["address"]) != null) {
+          continue
+      }
+
+      // FIXME very tricky
+      let signInfo = sm[sm.length - 1];
+      signInfo["id"] = i + signedSize
+      signInfo["mtxid"] = req.params.mtxid
+      signInfo["signer_address"] = signer["address"]
+      signInfo["sign_message"] = null
+
+      let addrInfo = await db_address.findOne({user_address: signer["address"]})
+      signedSigners.set(signer["address"], true)
+      if (addrInfo == null) continue;
+      let userInfo = await db_user.findByID(addrInfo["user_id"])
+      if (userInfo == null) continue;
+
+      signInfo["name"] = userInfo["name"];
+      signInfo["picture"] = userInfo["picture"];
+      sm.push(signInfo)
+    }
   }
+
+  // get the unsigned signer info
   return res.json(util.Succ(sm));
 });
 

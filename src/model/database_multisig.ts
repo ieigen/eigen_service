@@ -42,7 +42,7 @@ const sequelizeSignHistory = new Sequelize({
   storage: "./data/db_sign_history.sqlite",
 });
 
-const signHistoryDB = sequelizeSignHistory.define("sign_history", {
+export const signHistoryDB = sequelizeSignHistory.define("sign_history", {
   mtxid: DataTypes.INTEGER,
   signer_address: DataTypes.CITEXT,
   sign_message: DataTypes.STRING,
