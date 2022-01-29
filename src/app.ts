@@ -300,6 +300,7 @@ app.get("/txhs", async function (req, res) {
       return res.json(util.Err(util.ErrCode.Unknown, "invalid action"));
   }
 
+  console.log("result", result);
   //OPT: use batch
   if (result != null) {
     let transactions = result["transactions"];
@@ -508,8 +509,7 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
       signInfo["mtxid"] = req.params.mtxid;
       signInfo["signer_address"] = sm[i]["signer_address"];
       signInfo["sign_message"] = null;
-      //signInfo["createAt"] = sm[i]["createAt"]
-      //signInfo["updateAt"] = sm[i]["updateAt"]
+      signInfo["status"] = sm[i]["status"]
       resultsm.push(signInfo)
     }
 
@@ -538,6 +538,7 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
 
       signInfo["name"] = userInfo["name"];
       signInfo["picture"] = userInfo["picture"];
+      signInfo["status"] = db_txh.TransactionStatus.Creating
       resultsm.push(signInfo);
     }
   }
