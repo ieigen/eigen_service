@@ -487,6 +487,7 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
     req.params.mtxid
   );
   console.log("signed message", sm);
+  let resultsm = []
   // get all sigers
   let meta = await db_multisig.findMultisigMetaByConds({id: req.params.mtxid})
   console.log("meta", meta)
@@ -500,7 +501,7 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
   if (sm !== null) {
     for (var i = 0; i < sm.length; i++) {
       // get user_id
-
+      let signInfo = {}
       let addrInfo = await db_address.findOne({
         user_address: sm[i]["signer_address"],
       });
@@ -509,19 +510,27 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
       let userInfo = await db_user.findByID(addrInfo["user_id"]);
       if (userInfo == null) continue;
 
-      sm[i]["name"] = userInfo["name"];
-      sm[i]["picture"] = userInfo["picture"];
+      signInfo["name"] = userInfo["name"];
+      signInfo["picture"] = userInfo["picture"];
+      signInfo["id"] = i;
+      signInfo["mtxid"] = req.params.mtxid;
+      signInfo["signer_address"] = sm[i]["signer_address"];
+      signInfo["sign_message"] = null;
+      signInfo["createAt"] = sm[i]["createAt"]
+      signInfo["updateAt"] = sm[i]["updateAt"]
+      resultsm.push(signInfo)
     }
 
-    let signedSize = sm.length;
+    let signedSize = resultsm.length;
     for (var i = 0; i < allSigners.length; i++) {
       let signer = allSigners[i];
-      if (signedSigners.get(signer["address"]) != null) {
+      if (signedSigners !== undefined && signedSigners.has(signer["address"])) {
         continue;
       }
 
       // FIXME very tricky
-      let signInfo = sm[sm.length - 1];
+      let signInfo = {}
+      if (resultsm.length > 0) signInfo = resultsm[resultsm.length - 1];
       signInfo["id"] = i + signedSize;
       signInfo["mtxid"] = req.params.mtxid;
       signInfo["signer_address"] = signer["address"];
@@ -537,12 +546,12 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
 
       signInfo["name"] = userInfo["name"];
       signInfo["picture"] = userInfo["picture"];
-      sm.push(signInfo);
+      resultsm.push(signInfo);
     }
   }
 
   // get the unsigned signer info
-  return res.json(util.Succ(sm));
+  return res.json(util.Succ(resultsm));
 });
 
 // get user, his/her friends, his/her strangers by id
