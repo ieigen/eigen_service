@@ -232,26 +232,27 @@ app.get("/txhs", async function (req, res) {
     case "search_both_sides":
       const from = req.query.from;
       const to = req.query.to;
+      const address = req.query.address;
 
-      if (
-        !util.has_value(address) ||
-        util.has_value(from) ||
-        util.has_value(to)
-      ) {
-        res.json(
-          util.Err(
-            util.ErrCode.Unknown,
-            "wrong search pattern for both sized, address should be given, neither from or to should not be given"
-          )
-        );
-        return;
-      }
+      //   if (
+      //     !util.has_value(address) ||
+      //     util.has_value(from) ||
+      //     util.has_value(to)
+      //   ) {
+      //     res.json(
+      //       util.Err(
+      //         util.ErrCode.Unknown,
+      //         "wrong search pattern for both sized, address should be given, neither from or to should not be given"
+      //       )
+      //     );
+      //     return;
+      //   }
 
-      filter["address"] = address;
+      //   filter["address"] = address;
 
-      result = await db_txh.search_both_sizes(filter, page, page_size, order);
-      break;
-    case "search_multisig":
+      //   result = await db_txh.search_both_sizes(filter, page, page_size, order);
+      //   break;
+      // case "search_multisig":
       if (
         !util.has_value(address) ||
         util.has_value(from) ||
@@ -483,25 +484,27 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
   if (!util.has_value(req.params.mtxid)) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'mtxid'"));
   }
-  let sm = await db_multisig.findSignHistoryByMtxid(
-    req.params.mtxid
-  );
+  let sm = await db_multisig.findSignHistoryByMtxid(req.params.mtxid);
   console.log("signed message", sm);
-  let resultsm = []
+  let resultsm = [];
   // get all sigers
-  let meta = await db_multisig.findMultisigMetaByConds({id: req.params.mtxid})
-  console.log("meta", meta)
+  let meta = await db_multisig.findMultisigMetaByConds({
+    id: req.params.mtxid,
+  });
+  console.log("meta", meta);
   if (meta == null) {
     return res.json(util.Succ(sm));
   }
-  let allSigners = await db_wallet.findAll({ wallet_address: meta["wallet_address"] });
-  let signedSigners = new Map<string, boolean>();
-  console.log(allSigners)
+  let allSigners = await db_wallet.findAll({
+    wallet_address: meta["wallet_address"],
+  });
+  let signedSigners: Map<string, boolean>;
+  console.log(allSigners);
 
   if (sm !== null) {
     for (var i = 0; i < sm.length; i++) {
       // get user_id
-      let signInfo = {}
+      let signInfo = {};
       let addrInfo = await db_address.findOne({
         user_address: sm[i]["signer_address"],
       });
@@ -529,7 +532,7 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
       }
 
       // FIXME very tricky
-      let signInfo = {}
+      let signInfo = {};
       if (resultsm.length > 0) signInfo = resultsm[resultsm.length - 1];
       signInfo["id"] = i + signedSize;
       signInfo["mtxid"] = req.params.mtxid;
