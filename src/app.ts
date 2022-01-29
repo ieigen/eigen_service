@@ -495,7 +495,6 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
   if (sm !== null) {
     for (var i = 0; i < sm.length; i++) {
       // get user_id
-      let signInfo = {};
       let addrInfo = await db_address.findOne({
         user_address: sm[i]["signer_address"],
       });
@@ -504,13 +503,15 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
       let userInfo = await db_user.findByID(addrInfo["user_id"]);
       if (userInfo == null) continue;
 
-      signInfo["name"] = userInfo["name"];
-      signInfo["picture"] = userInfo["picture"];
-      signInfo["id"] = i;
-      signInfo["mtxid"] = req.params.mtxid;
-      signInfo["signer_address"] = sm[i]["signer_address"];
-      signInfo["sign_message"] = null;
-      signInfo["status"] = sm[i]["status"]
+      let signInfo = {
+        name: userInfo["name"],
+        picture: userInfo["picture"],
+        id: i,
+        mtxid: req.params.mtxid,
+        signer_address: sm[i]["signer_address"],
+        sign_message: null,
+        status: sm[i]["status"]
+      }
       resultsm.push(signInfo)
     }
 
@@ -521,14 +522,6 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
         continue;
       }
 
-      // FIXME very tricky
-      let signInfo = {};
-      if (resultsm.length > 0) signInfo = resultsm[resultsm.length - 1];
-      signInfo["id"] = i + signedSize;
-      signInfo["mtxid"] = req.params.mtxid;
-      signInfo["signer_address"] = signer["address"];
-      signInfo["sign_message"] = null;
-
       let addrInfo = await db_address.findOne({
         user_address: signer["address"],
       });
@@ -537,9 +530,15 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
       let userInfo = await db_user.findByID(addrInfo["user_id"]);
       if (userInfo == null) continue;
 
-      signInfo["name"] = userInfo["name"];
-      signInfo["picture"] = userInfo["picture"];
-      signInfo["status"] = db_txh.TransactionStatus.Creating
+      let signInfo = {
+        id: i + signedSize,
+        mtxid: req.params.mtxid,
+        signer_address: signer["address"],
+        sign_message: null,
+        name: userInfo["name"],
+        picture: userInfo["picture"],
+        status: db_txh.TransactionStatus.Creating
+      };
       resultsm.push(signInfo);
     }
   }
