@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { Sequelize, DataTypes, Op } from "sequelize";
+// FIXME don't depend another model, move them to controller
 import * as walletdb from "./database_wallet";
 import * as txhdb from "./database_transaction_history";
 

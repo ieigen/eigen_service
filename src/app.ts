@@ -291,7 +291,7 @@ app.get("/txhs", async function (req, res) {
       let as_signers = []
       for (let signer of signers) {
         // select * from thx where from in (y, y, y) and status = zzz
-        as_signers.push(signer["address"])
+        as_signers.push(signer["wallet_address"])
       }
 
       result = await db_txh.search_with_multisig(as_owner, as_signers, page, page_size, order);
@@ -301,17 +301,19 @@ app.get("/txhs", async function (req, res) {
   }
 
   //OPT: use batch
-  let transactions = result["transactions"];
-  for (var i = 0; i < transactions.length; i++) {
-    let txid = transactions[i]["txid"];
-    if (!util.has_value(txid)) continue;
-    let res = await db_multisig.findMultisigMetaByConds({ txid: txid });
-    if (res == null) continue;
-    if (!util.has_value(res["id"])) continue;
-    transactions[i]["mtxid"] = res["id"];
+  if (result != null) {
+    let transactions = result["transactions"];
+    for (var i = 0; i < transactions.length; i++) {
+      let txid = transactions[i]["txid"];
+      if (!util.has_value(txid)) continue;
+      let res = await db_multisig.findMultisigMetaByConds({ txid: txid });
+      if (res == null) continue;
+      if (!util.has_value(res["id"])) continue;
+      transactions[i]["mtxid"] = res["id"];
+    }
+    console.log(transactions);
+    result["transactions"] = transactions;
   }
-  console.log(transactions);
-  result["transactions"] = transactions;
   return res.json(util.Succ(result));
 });
 
