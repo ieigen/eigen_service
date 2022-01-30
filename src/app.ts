@@ -230,11 +230,10 @@ app.get("/txhs", async function (req, res) {
       filter["type"] = [db_txh.TX_TYPE_L2ToL1, db_txh.TX_TYPE_L2ToL2];
       result = await db_txh.search(filter, page, page_size, order);
       break;
-    case "search_both_sides":
+    case "search_both_sides": // Search both sides now is a legacy name, it means search multi sig transcations
       const from = req.query.from;
       const to = req.query.to;
       const address = req.query.address;
-
       //   if (
       //     !util.has_value(address) ||
       //     util.has_value(from) ||
@@ -275,7 +274,7 @@ app.get("/txhs", async function (req, res) {
       });
 
       // select * from thx where from == xxx;
-      let as_owners = [address]
+      let as_owners = [address];
       if (wallet !== null) {
         as_owners.push(wallet["wallet_address"]);
       }
@@ -289,13 +288,19 @@ app.get("/txhs", async function (req, res) {
         raw: true,
       });
 
-      let as_signers = []
+      let as_signers = [];
       for (let signer of signers) {
         // select * from thx where from in (y, y, y) and status = zzz
-        as_signers.push(signer["wallet_address"])
+        as_signers.push(signer["wallet_address"]);
       }
 
-      result = await db_txh.search_with_multisig(as_owners, as_signers, page, page_size, order);
+      result = await db_txh.search_with_multisig(
+        as_owners,
+        as_signers,
+        page,
+        page_size,
+        order
+      );
       break;
     default:
       return res.json(util.Err(util.ErrCode.Unknown, "invalid action"));
@@ -510,9 +515,9 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
         mtxid: req.params.mtxid,
         signer_address: sm[i]["signer_address"],
         sign_message: null,
-        status: sm[i]["status"]
-      }
-      resultsm.push(signInfo)
+        status: sm[i]["status"],
+      };
+      resultsm.push(signInfo);
     }
 
     let signedSize = resultsm.length;
@@ -537,7 +542,7 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
         sign_message: null,
         name: userInfo["name"],
         picture: userInfo["picture"],
-        status: db_txh.TransactionStatus.Creating
+        status: db_txh.TransactionStatus.Creating,
       };
       resultsm.push(signInfo);
     }
