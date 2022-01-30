@@ -1,4 +1,9 @@
-import { Sequelize, Op, DataTypes } from "sequelize";
+import { Sequelize, Op, DataTypes, Order } from "sequelize";
+
+const getOrder = (order): Order => {
+  if (order === "1") return [["updatedAt", "DESC"]];
+  return [];
+};
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
@@ -16,7 +21,7 @@ export enum TransactionStatus {
   Failed = -1,
   Sent = 0,
   Success = 1,
-  Confirming = 2,
+  Creating = 2,
 }
 
 const thdb = sequelize.define("transaction_history_st", {
@@ -100,65 +105,75 @@ const getByTxid = function (txid) {
   return thdb.findOne({ where: { txid } });
 };
 
+const delByTxid = (txid) => {
+  return thdb.destroy({ where: { txid: txid } });
+};
+
 const search = async function (filter_dict, page, page_size, order) {
   console.log("Search filter: ", filter_dict);
+  // Seq will throw for all undefined keys in where options.  https://sequelize.org/v5/manual/upgrade-to-v5.html
 
   if (page) {
     console.log("page = ", page);
     console.log("page_size = ", page_size);
-    if (order) {
-      console.log("Reverse order is enabled");
-      const { count, rows } = await thdb.findAndCountAll({
-        where: filter_dict,
-        order: [["updatedAt", "DESC"]],
-        limit: page_size,
-        offset: (page - 1) * page_size,
-      });
-      console.log("count = ", count);
-      console.log("rows = ", rows);
-      const total_page = Math.ceil(count / page_size);
-      return {
-        transactions: rows,
-        total_page,
-      };
-    } else {
-      const { count, rows } = await thdb.findAndCountAll({
-        where: filter_dict,
-        limit: page_size,
-        offset: (page - 1) * page_size,
-      });
-      console.log("count = ", count);
-      console.log("transactions = ", rows);
-      const total_page = Math.ceil(count / page_size);
-      return {
-        transactions: rows,
-        total_page,
-      };
-    }
+
+    const { count, rows } = await thdb.findAndCountAll({
+      where: filter_dict,
+      order: getOrder(order),
+      limit: page_size,
+      offset: (page - 1) * page_size,
+      raw: true,
+    });
+    console.log("count = ", count);
+    console.log("rows = ", rows);
+    const total_page = Math.ceil(count / page_size);
+    return {
+      transactions: rows,
+      total_page,
+    };
   } else {
-    if (order) {
-      console.log("Reverse order is enabled");
-      let list = await thdb.findAll({
-        where: filter_dict,
-        order: [["updatedAt", "DESC"]],
-        raw: true,
-      });
-      return {
-        transactions: list,
-        total_page: list.length,
-      };
-    } else {
-      let list = await thdb.findAll({
-        where: filter_dict,
-        raw: true,
-      });
-      console.log("Find all and returns list: ", list);
-      return {
-        transactions: list,
-        total_page: list.length,
-      };
-    }
+    let list = await thdb.findAll({
+      where: filter_dict,
+      order: getOrder(order),
+      raw: true,
+    });
+    return {
+      transactions: list,
+      total_page: list.length,
+    };
   }
+};
+
+// select * from thx where (from in as_owners) or (from in as_signers and status == creating)
+const search_with_multisig = async (
+  as_owners: string[],
+  as_signers: string[],
+  page,
+  page_size,
+  order
+) => {
+  let { count, rows } = await thdb.findAndCountAll({
+    where: {
+      [Op.or]: [
+        { from: { [Op.in]: as_owners } },
+        {
+          [Op.and]: [
+            { from: { [Op.in]: as_signers } },
+            { status: TransactionStatus.Creating },
+          ],
+        },
+      ],
+    },
+    limit: page_size,
+    order: getOrder(order),
+    offset: (page - 1) * page_size,
+    raw: true,
+  });
+  let total_page = Math.ceil(count / page_size);
+  return {
+    transactions: rows,
+    total_page,
+  };
 };
 
 const search_both_sizes = async function (filter_dict, page, page_size, order) {
@@ -182,46 +197,30 @@ const search_both_sizes = async function (filter_dict, page, page_size, order) {
   if (page) {
     console.log("page = ", page);
     console.log("page_size = ", page_size);
-    if (order) {
-      console.log("Reverse order is enabled");
 
-      const { count, rows } = await thdb.findAndCountAll({
-        ...address_filter,
-        order: [["updatedAt", "DESC"]],
-        limit: page_size,
-        offset: (page - 1) * page_size,
-      });
-      console.log("count = ", count);
-      console.log("rows = ", rows);
-      const total_page = Math.ceil(count / page_size);
-      return {
-        transactions: rows,
-        total_page,
-      };
-    } else {
-      const { count, rows } = await thdb.findAndCountAll({
-        ...address_filter,
-        limit: page_size,
-        offset: (page - 1) * page_size,
-      });
-      console.log("count = ", count);
-      console.log("transactions = ", rows);
-      const total_page = Math.ceil(count / page_size);
-      return {
-        transactions: rows,
-        total_page,
-      };
-    }
+    console.log("Reverse order is enabled");
+
+    const { count, rows } = await thdb.findAndCountAll({
+      ...address_filter,
+      order: getOrder(order),
+      limit: page_size,
+      offset: (page - 1) * page_size,
+      raw: true,
+    });
+    console.log("count = ", count);
+    console.log("rows = ", rows);
+    const total_page = Math.ceil(count / page_size);
+    return {
+      transactions: rows,
+      total_page,
+    };
   } else {
     let filter: any = address_filter;
 
-    if (order) {
-      console.log("Reverse order is enabled");
-      filter = {
-        ...address_filter,
-        order: [["updatedAt", "DESC"]],
-      };
-    }
+    filter = {
+      ...address_filter,
+      order: getOrder(order),
+    };
 
     return await thdb.findAll(filter);
   }
@@ -307,5 +306,7 @@ export {
   search,
   getByTxid,
   findAll,
+  delByTxid,
   search_both_sizes,
+  search_with_multisig,
 };

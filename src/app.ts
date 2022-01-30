@@ -17,6 +17,8 @@ import * as db_user from "./model/database_id";
 import { Session } from "./session";
 import * as TOKEN_CONSTANS from "./token/constants";
 import * as db_allowance from "./token/allowance";
+import * as db_multisig from "./model/database_multisig";
+import * as db_wallet from "./model/database_wallet";
 
 import bodyParser from "body-parser";
 const app = express();
@@ -197,42 +199,60 @@ app.post("/recovery", async function (req, res) {
 app.get("/txhs", async function (req, res) {
   const action = req.query.action;
   console.log(req.query);
-  const dict = req.query;
 
-  const page = dict.page;
-  const page_size = dict.page_size;
-  const order = dict.order;
+  const page = req.query.page;
+  const page_size = req.query.page_size;
+  //TODO donot use if to query by order, it makes the code ugly
+  const order = req.query.order;
+  const address = req.query.address;
+  let allow_fileds = {
+    from: req.query.from,
+    to: req.query.to,
+    txid: req.query.txid,
+    network_id: req.query.network_id,
+    from_type: req.query.from_type,
+    to_network_id: req.query.to_network_id,
+    block_num: req.query.block_num,
+    operation: req.query.operation,
+  };
+
+  let filter = Object.keys(allow_fileds)
+    .filter(
+      (key) => allow_fileds[key] !== null && allow_fileds[key] !== undefined
+    )
+    .reduce((acc, key) => ({ ...acc, [key]: allow_fileds[key] }), {});
+  let result;
   switch (action) {
     case "search":
-      delete dict.action;
-      delete dict.page;
-      delete dict.page_size;
-      delete dict.order;
-      return res.json(
-        util.Succ(await db_txh.search(req.query, page, page_size, order))
-      );
+      result = await db_txh.search(filter, page, page_size, order);
       break;
     case "search_l2":
-      delete dict.action;
-      delete dict.page;
-      delete dict.page_size;
-      delete dict.order;
-
-      dict.type = [db_txh.TX_TYPE_L2ToL1, db_txh.TX_TYPE_L2ToL2];
-      return res.json(
-        util.Succ(await db_txh.search(req.query, page, page_size, order))
-      );
+      filter["type"] = [db_txh.TX_TYPE_L2ToL1, db_txh.TX_TYPE_L2ToL2];
+      result = await db_txh.search(filter, page, page_size, order);
       break;
-    case "search_both_sides":
-      delete dict.action;
-      delete dict.page;
-      delete dict.page_size;
-      delete dict.order;
+    case "search_both_sides": // Search both sides now is a legacy name, it means search multi sig transcations
+      const from = req.query.from;
+      const to = req.query.to;
+      const address = req.query.address;
+      //   if (
+      //     !util.has_value(address) ||
+      //     util.has_value(from) ||
+      //     util.has_value(to)
+      //   ) {
+      //     res.json(
+      //       util.Err(
+      //         util.ErrCode.Unknown,
+      //         "wrong search pattern for both sized, address should be given, neither from or to should not be given"
+      //       )
+      //     );
+      //     return;
+      //   }
 
-      const address = dict.address;
-      const from = dict.from;
-      const to = dict.to;
+      //   filter["address"] = address;
 
+      //   result = await db_txh.search_both_sizes(filter, page, page_size, order);
+      //   break;
+      // case "search_multisig":
       if (
         !util.has_value(address) ||
         util.has_value(from) ||
@@ -247,16 +267,63 @@ app.get("/txhs", async function (req, res) {
         return;
       }
 
-      return res.json(
-        util.Succ(
-          await db_txh.search_both_sizes(req.query, page, page_size, order)
-        )
+      // Firstly, the address as an owner,
+      let wallets = await db_wallet.findAll({
+        address,
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
+      });
+
+      // select * from thx where from == xxx;
+      let as_owners = [address];
+      if (wallets !== null) {
+        for (let wallet of wallets) {
+          as_owners.push(wallet["wallet_address"]);
+        }
+      }
+
+      // Secondly, the address as a signer, and the status is "Creating"
+      let signers = await db_wallet.search({
+        where: {
+          address: address,
+          role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+        },
+        raw: true,
+      });
+
+      let as_signers = [];
+      for (let signer of signers) {
+        // select * from thx where from in (y, y, y) and status = zzz
+        as_signers.push(signer["wallet_address"]);
+      }
+
+      result = await db_txh.search_with_multisig(
+        as_owners,
+        as_signers,
+        page,
+        page_size,
+        order
       );
       break;
     default:
       return res.json(util.Err(util.ErrCode.Unknown, "invalid action"));
-      break;
   }
+
+  console.log("result", result);
+  //OPT: use batch
+  if (result != null) {
+    let transactions = result["transactions"];
+    for (var i = 0; i < transactions.length; i++) {
+      let txid = transactions[i]["txid"];
+      if (!util.has_value(txid)) continue;
+      let res = await db_multisig.findMultisigMetaByConds({ txid: txid });
+      if (res == null) continue;
+      if (!util.has_value(res["id"])) continue;
+      transactions[i]["mtxid"] = res["id"];
+    }
+    console.log(transactions);
+    result["transactions"] = transactions;
+  }
+  return res.json(util.Succ(result));
 });
 
 app.get("/txh", async function (req, res) {
@@ -352,6 +419,139 @@ app.put("/txh/:txid", async function (req, res) {
     sub_txid: req.body.sub_txid || "",
   });
   res.json(util.Succ(result));
+});
+
+// add meta
+app.post("/mtx/meta", async (req, res) => {
+  let ret = await db_multisig.addMultisigMeta(
+    req.body.network_id,
+    req.body.user_id,
+    req.body.wallet_address,
+    req.body.to,
+    req.body.value,
+    req.body.data
+  );
+  res.json(util.Succ(ret));
+});
+
+// update txid
+app.put("/mtx/meta", async (req, res) => {
+  if (!util.has_value(req.body.id)) {
+    return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'id'"));
+  }
+  let ret = await db_multisig.updateMultisigMeta(req.body.id, req.body.txid);
+  res.json(util.Succ(ret));
+});
+
+app.get("/mtx/meta/:id", async (req, res) => {
+  if (!util.has_value(req.params.id)) {
+    return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'id'"));
+  }
+  let ret = await db_multisig.findMultisigMetaByConds({ id: req.params.id });
+  // return owner_address and mtx status
+  let mtx = await db_txh.getByTxid(ret["txid"]);
+  if (mtx != null) {
+    ret["status"] = mtx["status"];
+  }
+
+  let walletInfo = await db_wallet.findOne({
+    wallet_address: ret["wallet_address"],
+  });
+  if (walletInfo != null) {
+    ret["owner_address"] = walletInfo["address"];
+  }
+  res.json(util.Succ(ret));
+});
+
+// add sign message
+app.post("/mtx/sign", async (req, res) => {
+  if (!util.has_value(req.body.mtxid)) {
+    return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'mtxid'"));
+  }
+  let ret = await db_multisig.addSignMessage(
+    req.body.mtxid,
+    req.body.signer_address,
+    req.body.signer_message,
+    req.body.status
+  );
+  res.json(util.Succ(ret));
+});
+
+// query sign message
+app.get("/mtx/sign/:mtxid", async (req, res) => {
+  if (!util.has_value(req.params.mtxid)) {
+    return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'mtxid'"));
+  }
+  let sm = await db_multisig.findSignHistoryByMtxid(req.params.mtxid);
+  console.log("signed message", sm);
+  let resultsm = [];
+  // get all sigers
+  let meta = await db_multisig.findMultisigMetaByConds({
+    id: req.params.mtxid,
+  });
+  console.log("meta", meta);
+  if (meta == null) {
+    return res.json(util.Succ(sm));
+  }
+  let allSigners = await db_wallet.findAll({
+    wallet_address: meta["wallet_address"],
+  });
+  console.log(allSigners);
+  let signedSigners = new Map<string, boolean>();
+
+  if (sm !== null) {
+    for (var i = 0; i < sm.length; i++) {
+      // get user_id
+      let addrInfo = await db_address.findOne({
+        user_address: sm[i]["signer_address"],
+      });
+      signedSigners.set(sm[i]["signer_address"], true);
+      if (addrInfo == null) continue;
+      let userInfo = await db_user.findByID(addrInfo["user_id"]);
+      if (userInfo == null) continue;
+
+      let signInfo = {
+        name: userInfo["name"],
+        picture: userInfo["picture"],
+        id: i,
+        mtxid: req.params.mtxid,
+        signer_address: sm[i]["signer_address"],
+        sign_message: sm[i]["sign_message"],
+        status: sm[i]["status"]
+      }
+      resultsm.push(signInfo)
+    }
+
+    let signedSize = resultsm.length;
+    for (var i = 0; i < allSigners.length; i++) {
+      let signer = allSigners[i];
+      if (signedSigners.has(signer["address"])) {
+        continue;
+      }
+
+      let addrInfo = await db_address.findOne({
+        user_address: signer["address"],
+      });
+      signedSigners.set(signer["address"], true);
+      if (addrInfo == null) continue;
+      let userInfo = await db_user.findByID(addrInfo["user_id"]);
+      if (userInfo == null) continue;
+
+      let signInfo = {
+        id: i + signedSize,
+        mtxid: req.params.mtxid,
+        signer_address: signer["address"],
+        sign_message: null,
+        name: userInfo["name"],
+        picture: userInfo["picture"],
+        status: db_txh.TransactionStatus.Creating,
+      };
+      resultsm.push(signInfo);
+    }
+  }
+
+  // get the unsigned signer info
+  return res.json(util.Succ(resultsm));
 });
 
 // get user, his/her friends, his/her strangers by id
