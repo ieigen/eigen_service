@@ -1,9 +1,9 @@
-import { Sequelize, Op, DataTypes } from "sequelize";
+import { Sequelize, Op, DataTypes, Order } from "sequelize";
 
-// TODO: change `if(order)` to get_order
-const get_order = (order) => {
+// TODO: change `if(order)` to getOrder
+const getOrder = (order): Order => {
     if (order) return [["updatedAt", "DESC"]];
-    return [["updatedAt"]]
+    return []
 }
 
 const sequelize = new Sequelize({
@@ -176,7 +176,6 @@ const search = async function (filter_dict, page, page_size, order) {
 
 // select * from thx where (from in as_owners) or (from in as_signers and status == creating)
 const search_with_multisig = async (as_owners: string[], as_signers: string[], page, page_size, order) => {
-    if (order) {
       let {count, rows} = await thdb.findAndCountAll({
           where: {
               [Op.or]: [
@@ -190,7 +189,7 @@ const search_with_multisig = async (as_owners: string[], as_signers: string[], p
               ],
           },
           limit: page_size,
-          order: [["updatedAt", "DESC"]],
+          order: getOrder(order),
           offset: (page - 1) * page_size,
           raw: true
       })
@@ -199,29 +198,6 @@ const search_with_multisig = async (as_owners: string[], as_signers: string[], p
           transactions: rows,
           total_page,
       }
-    } else {
-      let {count, rows} = await thdb.findAndCountAll({
-          where: {
-              [Op.or]: [
-                  { from: {[Op.in]: as_owners} },
-                  {
-                      [Op.and]: [
-                          {from: {[Op.in]: as_signers}},
-                          {status: TransactionStatus.Creating }
-                      ]
-                  }
-              ],
-          },
-          limit: page_size,
-          offset: (page - 1) * page_size,
-          raw: true
-      })
-      let total_page = Math.ceil(count / page_size);
-      return {
-          transactions: rows,
-          total_page,
-      }
-    }
 }
 
 const search_both_sizes = async function (filter_dict, page, page_size, order) {
