@@ -268,15 +268,17 @@ app.get("/txhs", async function (req, res) {
       }
 
       // Firstly, the address as an owner,
-      let wallet = await db_wallet.findOne({
+      let wallets = await db_wallet.findAll({
         address,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       });
 
       // select * from thx where from == xxx;
       let as_owners = [address];
-      if (wallet !== null) {
-        as_owners.push(wallet["wallet_address"]);
+      if (wallets !== null) {
+        for (let wallet of wallets) {
+          as_owners.push(wallet["wallet_address"]);
+        }
       }
 
       // Secondly, the address as a signer, and the status is "Creating"
