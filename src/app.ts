@@ -202,7 +202,6 @@ app.get("/txhs", async function (req, res) {
 
   const page = req.query.page;
   const page_size = req.query.page_size;
-  //TODO donot use if to query by order, it makes the code ugly
   const order = req.query.order;
   const address = req.query.address;
   let allow_fileds = {
@@ -234,25 +233,6 @@ app.get("/txhs", async function (req, res) {
       const from = req.query.from;
       const to = req.query.to;
       const address = req.query.address;
-      //   if (
-      //     !util.has_value(address) ||
-      //     util.has_value(from) ||
-      //     util.has_value(to)
-      //   ) {
-      //     res.json(
-      //       util.Err(
-      //         util.ErrCode.Unknown,
-      //         "wrong search pattern for both sized, address should be given, neither from or to should not be given"
-      //       )
-      //     );
-      //     return;
-      //   }
-
-      //   filter["address"] = address;
-
-      //   result = await db_txh.search_both_sizes(filter, page, page_size, order);
-      //   break;
-      // case "search_multisig":
       if (
         !util.has_value(address) ||
         util.has_value(from) ||
@@ -299,6 +279,7 @@ app.get("/txhs", async function (req, res) {
       result = await db_txh.search_with_multisig(
         as_owners,
         as_signers,
+        filter,
         page,
         page_size,
         order
