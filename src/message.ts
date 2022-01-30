@@ -1,6 +1,7 @@
 const http = require("http");
 const { Server } = require("socket.io");
 import * as txh from "./model/database_transaction_history";
+import * as db_wallet from "./model/database_wallet";
 import { Session } from "./session";
 import PubSub from "pubsub-js";
 
@@ -43,10 +44,22 @@ module.exports = function (app) {
       }
 
       // get unconfirmed tx list
-      let confirming_list = await txh.search(
+      let as_owners = [data.from]
+      let wallets = await db_wallet.findAll({
+        address: data.from,
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
+      });
+      if (wallets) {
+        for (let wallet of wallets) {
+          as_owners.push(wallet["wallet_address"]);
+        }
+      }
+
+      let confirming_list = await txh.search_with_multisig(
+        as_owners,
+        [],
         {
           network_id: data.network_id,
-          from: data.from,
           status: txh.TransactionStatus.Sent,
         },
         0,
@@ -55,9 +68,11 @@ module.exports = function (app) {
       );
       console.log(confirming_list);
       let txid_list: string[] = [];
-      for (var i = 0; i < confirming_list.transactions.length; i++) {
-        console.log(confirming_list.transactions[i]);
-        txid_list.push(confirming_list.transactions[i]["txid"]);
+      if (confirming_list.transactions) {
+        for (var i = 0; i < confirming_list.transactions.length; i++) {
+          console.log(confirming_list.transactions[i]);
+          txid_list.push(confirming_list.transactions[i]["txid"]);
+        }
       }
       console.log("Comfirming", txid_list);
       socket.emit("confirming", {

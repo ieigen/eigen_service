@@ -144,10 +144,11 @@ const search = async function (filter_dict, page, page_size, order) {
   }
 };
 
-// select * from thx where (from in as_owners) or (from in as_signers and status == creating)
+// select * from thx where ((from in as_owners) or (from in as_signers and status == creating)) and other filters
 const search_with_multisig = async (
   as_owners: string[],
   as_signers: string[],
+  other_filters,
   page,
   page_size,
   order
@@ -155,11 +156,17 @@ const search_with_multisig = async (
   let { count, rows } = await thdb.findAndCountAll({
     where: {
       [Op.or]: [
-        { from: { [Op.in]: as_owners } },
+        {
+          [Op.and]: [
+            { from: { [Op.in]: as_owners } },
+            other_filters
+          ]
+        },
         {
           [Op.and]: [
             { from: { [Op.in]: as_signers } },
             { status: TransactionStatus.Creating },
+            other_filters
           ],
         },
       ],
