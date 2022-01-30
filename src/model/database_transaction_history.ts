@@ -1,7 +1,7 @@
 import { Sequelize, Op, DataTypes, Order } from "sequelize";
 
 const getOrder = (order): Order => {
-  if (order) return [["updatedAt", "DESC"]];
+  if (order === 1) return [["updatedAt", "DESC"]];
   return [];
 };
 
