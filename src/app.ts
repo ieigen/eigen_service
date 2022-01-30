@@ -516,10 +516,10 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
         id: i,
         mtxid: req.params.mtxid,
         signer_address: sm[i]["signer_address"],
-        sign_message: null,
-        status: sm[i]["status"],
-      };
-      resultsm.push(signInfo);
+        sign_message: sm[i]["sign_message"],
+        status: sm[i]["status"]
+      }
+      resultsm.push(signInfo)
     }
 
     let signedSize = resultsm.length;
