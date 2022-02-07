@@ -578,7 +578,6 @@ module.exports = function (app) {
         const wallet_address = found_wallet["wallet_address"];
         console.log("Wallet address found: ", wallet_address);
         console.log("Req body: ", req.body);
-        const sign_message = req.body.sign_message;
         const name = req.body.name;
         const status = req.body.status;
         const address = req.body.address;
@@ -624,7 +623,6 @@ module.exports = function (app) {
         const wallet_address = wallet["wallet_address"];
         console.log("Wallet address found: ", wallet_address);
         console.log("Req body: ", req.body);
-        const sign_message = req.body.sign_message;
         const name = req.body.name;
         const status = req.body.status;
         const address = req.body.address;
