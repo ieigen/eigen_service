@@ -48,11 +48,18 @@ const sequelizeSignHistory = new Sequelize({
   storage: "./data/db_sign_history.sqlite",
 });
 
+export enum SignOperation {
+  None = 0,
+  Recovery = 1,
+  LargeTransaction = 2,
+}
+
 export const signHistoryDB = sequelizeSignHistory.define("sign_history", {
   mtxid: DataTypes.INTEGER,
   signer_address: DataTypes.CITEXT,
   sign_message: DataTypes.STRING,
   status: DataTypes.INTEGER,
+  operation: DataTypes.INTEGER,
 });
 
 sequelizeMeta
@@ -93,6 +100,7 @@ sequelizeSignHistory
       signer_address: "0x",
       sign_message: "0x", // Owner or signer's address
       status: walletdb.SignerStatus.None,
+      operation: SignOperation.None,
     });
   })
   .then(function (row: any) {
@@ -176,12 +184,19 @@ const updateMultisigMeta = function (id, txid) {
     });
 };
 
-const addSignMessage = function (mtxid, signer_address, sign_message, status) {
+const addSignMessage = function (
+  mtxid,
+  signer_address,
+  sign_message,
+  status,
+  operation
+) {
   return signHistoryDB.create({
     mtxid,
     signer_address,
     sign_message,
     status,
+    operation,
   });
 };
 
