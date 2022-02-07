@@ -28,7 +28,12 @@ const multisigMetaDB = sequelizeMeta.define("multisig_meta_st", {
   to: DataTypes.CITEXT,
   value: DataTypes.STRING,
   data: DataTypes.STRING,
-  txid: DataTypes.UUIDV4,
+  txid: {
+    type: DataTypes.UUIDV4,
+    defaultValue: function () {
+      return uuidv4();
+    },
+  },
 });
 
 const sequelizeSignHistory = new Sequelize({
