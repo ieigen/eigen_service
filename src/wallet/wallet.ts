@@ -12,6 +12,7 @@ import * as db_address from "../model/database_address";
 import * as db_user from "../model/database_id";
 import * as db_txh from "../model/database_transaction_history";
 import * as db_wh from "../model/database_wallet_history";
+import * as db_multisig from "../model/database_multisig";
 
 // Records txid => wallet, wallet is a Sequelize model which can be used to update status
 let TRANSACTION_ADD_SIGNER_BY_OWNER_MAP = new Map();
@@ -535,6 +536,17 @@ module.exports = function (app) {
       signers[i]["owner_address"] = owner_address;
       signers[i]["wallet_id"] = owner["wallet_id"];
       signers[i]["wallet_status"] = owner["wallet_status"];
+
+      // Find the latest mtxid and sign_message
+
+      let latest_mtxid = await db_multisig.findLatestMtxidByWalletAddress(
+        wallet_address
+      );
+
+      if (latest_mtxid !== null) {
+        signers[i]["mtxid"] = latest_mtxid["mtxid"];
+        signers[i]["sign_message"] = latest_mtxid["sign_message"];
+      }
     }
 
     res.json(util.Succ(signers));
@@ -607,6 +619,7 @@ module.exports = function (app) {
 
           return res.json(util.Succ(false));
         } else {
+          // NOTE: sign_message is added here
           console.log("Update signer: ", req.body);
           await db_wallet.updateOrAddBySigner(
             wallet_address,

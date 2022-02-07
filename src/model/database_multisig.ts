@@ -189,10 +189,19 @@ const findSignHistoryByMtxid = function (mtxid) {
   return signHistoryDB.findAll({ where: { mtxid }, raw: true });
 };
 
+const findLatestMtxidByWalletAddress = function (walle_address) {
+  return signHistoryDB.findOne({
+    where: { walle_address },
+    order: [["updatedAt", "DESC"]],
+    raw: true,
+  });
+};
+
 export {
   addSignMessage,
   findSignHistoryByMtxid,
   findMultisigMetaByConds,
   addMultisigMeta,
   updateMultisigMeta,
+  findLatestMtxidByWalletAddress,
 };
