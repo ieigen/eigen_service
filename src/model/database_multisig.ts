@@ -119,6 +119,7 @@ const addMultisigMeta = function (
   value,
   data
 ) {
+  // Here we should get a txid value in order to add it into multisigMetaDB
   let txid = uuidv4();
   // mock a txh
   console.log("txid", txid);
