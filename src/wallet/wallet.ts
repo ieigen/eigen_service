@@ -543,6 +543,7 @@ module.exports = function (app) {
         );
 
       if (latest_mtxid !== null) {
+        console.log("Latest mtxid: ", latest_mtxid);
         signers[i]["mtxid"] = latest_mtxid["mtxid"];
         signers[i]["sign_message"] = latest_mtxid["sign_message"];
       }
