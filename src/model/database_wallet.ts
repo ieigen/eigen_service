@@ -80,7 +80,6 @@ const walletdb = sequelize.define("wallet_st", {
   role: DataTypes.INTEGER,
   status: DataTypes.INTEGER, // signer status
   wallet_status: DataTypes.INTEGER,
-  sign_message: DataTypes.STRING,
 });
 
 sequelize
@@ -93,7 +92,6 @@ sequelize
       address: "0x", // Owner or signer's address
       role: WALLET_USER_ADDRESS_ROLE_OWNER,
       status: SignerStatus.None,
-      sign_message: "",
     });
   })
   .then(function (row: any) {
