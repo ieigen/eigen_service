@@ -204,9 +204,9 @@ const findSignHistoryByMtxid = function (mtxid) {
   return signHistoryDB.findAll({ where: { mtxid }, raw: true });
 };
 
-const findLatestRecoveryMtxidByWalletAddress = function (walle_address) {
+const findLatestRecoveryMtxidByWalletAddress = function (wallet_address) {
   return signHistoryDB.findOne({
-    where: { walle_address, operation: SignOperation.Recovery },
+    where: { wallet_address, operation: SignOperation.Recovery },
     order: [["updatedAt", "DESC"]],
     raw: true,
   });
