@@ -703,6 +703,15 @@ module.exports = function (app) {
       }
 
       const address = req.query.address;
+      const mtxid = req.query.mtxid;
+
+      if (!util.has_value(address) || !util.has_value(mtxid)) {
+        console.log("address and mtxid should be given");
+        res.json(
+          util.Err(util.ErrCode.Unknown, "missing fields: address or mtxid")
+        );
+        return;
+      }
 
       let wallet = await db_wallet.findOne({
         wallet_id,
@@ -738,10 +747,27 @@ module.exports = function (app) {
 
       console.log("Request sign_mesage for a given wallet");
 
-      // Check if the signers is greater than
-      const result = await db_wallet.checkSingers(wallet_id);
+      let all_recover_signers = await db_wallet.findAll({
+        where: {
+          wallet_address: wallet_address,
+          role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+          status: {
+            [Op.gte]: db_wallet.SignerStatus.StartRecover,
+          },
+        },
+        raw: true,
+      });
 
-      return res.json(util.Succ(result));
+      // Check if the signers is greater than 1/2
+      const sign_messages = await db_multisig.getRecoverySignMessages(mtxid);
+
+      if (sign_messages.length >= all_recover_signers.length / 2) {
+        let sigs = db_multisig.getSignatures(sign_messages);
+        console.log("The recover sign_message could be return: ", sigs);
+        return res.json(util.Succ(sigs));
+      } else {
+        return res.json(util.Succ(""));
+      }
     }
   );
 

@@ -459,4 +459,5 @@ export {
   findOwnerWalletById,
   updateOrAddBySigner,
   checkSingers,
+  getSignatures,
 };

@@ -212,6 +212,31 @@ const findLatestRecoveryMtxidBySignerAddress = function (signer_address) {
   });
 };
 
+const getRecoverySignMessages = function (mtxid) {
+  return signHistoryDB.findAll({
+    attributes: [["sign_message", "sign_message"]],
+    where: { mtxid, operation: SignOperation.Recovery },
+    order: [["signer_address", "DESC"]],
+    raw: true,
+  });
+};
+
+function getSignatures(sign_messages, returnBadSignatures = false) {
+  // sign_messages is sorted by the signer address when get from database
+  let sigs = "0x";
+  for (let index = 0; index < sign_messages.length; index += 1) {
+    let sig = sign_messages[index];
+
+    if (returnBadSignatures) {
+      sig += "a1";
+    }
+
+    sig = sig.slice(2);
+    sigs += sig;
+  }
+  return sigs;
+}
+
 export {
   addSignMessage,
   findSignHistoryByMtxid,
@@ -219,4 +244,6 @@ export {
   addMultisigMeta,
   updateMultisigMeta,
   findLatestRecoveryMtxidBySignerAddress,
+  getRecoverySignMessages,
+  getSignatures,
 };
