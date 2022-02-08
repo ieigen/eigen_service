@@ -540,8 +540,8 @@ module.exports = function (app) {
       // Find the latest mtxid and sign_message
 
       let latest_mtxid =
-        await db_multisig.findLatestRecoveryMtxidByWalletAddress(
-          wallet_address
+        await db_multisig.findLatestRecoveryMtxidBySignerAddress(
+          signer["address"]
         );
 
       if (latest_mtxid !== null) {
