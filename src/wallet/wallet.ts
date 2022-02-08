@@ -544,11 +544,9 @@ module.exports = function (app) {
 
       console.log("Latest mtxid: ", latest_mtxid);
 
-      signers[i]["mtxid"] = latest_mtxid["mtxid"]
-        ? latest_mtxid["mtxid"]
-        : null;
+      signers[i]["mtxid"] = latest_mtxid ? latest_mtxid["mtxid"] : null;
 
-      signers[i]["sign_message"] = latest_mtxid["sign_message"]
+      signers[i]["sign_message"] = latest_mtxid
         ? latest_mtxid["sign_message"]
         : null;
     }
