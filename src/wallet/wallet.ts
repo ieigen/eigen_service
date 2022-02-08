@@ -244,8 +244,7 @@ module.exports = function (app) {
       address,
       db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       db_wallet.SignerStatus.None,
-      db_wallet.WalletStatus.Creating, // Wallet status is submited at first
-      ""
+      db_wallet.WalletStatus.Creating // Wallet status is submited at first
     );
 
     const wallet_id = result["dataValues"]["wallet_id"];
@@ -276,8 +275,7 @@ module.exports = function (app) {
         signer,
         db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
         db_wallet.SignerStatus.Active, // Signers added when wallet is added do not need to be confirmed
-        db_wallet.WalletStatus.None, // Wallet status is meaningless for signer
-        ""
+        db_wallet.WalletStatus.None // Wallet status is meaningless for signer
       );
     }
     res.json(util.Succ(result));
@@ -620,15 +618,15 @@ module.exports = function (app) {
 
           return res.json(util.Succ(false));
         } else {
-          // NOTE: sign_message is added here
+          // Legacy: sign_message is updated and checked here
           console.log("Update signer: ", req.body);
           await db_wallet.updateOrAddBySigner(
             wallet_address,
             address,
             req.body
           );
-          const result = await db_wallet.checkSingers(wallet_id);
-          return res.json(util.Succ(result));
+
+          return res.json(util.Succ(true));
         }
       } else {
         console.log(
@@ -671,6 +669,7 @@ module.exports = function (app) {
 
           return res.json(util.Succ(false));
         } else {
+          // Legacy: sign_message is updated and checked here
           console.log("Update signer: ", req.body);
           await db_wallet.updateOrAddByOwner(
             user_id,
@@ -679,8 +678,7 @@ module.exports = function (app) {
             db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
             req.body
           );
-          const result = await db_wallet.checkSingers(wallet_id);
-          return res.json(util.Succ(result));
+          return res.json(util.Succ(true));
         }
       }
     }
