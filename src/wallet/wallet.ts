@@ -542,10 +542,14 @@ module.exports = function (app) {
           signer["address"]
         );
 
+      console.log("Latest mtxid: ", latest_mtxid);
+
       if (latest_mtxid !== null) {
-        console.log("Latest mtxid: ", latest_mtxid);
         signers[i]["mtxid"] = latest_mtxid["mtxid"];
         signers[i]["sign_message"] = latest_mtxid["sign_message"];
+      } else {
+        signers[i]["mtxid"] = null;
+        signers[i]["sign_message"] = null;
       }
     }
 
