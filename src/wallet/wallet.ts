@@ -755,8 +755,12 @@ module.exports = function (app) {
       // Check if the signers is greater than 1/2
       const sign_messages = await db_multisig.getRecoverySignMessages(mtxid);
 
-      if (sign_messages.length >= all_recover_signers.length / 2) {
-        let sigs = db_multisig.getSignatures(sign_messages);
+      console.log("Sign messages: ", sign_messages);
+
+      let sign_messages_array = sign_messages.map((x) => x["sign_message"]);
+
+      if (sign_messages_array.length >= all_recover_signers.length / 2) {
+        let sigs = db_multisig.getSignatures(sign_messages_array);
         console.log("The recover sign_message could be return: ", sigs);
         return res.json(util.Succ(sigs));
       } else {

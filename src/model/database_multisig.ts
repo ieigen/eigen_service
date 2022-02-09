@@ -231,6 +231,8 @@ function getSignatures(sign_messages, returnBadSignatures = false) {
   for (let index = 0; index < sign_messages.length; index += 1) {
     let sig = sign_messages[index];
 
+    console.log(sig);
+
     if (returnBadSignatures) {
       sig += "a1";
     }
