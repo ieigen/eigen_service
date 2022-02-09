@@ -745,14 +745,11 @@ module.exports = function (app) {
       console.log("Request sign_mesage for a given wallet");
 
       let all_recover_signers = await db_wallet.findAll({
-        where: {
-          wallet_address: wallet_address,
-          role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-          status: {
-            [Op.gte]: db_wallet.SignerStatus.StartRecover,
-          },
+        wallet_address: wallet_address,
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+        status: {
+          [Op.gte]: db_wallet.SignerStatus.StartRecover,
         },
-        raw: true,
       });
 
       // Check if the signers is greater than 1/2
