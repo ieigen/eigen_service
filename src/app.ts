@@ -410,7 +410,8 @@ app.post("/mtx/meta", async (req, res) => {
     req.body.wallet_address,
     req.body.to,
     req.body.value,
-    req.body.data
+    req.body.data,
+    req.body.operation
   );
   res.json(util.Succ(ret));
 });

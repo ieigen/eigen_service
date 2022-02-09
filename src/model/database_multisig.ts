@@ -34,6 +34,7 @@ const multisigMetaDB = sequelizeMeta.define("multisig_meta_st", {
       return uuidv4();
     },
   },
+  operation: DataTypes.INTEGER,
 });
 
 const sequelizeSignHistory = new Sequelize({
@@ -72,6 +73,7 @@ sequelizeMeta
       value: "",
       data: "",
       txid: "",
+      operation: SignOperation.None,
     });
   })
   .then(function (row: any) {
@@ -125,7 +127,8 @@ const addMultisigMeta = function (
   wallet_address,
   to,
   value,
-  data
+  data,
+  operation
 ) {
   // Here we should get a txid value in order to add it into multisigMetaDB
   let txid = uuidv4();
@@ -148,6 +151,7 @@ const addMultisigMeta = function (
     value,
     data,
     txid,
+    operation,
   });
 };
 
@@ -204,9 +208,9 @@ const findSignHistoryByMtxid = function (mtxid) {
   return signHistoryDB.findAll({ where: { mtxid }, raw: true });
 };
 
-const findLatestRecoveryMtxidBySignerAddress = function (signer_address) {
-  return signHistoryDB.findOne({
-    where: { signer_address, operation: SignOperation.Recovery },
+const findLatestRecoveryMtxidByWalletAddress = function (wallet_address) {
+  return multisigMetaDB.findOne({
+    where: { wallet_address, operation: SignOperation.Recovery },
     order: [["updatedAt", "DESC"]],
     raw: true,
   });
@@ -243,7 +247,7 @@ export {
   findMultisigMetaByConds,
   addMultisigMeta,
   updateMultisigMeta,
-  findLatestRecoveryMtxidBySignerAddress,
+  findLatestRecoveryMtxidByWalletAddress,
   getRecoverySignMessages,
   getSignatures,
 };

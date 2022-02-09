@@ -535,20 +535,16 @@ module.exports = function (app) {
       signers[i]["wallet_id"] = owner["wallet_id"];
       signers[i]["wallet_status"] = owner["wallet_status"];
 
-      // Find the latest mtxid and sign_message
+      // Find the latest mtxid for recovery
 
       let latest_mtxid =
-        await db_multisig.findLatestRecoveryMtxidBySignerAddress(
-          signer["address"]
+        await db_multisig.findLatestRecoveryMtxidByWalletAddress(
+          wallet_address
         );
 
-      console.log("Latest mtxid: ", latest_mtxid);
+      console.log("Latest recovery mtxid: ", latest_mtxid);
 
-      signers[i]["mtxid"] = latest_mtxid ? latest_mtxid["mtxid"] : null;
-
-      signers[i]["sign_message"] = latest_mtxid
-        ? latest_mtxid["sign_message"]
-        : null;
+      signers[i]["mtxid"] = latest_mtxid ? latest_mtxid["id"] : null;
     }
 
     res.json(util.Succ(signers));
