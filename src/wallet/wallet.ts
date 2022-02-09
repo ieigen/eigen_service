@@ -12,6 +12,7 @@ import * as db_address from "../model/database_address";
 import * as db_user from "../model/database_id";
 import * as db_txh from "../model/database_transaction_history";
 import * as db_wh from "../model/database_wallet_history";
+import * as db_multisig from "../model/database_multisig";
 
 // Records txid => wallet, wallet is a Sequelize model which can be used to update status
 let TRANSACTION_ADD_SIGNER_BY_OWNER_MAP = new Map();
@@ -243,8 +244,7 @@ module.exports = function (app) {
       address,
       db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       db_wallet.SignerStatus.None,
-      db_wallet.WalletStatus.Creating, // Wallet status is submited at first
-      ""
+      db_wallet.WalletStatus.Creating // Wallet status is submited at first
     );
 
     const wallet_id = result["dataValues"]["wallet_id"];
@@ -275,8 +275,7 @@ module.exports = function (app) {
         signer,
         db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
         db_wallet.SignerStatus.Active, // Signers added when wallet is added do not need to be confirmed
-        db_wallet.WalletStatus.None, // Wallet status is meaningless for signer
-        ""
+        db_wallet.WalletStatus.None // Wallet status is meaningless for signer
       );
     }
     res.json(util.Succ(result));
@@ -535,6 +534,17 @@ module.exports = function (app) {
       signers[i]["owner_address"] = owner_address;
       signers[i]["wallet_id"] = owner["wallet_id"];
       signers[i]["wallet_status"] = owner["wallet_status"];
+
+      // Find the latest mtxid for recovery
+
+      let latest_mtxid =
+        await db_multisig.findLatestRecoveryMtxidByWalletAddress(
+          wallet_address
+        );
+
+      console.log("Latest recovery mtxid: ", latest_mtxid);
+
+      signers[i]["mtxid"] = latest_mtxid ? latest_mtxid["id"] : null;
     }
 
     res.json(util.Succ(signers));
@@ -578,7 +588,6 @@ module.exports = function (app) {
         const wallet_address = found_wallet["wallet_address"];
         console.log("Wallet address found: ", wallet_address);
         console.log("Req body: ", req.body);
-        const sign_message = req.body.sign_message;
         const name = req.body.name;
         const status = req.body.status;
         const address = req.body.address;
@@ -608,14 +617,15 @@ module.exports = function (app) {
 
           return res.json(util.Succ(false));
         } else {
+          // Legacy: sign_message is updated and checked here
           console.log("Update signer: ", req.body);
           await db_wallet.updateOrAddBySigner(
             wallet_address,
             address,
             req.body
           );
-          const result = await db_wallet.checkSingers(wallet_id);
-          return res.json(util.Succ(result));
+
+          return res.json(util.Succ(true));
         }
       } else {
         console.log(
@@ -624,7 +634,6 @@ module.exports = function (app) {
         const wallet_address = wallet["wallet_address"];
         console.log("Wallet address found: ", wallet_address);
         console.log("Req body: ", req.body);
-        const sign_message = req.body.sign_message;
         const name = req.body.name;
         const status = req.body.status;
         const address = req.body.address;
@@ -659,6 +668,7 @@ module.exports = function (app) {
 
           return res.json(util.Succ(false));
         } else {
+          // Legacy: sign_message is updated and checked here
           console.log("Update signer: ", req.body);
           await db_wallet.updateOrAddByOwner(
             user_id,
@@ -667,8 +677,7 @@ module.exports = function (app) {
             db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
             req.body
           );
-          const result = await db_wallet.checkSingers(wallet_id);
-          return res.json(util.Succ(result));
+          return res.json(util.Succ(true));
         }
       }
     }
@@ -691,6 +700,15 @@ module.exports = function (app) {
       }
 
       const address = req.query.address;
+      const mtxid = req.query.mtxid;
+
+      if (!util.has_value(address) || !util.has_value(mtxid)) {
+        console.log("address and mtxid should be given");
+        res.json(
+          util.Err(util.ErrCode.Unknown, "missing fields: address or mtxid")
+        );
+        return;
+      }
 
       let wallet = await db_wallet.findOne({
         wallet_id,
@@ -726,10 +744,28 @@ module.exports = function (app) {
 
       console.log("Request sign_mesage for a given wallet");
 
-      // Check if the signers is greater than
-      const result = await db_wallet.checkSingers(wallet_id);
+      let all_recover_signers = await db_wallet.findAll({
+        wallet_address: wallet_address,
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+        status: {
+          [Op.gte]: db_wallet.SignerStatus.StartRecover,
+        },
+      });
 
-      return res.json(util.Succ(result));
+      // Check if the signers is greater than 1/2
+      const sign_messages = await db_multisig.getRecoverySignMessages(mtxid);
+
+      console.log("Sign messages: ", sign_messages);
+
+      let sign_messages_array = sign_messages.map((x) => x["sign_message"]);
+
+      if (sign_messages_array.length >= all_recover_signers.length / 2) {
+        let sigs = db_multisig.getSignatures(sign_messages_array);
+        console.log("The recover sign_message could be return: ", sigs);
+        return res.json(util.Succ(sigs));
+      } else {
+        return res.json(util.Succ(""));
+      }
     }
   );
 

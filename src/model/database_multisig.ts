@@ -28,7 +28,13 @@ const multisigMetaDB = sequelizeMeta.define("multisig_meta_st", {
   to: DataTypes.CITEXT,
   value: DataTypes.STRING,
   data: DataTypes.STRING,
-  txid: DataTypes.CITEXT,
+  txid: {
+    type: DataTypes.UUIDV4,
+    defaultValue: function () {
+      return uuidv4();
+    },
+  },
+  operation: DataTypes.INTEGER,
 });
 
 const sequelizeSignHistory = new Sequelize({
@@ -43,11 +49,18 @@ const sequelizeSignHistory = new Sequelize({
   storage: "./data/db_sign_history.sqlite",
 });
 
+export enum SignOperation {
+  None = 0,
+  Recovery = 1,
+  LargeTransaction = 2,
+}
+
 export const signHistoryDB = sequelizeSignHistory.define("sign_history", {
   mtxid: DataTypes.INTEGER,
   signer_address: DataTypes.CITEXT,
   sign_message: DataTypes.STRING,
   status: DataTypes.INTEGER,
+  operation: DataTypes.INTEGER,
 });
 
 sequelizeMeta
@@ -60,6 +73,7 @@ sequelizeMeta
       value: "",
       data: "",
       txid: "",
+      operation: SignOperation.None,
     });
   })
   .then(function (row: any) {
@@ -88,6 +102,7 @@ sequelizeSignHistory
       signer_address: "0x",
       sign_message: "0x", // Owner or signer's address
       status: walletdb.SignerStatus.None,
+      operation: SignOperation.None,
     });
   })
   .then(function (row: any) {
@@ -112,8 +127,10 @@ const addMultisigMeta = function (
   wallet_address,
   to,
   value,
-  data
+  data,
+  operation
 ) {
+  // Here we should get a txid value in order to add it into multisigMetaDB
   let txid = uuidv4();
   // mock a txh
   console.log("txid", txid);
@@ -134,6 +151,7 @@ const addMultisigMeta = function (
     value,
     data,
     txid,
+    operation,
   });
 };
 
@@ -170,12 +188,19 @@ const updateMultisigMeta = function (id, txid) {
     });
 };
 
-const addSignMessage = function (mtxid, signer_address, sign_message, status) {
+const addSignMessage = function (
+  mtxid,
+  signer_address,
+  sign_message,
+  status,
+  operation
+) {
   return signHistoryDB.create({
     mtxid,
     signer_address,
     sign_message,
     status,
+    operation,
   });
 };
 
@@ -183,10 +208,48 @@ const findSignHistoryByMtxid = function (mtxid) {
   return signHistoryDB.findAll({ where: { mtxid }, raw: true });
 };
 
+const findLatestRecoveryMtxidByWalletAddress = function (wallet_address) {
+  return multisigMetaDB.findOne({
+    where: { wallet_address, operation: SignOperation.Recovery },
+    order: [["updatedAt", "DESC"]],
+    raw: true,
+  });
+};
+
+const getRecoverySignMessages = function (mtxid) {
+  return signHistoryDB.findAll({
+    attributes: [["sign_message", "sign_message"]],
+    where: { mtxid, operation: SignOperation.Recovery },
+    order: [["signer_address", "DESC"]],
+    raw: true,
+  });
+};
+
+function getSignatures(sign_messages, returnBadSignatures = false) {
+  // sign_messages is sorted by the signer address when get from database
+  let sigs = "0x";
+  for (let index = 0; index < sign_messages.length; index += 1) {
+    let sig = sign_messages[index];
+
+    console.log(sig);
+
+    if (returnBadSignatures) {
+      sig += "a1";
+    }
+
+    sig = sig.slice(2);
+    sigs += sig;
+  }
+  return sigs;
+}
+
 export {
   addSignMessage,
   findSignHistoryByMtxid,
   findMultisigMetaByConds,
   addMultisigMeta,
   updateMultisigMeta,
+  findLatestRecoveryMtxidByWalletAddress,
+  getRecoverySignMessages,
+  getSignatures,
 };

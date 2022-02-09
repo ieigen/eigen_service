@@ -80,7 +80,6 @@ const walletdb = sequelize.define("wallet_st", {
   role: DataTypes.INTEGER,
   status: DataTypes.INTEGER, // signer status
   wallet_status: DataTypes.INTEGER,
-  sign_message: DataTypes.STRING,
 });
 
 sequelize
@@ -93,7 +92,6 @@ sequelize
       address: "0x", // Owner or signer's address
       role: WALLET_USER_ADDRESS_ROLE_OWNER,
       status: SignerStatus.None,
-      sign_message: "",
     });
   })
   .then(function (row: any) {
@@ -121,8 +119,7 @@ const add = function (
   address,
   role,
   status,
-  wallet_status,
-  sign_message
+  wallet_status
 ) {
   return walletdb.create({
     user_id,
@@ -132,7 +129,6 @@ const add = function (
     role,
     status,
     wallet_status,
-    sign_message,
   });
 };
 
@@ -240,7 +236,7 @@ const updateOrAddByOwner = function (
           (role == WALLET_USER_ADDRESS_ROLE_OWNER
             ? SignerStatus.None
             : SignerStatus.ToBeConfirmed);
-        let sign_message = update_dict.sign_message || "";
+
         add(
           user_id,
           name,
@@ -248,8 +244,7 @@ const updateOrAddByOwner = function (
           signer_address,
           role,
           status,
-          WalletStatus.Creating,
-          sign_message
+          WalletStatus.Creating
         );
         return true;
       }
@@ -262,10 +257,6 @@ const updateOrAddByOwner = function (
 
       if (update_dict.status !== undefined) {
         actual_update_dict["status"] = update_dict.status;
-      }
-
-      if (update_dict.sign_message !== undefined) {
-        actual_update_dict["sign_message"] = update_dict.sign_message;
       }
 
       return row
@@ -316,7 +307,6 @@ const updateOrAddBySigner = function (
           if (row === null) {
             let name = update_dict.name || "";
             let status = update_dict.status || SignerStatus.ToBeConfirmed;
-            let sign_message = update_dict.sign_message || "";
             add(
               user_id,
               name,
@@ -324,8 +314,7 @@ const updateOrAddBySigner = function (
               signer_address,
               WALLET_USER_ADDRESS_ROLE_SIGNER,
               status,
-              WalletStatus.None,
-              sign_message
+              WalletStatus.None
             );
             return true;
           }
@@ -338,10 +327,6 @@ const updateOrAddBySigner = function (
 
           if (update_dict.status !== undefined) {
             actual_update_dict["status"] = update_dict.status;
-          }
-
-          if (update_dict.sign_message !== undefined) {
-            actual_update_dict["sign_message"] = update_dict.sign_message;
           }
 
           return row
@@ -364,87 +349,6 @@ const remove = function (wallet_address, signer_address, role) {
   });
 };
 
-const checkSingers = function (wallet_id) {
-  return (async function (wallet_id) {
-    let wallet = await walletdb.findOne({
-      where: {
-        wallet_id: wallet_id,
-        role: WALLET_USER_ADDRESS_ROLE_OWNER,
-      },
-      raw: true,
-    });
-
-    if (wallet === null) {
-      console.log(
-        "Wallet does not exist with wallet id when checking signers: ",
-        wallet_id
-      );
-      return false;
-    }
-
-    let wallet_address = wallet["wallet_address"];
-
-    let all_recover_signers = await walletdb.findAll({
-      where: {
-        wallet_address: wallet_address,
-        role: WALLET_USER_ADDRESS_ROLE_SIGNER,
-        status: {
-          [Op.gte]: SignerStatus.StartRecover,
-        },
-      },
-      raw: true,
-    });
-
-    console.log(
-      "checkSingers [all_recover_signers]: ",
-      JSON.stringify(all_recover_signers)
-    );
-
-    let agree_recover_signers = await walletdb.findAll({
-      where: {
-        wallet_address: wallet_address,
-        role: WALLET_USER_ADDRESS_ROLE_SIGNER,
-        status: SignerStatus.AgreeRecover,
-      },
-      order: [["address", "DESC"]],
-      raw: true,
-    });
-
-    console.log(
-      "checkSingers [agree_recover_signers]: ",
-      JSON.stringify(agree_recover_signers)
-    );
-
-    if (agree_recover_signers.length >= all_recover_signers.length / 2) {
-      let sigs = getSignatures(agree_recover_signers);
-      console.log("The recover sign_message could be return: ", sigs);
-      return sigs;
-    }
-
-    return "";
-  })(wallet_id);
-};
-
-function getSignatures(signers, returnBadSignatures = false) {
-  // Sort the signers
-  // Sorted when get from database
-  let sortedSigners = signers;
-
-  let sigs = "0x";
-  for (let index = 0; index < sortedSigners.length; index += 1) {
-    const signer = sortedSigners[index];
-    let sig = signer["sign_message"];
-
-    if (returnBadSignatures) {
-      sig += "a1";
-    }
-
-    sig = sig.slice(2);
-    sigs += sig;
-  }
-  return sigs;
-}
-
 export {
   updateOwnerAddress,
   add,
@@ -458,5 +362,4 @@ export {
   updateOrAddByOwner,
   findOwnerWalletById,
   updateOrAddBySigner,
-  checkSingers,
 };

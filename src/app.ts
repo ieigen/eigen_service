@@ -410,7 +410,8 @@ app.post("/mtx/meta", async (req, res) => {
     req.body.wallet_address,
     req.body.to,
     req.body.value,
-    req.body.data
+    req.body.data,
+    req.body.operation
   );
   res.json(util.Succ(ret));
 });
@@ -453,7 +454,8 @@ app.post("/mtx/sign", async (req, res) => {
     req.body.mtxid,
     req.body.signer_address,
     req.body.signer_message,
-    req.body.status
+    req.body.status,
+    req.body.operation
   );
   res.json(util.Succ(ret));
 });
@@ -498,9 +500,9 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
         mtxid: req.params.mtxid,
         signer_address: sm[i]["signer_address"],
         sign_message: sm[i]["sign_message"],
-        status: sm[i]["status"]
-      }
-      resultsm.push(signInfo)
+        status: sm[i]["status"],
+      };
+      resultsm.push(signInfo);
     }
 
     let signedSize = resultsm.length;
