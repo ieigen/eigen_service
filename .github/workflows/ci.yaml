@@ -10,6 +10,8 @@ jobs:
   test:
     name: Test our project
     runs-on: ubuntu-latest
+    env:
+      JWT_SECRET: import-secret-from-env"
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
