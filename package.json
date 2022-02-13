@@ -11,7 +11,8 @@
     "clean": "rm -f ./data/db_*.sqlite",
     "build_image": "docker build -t ieigen/service:v1 .",
     "deploy": "yarn build_image && docker run --name=eigen-service -p 3000:3000 -v $PWD/data:/app/data  -d ieigen/service:v1",
-    "deploy_prod": "docker-compose up -d"
+    "deploy_prod": "docker-compose up -d",
+    "doc": "./node_modules/.bin/typedoc"
   },
   "devDependencies": {
     "@types/mocha": "^9.0.0",
@@ -19,7 +20,9 @@
     "chai": "^4.3.4",
     "mocha": "^9.1.3",
     "tslint": "^6.1.3",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.3",
+    "typedoc": "^0.22.11",
+    "typedoc-plugin-markdown": "^3.11.13"
   },
   "dependencies": {
     "@ethersproject/shims": "^5.4.0",
