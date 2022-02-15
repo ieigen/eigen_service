@@ -2,7 +2,7 @@
 /**
  * Public key model definition
  *
- * @module model
+ * @module database_pk
  */
 
 import { Sequelize, DataTypes } from "sequelize";

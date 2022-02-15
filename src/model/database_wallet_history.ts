@@ -2,7 +2,7 @@
 /**
  * Wallet history model definition
  *
- * @module model
+ * @module database_wallet_history
  */
 
 import { Sequelize, DataTypes } from "sequelize";

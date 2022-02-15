@@ -2,7 +2,7 @@
 /**
  * Transaction history model definition
  *
- * @module model
+ * @module database_transaction_history
  */
 
 import { Sequelize, Op, DataTypes, Order } from "sequelize";

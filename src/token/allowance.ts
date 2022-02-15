@@ -2,7 +2,7 @@
 /**
  * Allowance management model definition
  *
- * @module model
+ * @module database_allowance
  */
 
 import { ethers } from "ethers";

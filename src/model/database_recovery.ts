@@ -2,7 +2,7 @@
 /**
  * Recovery model definition
  *
- * @module model
+ * @module database_recovery
  */
 
 import { stringify } from "querystring";

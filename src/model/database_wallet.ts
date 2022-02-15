@@ -2,7 +2,7 @@
 /**
  * Wallet model definition
  *
- * @module model
+ * @module database_wallet
  */
 
 import { Sequelize, DataTypes, Op } from "sequelize";

@@ -2,7 +2,7 @@
 /**
  * User information model definition
  *
- * @module model
+ * @module database_id
  */
 
 import { Sequelize, DataTypes, Op } from "sequelize";

@@ -2,7 +2,7 @@
 /**
  * Multi signature model definition
  *
- * @module model
+ * @module database_multisig
  */
 
 import { v4 as uuidv4 } from "uuid";

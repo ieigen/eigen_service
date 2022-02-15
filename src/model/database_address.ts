@@ -2,7 +2,7 @@
 /**
  * Addresses model definition
  *
- * @module model
+ * @module database_addresses
  */
 
 import { Sequelize, DataTypes } from "sequelize";

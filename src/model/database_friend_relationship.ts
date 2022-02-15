@@ -2,7 +2,7 @@
 /**
  * Friend relationship model definition
  *
- * @module model
+ * @module database_friend_relationship
  */
 
 import { Sequelize, Op, DataTypes } from "sequelize";
