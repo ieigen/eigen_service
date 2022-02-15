@@ -1,7 +1,7 @@
 {
   "name": "eigen_service",
   "version": "1.0.0",
-  "main": "build/src/app.js",
+  "main": "src/app.ts",
   "license": "Apache-2.0",
   "scripts": {
     "start": "yarn build && node ./build/src/app.js",
@@ -12,7 +12,7 @@
     "build_image": "docker build -t ieigen/service:v1 .",
     "deploy": "yarn build_image && docker run --name=eigen-service -p 3000:3000 -v $PWD/data:/app/data  -d ieigen/service:v1",
     "deploy_prod": "docker-compose up -d",
-    "doc": "./node_modules/.bin/typedoc"
+    "doc": "./node_modules/.bin/typedoc --entryPointStrategy expand . --exclude \"node_modules/**\" --exclude \"build/**\""
   },
   "devDependencies": {
     "@types/mocha": "^9.0.0",
