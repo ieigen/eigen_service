@@ -1,3 +1,10 @@
+// wallet.ts
+/**
+ * Provide wallet related services
+ *
+ * @module wallet
+ */
+
 import express from "express";
 import PubSub from "pubsub-js";
 import { Op } from "sequelize";

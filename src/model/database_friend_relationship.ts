@@ -1,3 +1,10 @@
+// database_friend_relationship.ts
+/**
+ * Friend relationship model definition
+ *
+ * @module model
+ */
+
 import { Sequelize, Op, DataTypes } from "sequelize";
 
 const sequelize = new Sequelize({

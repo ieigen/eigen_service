@@ -1,3 +1,10 @@
+// google.ts
+/**
+ * Provides google related login processes
+ *
+ * @module login
+ */
+
 import express from "express";
 import jsonwebtoken from "jsonwebtoken";
 import axios from "axios";
@@ -122,7 +129,7 @@ module.exports = function (app) {
     );
     console.log("exist_user", exist_user);
     let user_info;
-    let isNew = 0
+    let isNew = 0;
     if (exist_user === null) {
       //add to db
       user_info = {
@@ -139,7 +146,7 @@ module.exports = function (app) {
       };
       console.log(user_info);
       const result = await userdb.add(user_info);
-      isNew = 1
+      isNew = 1;
       console.log("add", result);
     } else {
       user_info = {

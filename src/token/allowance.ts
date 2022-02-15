@@ -1,3 +1,10 @@
+// allowance.ts
+/**
+ * Allowance management model definition
+ *
+ * @module model
+ */
+
 import { ethers } from "ethers";
 import { format } from "path/posix";
 import { Sequelize, Op, DataTypes } from "sequelize";

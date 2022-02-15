@@ -1,3 +1,10 @@
+// database_multisig.ts
+/**
+ * Multi signature model definition
+ *
+ * @module model
+ */
+
 import { v4 as uuidv4 } from "uuid";
 import { Sequelize, DataTypes, Op } from "sequelize";
 // FIXME don't depend another model, move them to controller

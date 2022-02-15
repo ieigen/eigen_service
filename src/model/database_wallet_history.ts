@@ -1,3 +1,10 @@
+// database_wallet_history.ts
+/**
+ * Wallet history model definition
+ *
+ * @module model
+ */
+
 import { Sequelize, DataTypes } from "sequelize";
 
 import { WalletStatus } from "./database_wallet";

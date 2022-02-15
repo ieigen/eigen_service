@@ -1,3 +1,10 @@
+// database_addresses.ts
+/**
+ * Addresses model definition
+ *
+ * @module model
+ */
+
 import { Sequelize, DataTypes } from "sequelize";
 const sequelize = new Sequelize({
   dialect: "sqlite",
