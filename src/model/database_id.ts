@@ -1,3 +1,10 @@
+// database_id.ts
+/**
+ * User information model definition
+ *
+ * @module database_id
+ */
+
 import { Sequelize, DataTypes, Op } from "sequelize";
 import jwt from "express-jwt";
 

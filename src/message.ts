@@ -1,3 +1,10 @@
+// message.ts
+/**
+ * Long-term session message processing
+ *
+ * @module message
+ */
+
 const http = require("http");
 const { Server } = require("socket.io");
 import * as txh from "./model/database_transaction_history";
@@ -44,7 +51,7 @@ module.exports = function (app) {
       }
 
       // get unconfirmed tx list
-      let as_owners = [data.from]
+      let as_owners = [data.from];
       let wallets = await db_wallet.findAll({
         address: data.from,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,

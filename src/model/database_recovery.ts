@@ -1,3 +1,10 @@
+// database_recovery.ts
+/**
+ * Recovery model definition
+ *
+ * @module database_recovery
+ */
+
 import { stringify } from "querystring";
 import { Sequelize, DataTypes } from "sequelize";
 const sequelize = new Sequelize({
@@ -45,7 +52,14 @@ sequelize
     console.log("Unable to connect to the database:", err);
   });
 
-const add = function (user_id, name, desc, total_shared_num, threshold, friends) {
+const add = function (
+  user_id,
+  name,
+  desc,
+  total_shared_num,
+  threshold,
+  friends
+) {
   return recoverydb.create({
     user_id,
     name,
@@ -61,10 +75,17 @@ const findByUserID = function (user_id) {
 };
 
 const remove = function (id) {
-    return recoverydb.destroy({ where: { id: id } });
+  return recoverydb.destroy({ where: { id: id } });
 };
 
-const updateOrAdd = function (user_id, name, desc, total_shared_num, threshold, friends) {
+const updateOrAdd = function (
+  user_id,
+  name,
+  desc,
+  total_shared_num,
+  threshold,
+  friends
+) {
   recoverydb.findOne({ where: { user_id: user_id } }).then(function (row: any) {
     console.log(row);
     if (row === null) {

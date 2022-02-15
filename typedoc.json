@@ -1,0 +1,8 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "out": "docs",
+  "sort": ["source-order"],
+  "plugin": "typedoc-plugin-markdown",
+  "tsconfig": "tsconfig.json",
+  "entryPoints": "."
+}

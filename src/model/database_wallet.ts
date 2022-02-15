@@ -1,3 +1,10 @@
+// database_wallet.ts
+/**
+ * Wallet model definition
+ *
+ * @module database_wallet
+ */
+
 import { Sequelize, DataTypes, Op } from "sequelize";
 const sequelize = new Sequelize({
   dialect: "sqlite",

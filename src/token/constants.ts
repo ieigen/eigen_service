@@ -1,3 +1,10 @@
+// constants.ts
+/**
+ * Some global constants are defined here
+ *
+ * @module constants
+ */
+
 import fs from "fs";
 import * as util from "../util";
 require("dotenv").config();

@@ -1,3 +1,10 @@
+// database_transaction_history.ts
+/**
+ * Transaction history model definition
+ *
+ * @module database_transaction_history
+ */
+
 import { Sequelize, Op, DataTypes, Order } from "sequelize";
 
 const getOrder = (order): Order => {
@@ -157,16 +164,13 @@ const search_with_multisig = async (
     where: {
       [Op.or]: [
         {
-          [Op.and]: [
-            { from: { [Op.in]: as_owners } },
-            other_filters
-          ]
+          [Op.and]: [{ from: { [Op.in]: as_owners } }, other_filters],
         },
         {
           [Op.and]: [
             { from: { [Op.in]: as_signers } },
             { status: TransactionStatus.Creating },
-            other_filters
+            other_filters,
           ],
         },
       ],
