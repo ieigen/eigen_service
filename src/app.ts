@@ -1,3 +1,10 @@
+// app.ts
+/**
+ * The entry point for eigen_service
+ *
+ * @module main
+ */
+
 import express from "express";
 import jwt from "express-jwt";
 import jsonwebtoken from "jsonwebtoken";
@@ -69,7 +76,13 @@ app.use(
   }).unless(filterFunc)
 );
 
-// query key
+/**
+ * Stores public key
+ *
+ * @param req
+ * @param res
+ * @returns {string}
+ */
 app.get("/stores", async function (req, res) {
   return res.json(util.Succ(await db_pk.findAll()));
 });

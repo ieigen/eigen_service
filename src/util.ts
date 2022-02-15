@@ -1,3 +1,10 @@
+// util.ts
+/**
+ * Provide some useful utility functions
+ *
+ * @module util
+ */
+
 const require_env_variables = (envVars) => {
   for (const envVar of envVars) {
     if (!process.env[envVar]) {
@@ -22,7 +29,7 @@ export enum ErrCode {
   Success = 0,
   InvalidAuth = 1,
   InvalidInput = 2,
-  CryptoError = 3
+  CryptoError = 3,
 }
 
 const has_value = function (variable) {
