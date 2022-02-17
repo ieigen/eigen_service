@@ -21,6 +21,11 @@ const sequelize = new Sequelize({
   storage: "./data/db_user.sqlite",
 });
 
+/**
+ * User kind, e.g., Google
+ *
+ * @enum
+ */
 export enum UserKind {
   GOOGLE,
 }

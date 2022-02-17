@@ -21,6 +21,11 @@ const sequelize = new Sequelize({
   storage: "./data/db_wallet_history.sqlite",
 });
 
+/**
+ * The cause of a status transaction change.
+ *
+ * @enum
+ */
 export enum StatusTransitionCause {
   None = 0,
   Create = 1,

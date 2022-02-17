@@ -30,6 +30,11 @@ import {
   SignatureLike,
 } from "@ethersproject/bytes";
 
+/**
+ * Secret Level.
+ *
+ * @enum
+ */
 export enum SecLevel {
   STRONG,
   MEDIUM,

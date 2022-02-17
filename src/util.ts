@@ -24,6 +24,11 @@ const Err = function (errno, message) {
   return BaseResp(errno, message, "");
 };
 
+/**
+ * Error code for a JSON responce.
+ *
+ * @enum
+ */
 export enum ErrCode {
   Unknown = -1,
   Success = 0,

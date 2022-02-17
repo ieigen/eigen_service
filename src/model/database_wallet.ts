@@ -21,6 +21,11 @@ const sequelize = new Sequelize({
 export const WALLET_USER_ADDRESS_ROLE_OWNER = 0x0;
 export const WALLET_USER_ADDRESS_ROLE_SIGNER = 0x1;
 
+/**
+ * The signer status.
+ *
+ * @enum
+ */
 export enum SignerStatus {
   None = 0,
   ToBeConfirmed = 1,
@@ -32,6 +37,11 @@ export enum SignerStatus {
   IgnoreRecover = 7,
 }
 
+/**
+ * The wallet status.
+ *
+ * @enum
+ */
 export enum WalletStatus {
   None = 0,
   Creating = 1,

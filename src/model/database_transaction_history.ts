@@ -24,6 +24,11 @@ const sequelize = new Sequelize({
   storage: "./data/db_transaction_history.sqlite",
 });
 
+/**
+ * The kind of signature operation.
+ *
+ * @enum
+ */
 export enum TransactionStatus {
   Failed = -1,
   Sent = 0,

@@ -56,6 +56,11 @@ const sequelizeSignHistory = new Sequelize({
   storage: "./data/db_sign_history.sqlite",
 });
 
+/**
+ * The kind of signature operation.
+ *
+ * @enum
+ */
 export enum SignOperation {
   None = 0,
   Recovery = 1,
