@@ -12,7 +12,8 @@
     "build_image": "docker build -t ieigen/service:v1 .",
     "deploy": "yarn build_image && docker run --name=eigen-service -p 3000:3000 -v $PWD/data:/app/data  -d ieigen/service:v1",
     "deploy_prod": "docker-compose up -d",
-    "doc": "./node_modules/.bin/typedoc --entryPointStrategy expand . --exclude \"node_modules/**\" --exclude \"build/**\""
+    "doc": "./node_modules/.bin/typedoc --entryPointStrategy expand . --exclude \"node_modules/**\" --exclude \"build/**\"",
+    "lint": "./node_modules/.bin/tslint -c tslint.json -p tsconfig.json"
   },
   "devDependencies": {
     "@types/mocha": "^9.0.0",
@@ -45,6 +46,7 @@
     "standard-ecies": "^2.0.0",
     "totp.js": "^0.0.1",
     "typings": "^2.1.1",
-    "pubsub-js": "^1.9.4"
+    "pubsub-js": "^1.9.4",
+    "consola": "^2.15.3"
   }
 }
