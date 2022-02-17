@@ -5,6 +5,8 @@
  * @module session
  */
 
+const consola = require("consola");
+
 export module Session {
   export class session {
     token: string;
@@ -18,7 +20,7 @@ export module Session {
 
     isValid(this: session): boolean {
       let cur = Math.floor(Date.now() / 1000);
-      console.log(this, cur);
+      consola.info(this, cur);
       if (this.issueTime + this.expiry >= cur) {
         this.issueTime = cur;
         return true;
