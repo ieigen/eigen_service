@@ -5,13 +5,15 @@
  * @module main
  */
 
+/* eslint-disable @typescript-eslint/no-var-requires */
+
 import express from "express";
 import jwt from "express-jwt";
 import jsonwebtoken from "jsonwebtoken";
 import cors from "cors";
 import consola from "consola";
-const TOTP = require("totp.js");
-require("dotenv").config();
+import TOTP from "totp.js";
+import "dotenv/config";
 
 import * as log4js from "./log";
 import * as db_pk from "./model/database_pk";
@@ -43,12 +45,12 @@ app.use(cors(issueOptions));
 
 util.require_env_variables(["JWT_SECRET"]);
 
-let filterFunc = function (req) {
+const filterFunc = function (req) {
   if (process.env.DEBUG_MODE) {
     return true;
   }
   consola.info(req.url);
-  let bypass = ["/auth/google/url", "/stores", "/store", "/txhs"];
+  const bypass = ["/auth/google/url", "/stores", "/store", "/txhs"];
   consola.info(bypass.indexOf(req.url), req.method);
   if (bypass.indexOf(req.url) >= 0 && req.method == "GET") {
     return true;
@@ -219,8 +221,8 @@ app.get("/txhs", async function (req, res) {
   const page = req.query.page;
   const page_size = req.query.page_size;
   const order = req.query.order;
-  const address = req.query.address;
-  let allow_fileds = {
+
+  const allow_fileds = {
     from: req.query.from,
     to: req.query.to,
     txid: req.query.txid,
@@ -231,7 +233,7 @@ app.get("/txhs", async function (req, res) {
     operation: req.query.operation,
   };
 
-  let filter = Object.keys(allow_fileds)
+  const filter = Object.keys(allow_fileds)
     .filter(
       (key) => allow_fileds[key] !== null && allow_fileds[key] !== undefined
     )
@@ -267,21 +269,21 @@ app.get("/txhs", async function (req, res) {
       }
 
       // Firstly, the address as an owner,
-      let wallets = await db_wallet.findAll({
+      const wallets = await db_wallet.findAll({
         address,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       });
 
       // select * from thx where from == xxx;
-      let as_owners = [address];
+      const as_owners = [address];
       if (wallets !== null) {
-        for (let wallet of wallets) {
+        for (const wallet of wallets) {
           as_owners.push(wallet["wallet_address"]);
         }
       }
 
       // Secondly, the address as a signer, and the status is "Creating"
-      let signers = await db_wallet.search({
+      const signers = await db_wallet.search({
         where: {
           address: address,
           role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
@@ -289,8 +291,8 @@ app.get("/txhs", async function (req, res) {
         raw: true,
       });
 
-      let as_signers = [];
-      for (let signer of signers) {
+      const as_signers = [];
+      for (const signer of signers) {
         // select * from thx where from in (y, y, y) and status = zzz
         as_signers.push(signer["wallet_address"]);
       }
@@ -311,11 +313,11 @@ app.get("/txhs", async function (req, res) {
   consola.log("result", result);
   //OPT: use batch
   if (result != null) {
-    let transactions = result["transactions"];
-    for (var i = 0; i < transactions.length; i++) {
-      let txid = transactions[i]["txid"];
+    const transactions = result["transactions"];
+    for (let i = 0; i < transactions.length; i++) {
+      const txid = transactions[i]["txid"];
       if (!util.has_value(txid)) continue;
-      let res = await db_multisig.findMultisigMetaByConds({ txid: txid });
+      const res = await db_multisig.findMultisigMetaByConds({ txid: txid });
       if (res == null) continue;
       if (!util.has_value(res["id"])) continue;
       transactions[i]["mtxid"] = res["id"];
@@ -361,7 +363,6 @@ app.post("/txh", async function (req, res) {
   const from = req.body.from;
   const to = req.body.to;
   const value = req.body.value;
-  const block_num = req.body.block_num;
   const type = req.body.type;
   const name = req.body.name;
   const network_id = req.body.network_id;
@@ -427,7 +428,7 @@ app.put("/txh/:txid", async function (req, res) {
 
 // add meta
 app.post("/mtx/meta", async (req, res) => {
-  let ret = await db_multisig.addMultisigMeta(
+  const ret = await db_multisig.addMultisigMeta(
     req.body.network_id,
     req.body.user_id,
     req.body.wallet_address,
@@ -444,7 +445,7 @@ app.put("/mtx/meta", async (req, res) => {
   if (!util.has_value(req.body.id)) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'id'"));
   }
-  let ret = await db_multisig.updateMultisigMeta(req.body.id, req.body.txid);
+  const ret = await db_multisig.updateMultisigMeta(req.body.id, req.body.txid);
   res.json(util.Succ(ret));
 });
 
@@ -452,14 +453,14 @@ app.get("/mtx/meta/:id", async (req, res) => {
   if (!util.has_value(req.params.id)) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'id'"));
   }
-  let ret = await db_multisig.findMultisigMetaByConds({ id: req.params.id });
+  const ret = await db_multisig.findMultisigMetaByConds({ id: req.params.id });
   // return owner_address and mtx status
-  let mtx = await db_txh.getByTxid(ret["txid"]);
+  const mtx = await db_txh.getByTxid(ret["txid"]);
   if (mtx != null) {
     ret["status"] = mtx["status"];
   }
 
-  let walletInfo = await db_wallet.findOne({
+  const walletInfo = await db_wallet.findOne({
     wallet_address: ret["wallet_address"],
   });
   if (walletInfo != null) {
@@ -473,7 +474,7 @@ app.post("/mtx/sign", async (req, res) => {
   if (!util.has_value(req.body.mtxid)) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'mtxid'"));
   }
-  let ret = await db_multisig.addSignMessage(
+  const ret = await db_multisig.addSignMessage(
     req.body.mtxid,
     req.body.signer_address,
     req.body.signer_message,
@@ -488,35 +489,35 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
   if (!util.has_value(req.params.mtxid)) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'mtxid'"));
   }
-  let sm = await db_multisig.findSignHistoryByMtxid(req.params.mtxid);
+  const sm = await db_multisig.findSignHistoryByMtxid(req.params.mtxid);
   consola.log("signed message", sm);
-  let resultsm = [];
+  const resultsm = [];
   // get all sigers
-  let meta = await db_multisig.findMultisigMetaByConds({
+  const meta = await db_multisig.findMultisigMetaByConds({
     id: req.params.mtxid,
   });
   consola.log("meta", meta);
   if (meta == null) {
     return res.json(util.Succ(sm));
   }
-  let allSigners = await db_wallet.findAll({
+  const allSigners = await db_wallet.findAll({
     wallet_address: meta["wallet_address"],
   });
   consola.log(allSigners);
-  let signedSigners = new Map<string, boolean>();
+  const signedSigners = new Map<string, boolean>();
 
   if (sm !== null) {
-    for (var i = 0; i < sm.length; i++) {
+    for (let i = 0; i < sm.length; i++) {
       // get user_id
-      let addrInfo = await db_address.findOne({
+      const addrInfo = await db_address.findOne({
         user_address: sm[i]["signer_address"],
       });
       signedSigners.set(sm[i]["signer_address"], true);
       if (addrInfo == null) continue;
-      let userInfo = await db_user.findByID(addrInfo["user_id"]);
+      const userInfo = await db_user.findByID(addrInfo["user_id"]);
       if (userInfo == null) continue;
 
-      let signInfo = {
+      const signInfo = {
         name: userInfo["name"],
         picture: userInfo["picture"],
         id: i,
@@ -528,22 +529,22 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
       resultsm.push(signInfo);
     }
 
-    let signedSize = resultsm.length;
-    for (var i = 0; i < allSigners.length; i++) {
-      let signer = allSigners[i];
+    const signedSize = resultsm.length;
+    for (let i = 0; i < allSigners.length; i++) {
+      const signer = allSigners[i];
       if (signedSigners.has(signer["address"])) {
         continue;
       }
 
-      let addrInfo = await db_address.findOne({
+      const addrInfo = await db_address.findOne({
         user_address: signer["address"],
       });
       signedSigners.set(signer["address"], true);
       if (addrInfo == null) continue;
-      let userInfo = await db_user.findByID(addrInfo["user_id"]);
+      const userInfo = await db_user.findByID(addrInfo["user_id"]);
       if (userInfo == null) continue;
 
-      let signInfo = {
+      const signInfo = {
         id: i + signedSize,
         mtxid: req.params.mtxid,
         signer_address: signer["address"],
@@ -583,13 +584,13 @@ app.get("/user/:user_id", async function (req, res) {
   }
 
   switch (action) {
-    case "guardians":
-      var filter_status = req.query.status;
+    case "guardians": {
+      const filter_status = req.query.status;
       if (filter_status !== undefined) {
         consola.info("Filter the status of guardians: ", filter_status);
       }
       if (user_id === undefined) {
-        var all_relationships = await friend_list.findAll();
+        const all_relationships = await friend_list.findAll();
         res.json(util.Succ(all_relationships));
         return;
       }
@@ -598,9 +599,9 @@ app.get("/user/:user_id", async function (req, res) {
         res.json(util.Err(util.ErrCode.Unknown, "user does not exist"));
         return;
       }
-      var status = await friend_list.getStatusByUserId(user_id);
-      var ids = new Set();
-      var relationships = new Map();
+      const status = await friend_list.getStatusByUserId(user_id);
+      const ids = new Set();
+      const relationships = new Map();
       for (let i = 0; i < status.length; i++) {
         // There isn't status filter or filter the status
         if (filter_status === undefined || filter_status == status[i].status) {
@@ -609,11 +610,10 @@ app.get("/user/:user_id", async function (req, res) {
         }
       }
       consola.log(status, ids);
-      var information_without_status: any = await db_user.findUsersInformation(
-        Array.from(ids)
-      );
+      const information_without_status: any =
+        await db_user.findUsersInformation(Array.from(ids));
       consola.log("Infomation without status: ", information_without_status);
-      var information_with_status = new Array();
+      const information_with_status = new Array<any>();
       for (let i = 0; i < information_without_status.length; i++) {
         information_with_status.push({
           user_id: information_without_status[i].user_id,
@@ -625,7 +625,8 @@ app.get("/user/:user_id", async function (req, res) {
       consola.log(`Guardian list of ${user_id}: `, information_with_status);
       res.json(util.Succ(information_with_status));
       return;
-    case "strangers":
+    }
+    case "strangers": {
       if (user_id === undefined) {
         res.json(util.Err(util.ErrCode.Unknown, "invalid argument"));
         return;
@@ -635,26 +636,28 @@ app.get("/user/:user_id", async function (req, res) {
         res.json(util.Err(util.ErrCode.Unknown, "user does not exist"));
         return;
       }
-      var ids = await db_user.findAllUserIDs();
-      var known = await friend_list.getKnownByUserId(user_id);
-      var strangers = new Set([...ids].filter((x) => !known.has(x)));
+      const ids = await db_user.findAllUserIDs();
+      const known = await friend_list.getKnownByUserId(user_id);
+      const strangers = new Set([...ids].filter((x) => !known.has(x)));
       strangers.delete(Number(user_id));
-      var result = Array.from(strangers);
-      var information = await db_user.findUsersInformation(result);
+      const result = Array.from(strangers);
+      const information = await db_user.findUsersInformation(result);
 
       consola.log(`Stranger list of ${user_id}: `, information);
       res.json(util.Succ(information));
       return;
-    default:
+    }
+    default: {
       res.json(util.Err(util.ErrCode.Unknown, "invalid action"));
       return;
+    }
   }
 });
 
 // TODO: Just for test
 app.post("/user", async function (req, res) {
   consola.log("Update or Add: ", req.body.user_id, req.body);
-  var result: any = await db_user.updateOrAdd(req.body.user_id, req.body);
+  const result: any = await db_user.updateOrAdd(req.body.user_id, req.body);
   consola.log("Create a new user, id = ", result.user_id, result);
   const user_info = {
     unique_id: result.unique_id,
@@ -690,7 +693,7 @@ app.post("/user/:user_id/guardian", async function (req, res) {
     );
     return;
   }
-  var guardian_id = req.body.guardian_id;
+  let guardian_id = req.body.guardian_id;
   consola.log(`User ${user_id} wants add guardian`);
   const guardian_email = req.body.guardian_email;
 
@@ -705,7 +708,7 @@ app.post("/user/:user_id/guardian", async function (req, res) {
   }
 
   if (util.has_value(guardian_email)) {
-    var guardian = await db_user.findByEmail(guardian_email);
+    const guardian = await db_user.findByEmail(guardian_email);
     if (guardian) {
       guardian_id = guardian.user_id;
     } else {
@@ -764,7 +767,7 @@ app.put("/user/:user_id/guardian", async function (req, res) {
     return;
   }
   const action = req.body.action;
-  var guardian_id = req.body.guardian_id;
+  let guardian_id = req.body.guardian_id;
   if (!util.has_value(user_id) || !util.has_value(action)) {
     res.json(util.Err(util.ErrCode.Unknown, "missing user_id or action"));
     return;
@@ -788,7 +791,7 @@ app.put("/user/:user_id/guardian", async function (req, res) {
   }
 
   if (util.has_value(guardian_email)) {
-    var guardian = await db_user.findByEmail(guardian_email);
+    const guardian = await db_user.findByEmail(guardian_email);
     if (guardian) {
       guardian_id = guardian.user_id;
     } else {
@@ -821,9 +824,9 @@ app.put("/user/:user_id/guardian", async function (req, res) {
     return;
   }
 
-  var result;
+  let result;
   switch (action) {
-    case "confirm":
+    case "confirm": {
       // NOTE: When send a guardian confirm, self is responder, guardian is requester
       result = await friend_list.confirm(guardian_id, user_id);
       if (result) {
@@ -835,7 +838,9 @@ app.put("/user/:user_id/guardian", async function (req, res) {
           util.Err(util.ErrCode.Unknown, "fail to confirm a guardian request")
         );
       }
-    case "reject":
+      break;
+    }
+    case "reject": {
       // NOTE: When send a guardian reject, self is responder, guardian is requester
       result = await friend_list.reject(guardian_id, user_id);
       if (result) {
@@ -847,9 +852,12 @@ app.put("/user/:user_id/guardian", async function (req, res) {
           util.Err(util.ErrCode.Unknown, "fail to reject a guardian request")
         );
       }
-    default:
+      break;
+    }
+    default: {
       res.json(util.Err(util.ErrCode.Unknown, "invalid action"));
       return;
+    }
   }
 });
 
@@ -866,7 +874,7 @@ app.delete("/user/:user_id/guardian", async function (req, res) {
     );
     return;
   }
-  var guardian_id = req.body.guardian_id;
+  let guardian_id = req.body.guardian_id;
   if (!util.has_value(user_id)) {
     res.json(util.Err(util.ErrCode.Unknown, "missing user_id"));
     return;
@@ -886,7 +894,7 @@ app.delete("/user/:user_id/guardian", async function (req, res) {
   }
 
   if (util.has_value(guardian_email)) {
-    var guardian = await db_user.findByEmail(guardian_email);
+    const guardian = await db_user.findByEmail(guardian_email);
     if (guardian) {
       guardian_id = guardian.user_id;
     } else {
@@ -984,7 +992,7 @@ app.post("/user/:user_id/otpauth", async function (req, res) {
   if (user) {
     if (user.secret) {
       const totp = new TOTP(user.secret);
-      var result = totp.verify(code);
+      const result = totp.verify(code);
       res.json(util.Succ(result));
       return;
     } else {
@@ -1013,7 +1021,7 @@ app.get("/user/:user_id/statistics", async function (req, res) {
     return;
   }
 
-  var kind = req.query.kind;
+  const kind = req.query.kind;
 
   if (kind === undefined) {
     consola.info("Satistics kind is not given ", user_id);
@@ -1092,7 +1100,7 @@ app.get("/user/:user_id/allowance", async function (req, res) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
   }
 
-  let allowance = await db_allowance.get(
+  const allowance = await db_allowance.get(
     network_id,
     token_address,
     user_address,
@@ -1132,19 +1140,19 @@ app.get("/user/:user_id/allowances", async function (req, res) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
   }
 
-  let allowances: any = await db_allowance.findAllAllowancesGreaterThanZero(
+  const allowances: any = await db_allowance.findAllAllowancesGreaterThanZero(
     network_id,
     user_address
   );
 
   consola.log(allowances);
 
-  let allowance_list = [];
+  const allowance_list = [];
 
   if (network_id !== "1") {
     // We only support more information display on mainnet
-    for (var i = 0; i < allowances.length; i++) {
-      var allowance = allowances[i];
+    for (let i = 0; i < allowances.length; i++) {
+      const allowance = allowances[i];
 
       allowance_list.push({
         approved_time: allowance.updatedAt,
@@ -1159,9 +1167,9 @@ app.get("/user/:user_id/allowances", async function (req, res) {
     return;
   }
 
-  for (var i = 0; i < allowances.length; i++) {
-    var allowance = allowances[i];
-    var token_info =
+  for (let i = 0; i < allowances.length; i++) {
+    const allowance = allowances[i];
+    const token_info =
       TOKEN_CONSTANS.MAINNET_TOKEN_ADDRESS_TO_TOKEN_MAP[
         allowance.token_address
       ];
@@ -1253,13 +1261,13 @@ app.get("/user/:user_id/addresses", async function (req, res) {
       user_address: req.query.address,
     };
   } else if (util.has_value(req.query.email)) {
-    let user = await db_user.findByEmail(req.query.email);
+    const user = await db_user.findByEmail(req.query.email);
     if (user === null) {
       res.json(util.Succ([]));
       return;
     }
     consola.log(user);
-    let found_user_id = user["user_id"];
+    const found_user_id = user["user_id"];
     filter = { user_id: found_user_id };
   } else {
     // Nothing given, then return all the addresses the user has
@@ -1267,7 +1275,7 @@ app.get("/user/:user_id/addresses", async function (req, res) {
       user_id: user_id,
     };
   }
-  let addresses_array: any = await db_address.findAll(filter);
+  const addresses_array: any = await db_address.findAll(filter);
   res.json(util.Succ(addresses_array));
 
   return;
@@ -1301,13 +1309,13 @@ app.get("/user/:user_id/friends_addresses", async function (req, res) {
       user_address: req.query.address,
     };
   } else if (util.has_value(req.query.email)) {
-    let user = await db_user.findByEmail(req.query.email);
+    const user = await db_user.findByEmail(req.query.email);
     if (user === null) {
       res.json(util.Succ([]));
       return;
     }
     consola.log(user);
-    let found_user_id = user["user_id"];
+    const found_user_id = user["user_id"];
     filter = { user_id: found_user_id };
   } else {
     // Nothing given, then return all the addresses the user has
@@ -1316,11 +1324,11 @@ app.get("/user/:user_id/friends_addresses", async function (req, res) {
     };
   }
 
-  let addresses_array: any = await db_address.findAll(filter);
-  let addresses = addresses_array.map((a) => a.user_address);
+  const addresses_array: any = await db_address.findAll(filter);
+  const addresses = addresses_array.map((a) => a.user_address);
 
   // should remove duplicate addresses
-  let unique_addresses = [...new Set(addresses)];
+  const unique_addresses = [...new Set(addresses)];
 
   consola.log("Return all addresses:", unique_addresses);
 

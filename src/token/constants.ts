@@ -7,9 +7,9 @@
 
 import fs from "fs";
 import consola from "consola";
+import "dotenv/config";
 
 import * as util from "../util";
-require("dotenv").config();
 
 util.require_env_variables(["INFURA_PROJECT_ID"]);
 
