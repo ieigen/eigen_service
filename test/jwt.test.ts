@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import jsonwebtoken from "jsonwebtoken";
-const consola = require("consola");
+import consola from "consola";
 
 describe("JWT token generate", () => {
   it("should generate correctly", () => {

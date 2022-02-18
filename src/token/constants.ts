@@ -6,7 +6,7 @@
  */
 
 import fs from "fs";
-const consola = require("consola");
+import consola from "consola";
 
 import * as util from "../util";
 require("dotenv").config();

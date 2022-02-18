@@ -8,7 +8,7 @@
 import { ethers } from "ethers";
 import { format } from "path/posix";
 import { Sequelize, Op, DataTypes } from "sequelize";
-const consola = require("consola");
+import consola from "consola";
 
 import * as CONSTANTS from "./constants";
 

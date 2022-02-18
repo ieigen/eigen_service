@@ -7,7 +7,7 @@
 
 const http = require("http");
 const { Server } = require("socket.io");
-const consola = require("consola");
+import consola from "consola";
 import PubSub from "pubsub-js";
 
 import * as txh from "./model/database_transaction_history";

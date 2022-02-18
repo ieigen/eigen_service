@@ -5,7 +5,7 @@
  * @module util
  */
 
-const consola = require("consola");
+import consola from "consola";
 
 const require_env_variables = (envVars) => {
   for (const envVar of envVars) {

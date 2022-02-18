@@ -8,9 +8,8 @@
 import express from "express";
 import jwt from "express-jwt";
 import jsonwebtoken from "jsonwebtoken";
-import { v4 as uuidv4 } from "uuid";
 import cors from "cors";
-const consola = require("consola");
+import consola from "consola";
 const TOTP = require("totp.js");
 require("dotenv").config();
 

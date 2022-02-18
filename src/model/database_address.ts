@@ -6,7 +6,7 @@
  */
 
 import { Sequelize, DataTypes } from "sequelize";
-const consola = require("consola");
+import consola from "consola";
 
 const sequelize = new Sequelize({
   dialect: "sqlite",

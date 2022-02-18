@@ -1,7 +1,7 @@
 import * as sec from "../src/crypto/secretshare";
 import * as mocha from "mocha";
 import { expect } from "chai";
-const consola = require("consola");
+import consola from "consola";
 
 describe("secret share lib", () => {
   it("should be combine correctly", () => {

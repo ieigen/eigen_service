@@ -7,7 +7,7 @@
 
 import { Sequelize, DataTypes, Op } from "sequelize";
 import jwt from "express-jwt";
-const consola = require("consola");
+import consola from "consola";
 
 import * as util from "../util";
 

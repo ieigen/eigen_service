@@ -6,7 +6,7 @@
  */
 
 import { Sequelize, Op, DataTypes, Order } from "sequelize";
-const consola = require("consola");
+import consola from "consola";
 
 const getOrder = (order): Order => {
   if (order === "1") return [["updatedAt", "DESC"]];

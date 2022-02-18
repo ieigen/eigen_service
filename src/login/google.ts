@@ -12,7 +12,7 @@ import bodyParser from "body-parser";
 import querystring from "querystring";
 import * as crypto from "crypto";
 import { Session } from "../session";
-const consola = require("consola");
+import consola from "consola";
 
 import * as util from "../util";
 import * as userdb from "../model/database_id";

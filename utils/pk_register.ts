@@ -1,6 +1,6 @@
 const axios = require("axios");
 import querystring from "querystring";
-const consola = require("consola");
+import consola from "consola";
 
 const relay_sdk = require("relay_sdk");
 let relayutil = relay_sdk.util;

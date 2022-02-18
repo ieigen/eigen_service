@@ -10,7 +10,7 @@ import * as util from "../util";
 import * as elliptic from "elliptic";
 const EC = elliptic.ec;
 const ec = new EC("p256");
-const consola = require("consola");
+import consola from "consola";
 
 const relay_sdk = require("relay_sdk");
 let relayutil = relay_sdk.util;

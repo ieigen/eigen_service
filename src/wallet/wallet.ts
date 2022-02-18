@@ -8,7 +8,7 @@
 import express from "express";
 import PubSub from "pubsub-js";
 import { Op } from "sequelize";
-const consola = require("consola");
+import consola from "consola";
 
 import * as util from "../util";
 import * as db_wallet from "../model/database_wallet";

@@ -11,7 +11,7 @@ import ss from "secrets.js-grempe";
 import "@ethersproject/shims";
 import * as ethers from "ethers";
 import * as crypto from "crypto";
-const consola = require("consola");
+import consola from "consola";
 
 import {
   defaultPath,

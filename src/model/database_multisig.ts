@@ -7,7 +7,7 @@
 
 import { v4 as uuidv4 } from "uuid";
 import { Sequelize, DataTypes, Op } from "sequelize";
-const consola = require("consola");
+import consola from "consola";
 
 // FIXME don't depend another model, move them to controller
 import * as walletdb from "./database_wallet";
