@@ -172,7 +172,7 @@ export const get_allowance = function (
   token_address,
   swap_address
 ) {
-  let provider = ethers.getDefaultProvider(CONSTANTS.getRpcUrl(network));
+  const provider = ethers.getDefaultProvider(CONSTANTS.getRpcUrl(network));
   consola.log("Provider: ", provider);
 
   const token = new ethers.Contract(
@@ -186,23 +186,4 @@ export const get_allowance = function (
     consola.log(res);
     return res;
   });
-};
-
-const get_allowances_for_all_tokens_on_a_network = async function (
-  network,
-  user_address,
-  swap_address
-) {
-  let provider = ethers.getDefaultProvider(CONSTANTS.getRpcUrl(network));
-  consola.log("Provider: ", provider);
-
-  for (let token_info in CONSTANTS.MAINNET_TOKENS.tokens) {
-    // const token = new ethers.Contract(token_info.address, ERC20_ABI, provider);
-    // consola.log("erc20: ", token);
-    // token.allowance(user_address, swap_address).then(function (res) {
-    //   consola.log(res);
-    //   return res;
-    // });
-    consola.log(token_info);
-  }
 };

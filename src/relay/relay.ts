@@ -5,13 +5,12 @@
  * @module relay
  */
 
-import express from "express";
 import * as util from "../util";
 import * as elliptic from "elliptic";
-const EC = elliptic.ec;
 
 import consola from "consola";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const relay_sdk = require("relay_sdk");
 const relayutil = relay_sdk.util;
 const relaysdk = relay_sdk.sdk;
@@ -53,7 +52,7 @@ module.exports = function (app) {
     }
 
     // encrypt by kms
-    let encryptMsg = `encrypt|${c1}|${cc1}|`;
+    const encryptMsg = `encrypt|${c1}|${cc1}|`;
     consola.log(encryptMsg);
     const client = new relaysdk.EigenRelayClient(
       "fns",
@@ -95,7 +94,7 @@ module.exports = function (app) {
     }
 
     // decrypt by kms
-    let encryptMsg = `decrypt|${cc2}|${c1}|${cr1}`;
+    const encryptMsg = `decrypt|${cc2}|${c1}|${cr1}`;
     consola.log(encryptMsg);
 
     const client = new relaysdk.EigenRelayClient(

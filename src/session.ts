@@ -7,6 +7,8 @@
 
 import consola from "consola";
 
+/* eslint-disable @typescript-eslint/no-namespace */
+/* eslint-disable @typescript-eslint/prefer-namespace-keyword */
 export module Session {
   export class session {
     token: string;
@@ -19,7 +21,7 @@ export module Session {
     }
 
     isValid(this: session): boolean {
-      let cur = Math.floor(Date.now() / 1000);
+      const cur = Math.floor(Date.now() / 1000);
       consola.info(this, cur);
       if (this.issueTime + this.expiry >= cur) {
         this.issueTime = cur;
@@ -30,10 +32,10 @@ export module Session {
   }
 
   //TODO use redis in production
-  let user_token: Map<string, session> = new Map();
+  const user_token: Map<string, session> = new Map();
 
   export function check_token(key: string) {
-    let sess = user_token.get(key);
+    const sess = user_token.get(key);
     if (sess !== undefined && sess.isValid()) {
       user_token.set(key, sess);
       return sess.token;

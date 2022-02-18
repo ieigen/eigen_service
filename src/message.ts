@@ -5,7 +5,7 @@
  * @module message
  */
 
-const http = require("http");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { Server } = require("socket.io");
 import consola from "consola";
 import PubSub from "pubsub-js";
@@ -32,12 +32,12 @@ module.exports = function (app) {
         return;
       }
       //update status
-      let confirmed_list: string[] = data.confirmed_txlist;
+      const confirmed_list: string[] = data.confirmed_txlist;
       consola.info("confirmed_list: ", confirmed_list);
-      for (var i = 0; i < confirmed_list.length; i++) {
-        let tx = confirmed_list[i];
+      for (let i = 0; i < confirmed_list.length; i++) {
+        const tx = confirmed_list[i];
 
-        let res = await txh.updateOrAdd(tx["txid"], {
+        const res = await txh.updateOrAdd(tx["txid"], {
           status: tx["status"],
           block_num: tx["block_num"],
         });
@@ -53,18 +53,18 @@ module.exports = function (app) {
       }
 
       // get unconfirmed tx list
-      let as_owners = [data.from];
-      let wallets = await db_wallet.findAll({
+      const as_owners = [data.from];
+      const wallets = await db_wallet.findAll({
         address: data.from,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       });
       if (wallets) {
-        for (let wallet of wallets) {
+        for (const wallet of wallets) {
           as_owners.push(wallet["wallet_address"]);
         }
       }
 
-      let confirming_list = await txh.search_with_multisig(
+      const confirming_list = await txh.search_with_multisig(
         as_owners,
         [],
         {
@@ -76,9 +76,9 @@ module.exports = function (app) {
         false
       );
       consola.info(confirming_list);
-      let txid_list: string[] = [];
+      const txid_list: string[] = [];
       if (confirming_list.transactions) {
-        for (var i = 0; i < confirming_list.transactions.length; i++) {
+        for (let i = 0; i < confirming_list.transactions.length; i++) {
           consola.info(confirming_list.transactions[i]);
           txid_list.push(confirming_list.transactions[i]["txid"]);
         }
