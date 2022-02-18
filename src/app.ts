@@ -10,6 +10,7 @@ import jwt from "express-jwt";
 import jsonwebtoken from "jsonwebtoken";
 import { v4 as uuidv4 } from "uuid";
 import cors from "cors";
+const consola = require("consola");
 const TOTP = require("totp.js");
 require("dotenv").config();
 
@@ -47,9 +48,9 @@ let filterFunc = function (req) {
   if (process.env.DEBUG_MODE) {
     return true;
   }
-  console.log(req.url);
+  consola.info(req.url);
   let bypass = ["/auth/google/url", "/stores", "/store", "/txhs"];
-  console.log(bypass.indexOf(req.url), req.method);
+  consola.info(bypass.indexOf(req.url), req.method);
   if (bypass.indexOf(req.url) >= 0 && req.method == "GET") {
     return true;
   }
@@ -62,7 +63,7 @@ app.use(
     algorithms: ["HS256"],
     credentialsRequired: false,
     getToken: function fromHeaderOrQuerystring(req) {
-      console.log(req.headers);
+      consola.info(req.headers);
       if (
         req.headers.authorization &&
         req.headers.authorization.split(" ")[0] === "Bearer"
@@ -91,6 +92,7 @@ app.get("/store", async function (req, res) {
   const digest = req.query.digest;
   if (!util.has_value(digest)) {
     logger.error("digest is empty");
+    consola.error("digest is empty");
     return res.json(util.Err(1, "digest missing"));
   }
   const result = await db_pk.findByDigest(digest);
@@ -105,6 +107,7 @@ app.post("/store", async function (req, res) {
   const digest = req.body.digest;
   const pk = req.body.public_key;
   if (!util.has_value(digest) || !util.has_value(pk)) {
+    consola.error("missing dig or pk");
     return res.json(util.Err(1, "missing dig or pk"));
   }
 
@@ -122,6 +125,7 @@ app.put("/store", async function (req, res) {
     !util.has_value(pk) ||
     !util.has_value(old_digest)
   ) {
+    consola.error("missing dig or pk");
     return res.json(util.Err(1, "missing dig or pk"));
   }
   const result = db_pk.updateOrAdd(old_digest, digest, pk);
@@ -136,10 +140,10 @@ app.get("/txhs", async function(req, res) {
 
 // get recovery data
 app.get("/recovery", async function (req, res) {
-  console.log(JSON.stringify(req.query));
+  consola.info(JSON.stringify(req.query));
   const user_id = req.query.user_id;
   if (!util.check_user_id(req, user_id)) {
-    console.log("user_id does not match with decoded JWT");
+    consola.error("user_id does not match with decoded JWT");
     res.json(
       util.Err(
         util.ErrCode.InvalidAuth,
@@ -150,17 +154,17 @@ app.get("/recovery", async function (req, res) {
   }
 
   const result = await db_recovery.findByUserID(user_id);
-  console.log(result);
+  consola.log(result);
   res.json(util.Succ(result));
 });
 
 // get recovery data
 app.delete("/recovery", async function (req, res) {
-  console.log(JSON.stringify(req.query));
+  consola.log(JSON.stringify(req.query));
   const id = req.body.id;
 
   if (!util.check_user_id(req, id)) {
-    console.log("user_id does not match with decoded JWT");
+    consola.error("user_id does not match with decoded JWT");
     res.json(
       util.Err(
         util.ErrCode.InvalidAuth,
@@ -170,15 +174,15 @@ app.delete("/recovery", async function (req, res) {
     return;
   }
   const result = await db_recovery.remove(id);
-  console.log(result);
+  consola.log(result);
   res.json(util.Succ(result));
 });
 
 app.post("/recovery", async function (req, res) {
-  console.log(JSON.stringify(req.body));
+  consola.log(JSON.stringify(req.body));
   const user_id = req.body.user_id;
   if (!util.check_user_id(req, user_id)) {
-    console.log("user_id does not match with decoded JWT");
+    consola.error("user_id does not match with decoded JWT");
     res.json(
       util.Err(
         util.ErrCode.InvalidAuth,
@@ -205,13 +209,13 @@ app.post("/recovery", async function (req, res) {
     threshold,
     JSON.stringify(friends)
   );
-  console.log(result);
+  consola.log(result);
   res.json(util.Succ(result));
 });
 
 app.get("/txhs", async function (req, res) {
   const action = req.query.action;
-  console.log(req.query);
+  consola.log(req.query);
 
   const page = req.query.page;
   const page_size = req.query.page_size;
@@ -251,6 +255,9 @@ app.get("/txhs", async function (req, res) {
         util.has_value(from) ||
         util.has_value(to)
       ) {
+        consola.error(
+          "wrong search pattern for both sized, address should be given, neither from or to should not be given"
+        );
         res.json(
           util.Err(
             util.ErrCode.Unknown,
@@ -302,7 +309,7 @@ app.get("/txhs", async function (req, res) {
       return res.json(util.Err(util.ErrCode.Unknown, "invalid action"));
   }
 
-  console.log("result", result);
+  consola.log("result", result);
   //OPT: use batch
   if (result != null) {
     let transactions = result["transactions"];
@@ -314,7 +321,7 @@ app.get("/txhs", async function (req, res) {
       if (!util.has_value(res["id"])) continue;
       transactions[i]["mtxid"] = res["id"];
     }
-    console.log(transactions);
+    consola.log(transactions);
     result["transactions"] = transactions;
   }
   return res.json(util.Succ(result));
@@ -322,7 +329,7 @@ app.get("/txhs", async function (req, res) {
 
 app.get("/txh", async function (req, res) {
   const action = req.query.action;
-  console.log("action = ", action);
+  consola.log("action = ", action);
   if (!action) {
     const txid = req.query.txid;
     if (!util.has_value(txid)) {
@@ -370,11 +377,15 @@ app.post("/txh", async function (req, res) {
     !util.has_value(operation) ||
     !util.has_value(type)
   ) {
+    consola.error("missing fields");
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
   }
 
   if (type == db_txh.TX_TYPE_L1ToL2 || type == db_txh.TX_TYPE_L2ToL1) {
     if (!util.has_value(to_network_id)) {
+      consola.error(
+        "missing fields, cross chain transaction should set 'to_network_id'"
+      );
       return res.json(
         util.Err(
           util.ErrCode.Unknown,
@@ -383,7 +394,7 @@ app.post("/txh", async function (req, res) {
       );
     }
   }
-  console.log(req.body);
+  consola.log(req.body);
 
   const result = db_txh.updateOrAdd(txid, {
     txid,
@@ -479,20 +490,20 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields 'mtxid'"));
   }
   let sm = await db_multisig.findSignHistoryByMtxid(req.params.mtxid);
-  console.log("signed message", sm);
+  consola.log("signed message", sm);
   let resultsm = [];
   // get all sigers
   let meta = await db_multisig.findMultisigMetaByConds({
     id: req.params.mtxid,
   });
-  console.log("meta", meta);
+  consola.log("meta", meta);
   if (meta == null) {
     return res.json(util.Succ(sm));
   }
   let allSigners = await db_wallet.findAll({
     wallet_address: meta["wallet_address"],
   });
-  console.log(allSigners);
+  consola.log(allSigners);
   let signedSigners = new Map<string, boolean>();
 
   if (sm !== null) {
@@ -554,7 +565,7 @@ app.get("/mtx/sign/:mtxid", async (req, res) => {
 app.get("/user/:user_id", async function (req, res) {
   const user_id = req.params.user_id;
   if (!util.check_user_id(req, user_id)) {
-    console.log("user_id does not match with decoded JWT");
+    consola.error("user_id does not match with decoded JWT");
     res.json(
       util.Err(
         util.ErrCode.InvalidAuth,
@@ -567,7 +578,7 @@ app.get("/user/:user_id", async function (req, res) {
 
   if (action === undefined) {
     const result = await db_user.findByID(user_id);
-    console.log(result);
+    consola.log(result);
     res.json(util.Succ(result));
     return;
   }
@@ -576,7 +587,7 @@ app.get("/user/:user_id", async function (req, res) {
     case "guardians":
       var filter_status = req.query.status;
       if (filter_status !== undefined) {
-        console.log("Filter the status of guardians: ", filter_status);
+        consola.info("Filter the status of guardians: ", filter_status);
       }
       if (user_id === undefined) {
         var all_relationships = await friend_list.findAll();
@@ -584,7 +595,7 @@ app.get("/user/:user_id", async function (req, res) {
         return;
       }
       if (!(await db_user.findByID(user_id))) {
-        console.log("The user does not exist ", user_id);
+        consola.error("The user does not exist ", user_id);
         res.json(util.Err(util.ErrCode.Unknown, "user does not exist"));
         return;
       }
@@ -598,11 +609,11 @@ app.get("/user/:user_id", async function (req, res) {
           relationships[status[i].user_id] = status[i].status;
         }
       }
-      console.log(status, ids);
+      consola.log(status, ids);
       var information_without_status: any = await db_user.findUsersInformation(
         Array.from(ids)
       );
-      console.log("Infomation without status: ", information_without_status);
+      consola.log("Infomation without status: ", information_without_status);
       var information_with_status = new Array();
       for (let i = 0; i < information_without_status.length; i++) {
         information_with_status.push({
@@ -612,7 +623,7 @@ app.get("/user/:user_id", async function (req, res) {
           status: relationships[information_without_status[i].user_id],
         });
       }
-      console.log(`Guardian list of ${user_id}: `, information_with_status);
+      consola.log(`Guardian list of ${user_id}: `, information_with_status);
       res.json(util.Succ(information_with_status));
       return;
     case "strangers":
@@ -621,7 +632,7 @@ app.get("/user/:user_id", async function (req, res) {
         return;
       }
       if (!(await db_user.findByID(user_id))) {
-        console.log("The user does not exist ", user_id);
+        consola.error("The user does not exist ", user_id);
         res.json(util.Err(util.ErrCode.Unknown, "user does not exist"));
         return;
       }
@@ -632,7 +643,7 @@ app.get("/user/:user_id", async function (req, res) {
       var result = Array.from(strangers);
       var information = await db_user.findUsersInformation(result);
 
-      console.log(`Stranger list of ${user_id}: `, information);
+      consola.log(`Stranger list of ${user_id}: `, information);
       res.json(util.Succ(information));
       return;
     default:
@@ -643,9 +654,9 @@ app.get("/user/:user_id", async function (req, res) {
 
 // TODO: Just for test
 app.post("/user", async function (req, res) {
-  console.log("Update or Add: ", req.body.user_id, req.body);
+  consola.log("Update or Add: ", req.body.user_id, req.body);
   var result: any = await db_user.updateOrAdd(req.body.user_id, req.body);
-  console.log("Create a new user, id = ", result.user_id, result);
+  consola.log("Create a new user, id = ", result.user_id, result);
   const user_info = {
     unique_id: result.unique_id,
     email: result.email,
@@ -658,7 +669,7 @@ app.post("/user", async function (req, res) {
   };
 
   const token = jsonwebtoken.sign(user_info, process.env.JWT_SECRET);
-  console.log("user cookie", token);
+  consola.log("user cookie", token);
   return res.json(
     util.Succ({
       result: result,
@@ -671,7 +682,7 @@ app.post("/user", async function (req, res) {
 app.post("/user/:user_id/guardian", async function (req, res) {
   const user_id = req.params.user_id;
   if (!util.check_user_id(req, user_id)) {
-    console.log("user_id does not match with decoded JWT");
+    consola.error("user_id does not match with decoded JWT");
     res.json(
       util.Err(
         util.ErrCode.InvalidAuth,
@@ -681,7 +692,7 @@ app.post("/user/:user_id/guardian", async function (req, res) {
     return;
   }
   var guardian_id = req.body.guardian_id;
-  console.log(`User ${user_id} wants add guardian`);
+  consola.log(`User ${user_id} wants add guardian`);
   const guardian_email = req.body.guardian_email;
 
   if (guardian_id !== undefined && guardian_email) {
@@ -723,7 +734,7 @@ app.post("/user/:user_id/guardian", async function (req, res) {
     !(await db_user.findByID(user_id)) ||
     !(await db_user.findByID(guardian_id))
   ) {
-    console.log("One of the users does not exist", user_id, guardian_id);
+    consola.error("One of the users does not exist", user_id, guardian_id);
     res.json(util.Err(util.ErrCode.Unknown, "one of the users does not exist"));
     return;
   }
@@ -731,10 +742,10 @@ app.post("/user/:user_id/guardian", async function (req, res) {
   // NOTE: When send a friend requet, self is requester, guardian is responder
   const result = await friend_list.request(user_id, guardian_id);
   if (result) {
-    console.log("Send guardian request success!");
+    consola.log("Send guardian request success!");
     return res.json(util.Succ(result));
   } else {
-    console.log("Send a guardian request fail!");
+    consola.log("Send a guardian request fail!");
     return res.json(
       util.Err(util.ErrCode.Unknown, "fail to send a guardian request")
     );
@@ -760,10 +771,10 @@ app.put("/user/:user_id/guardian", async function (req, res) {
     return;
   }
 
-  console.log(`User ${user_id} wants do ${action}`);
+  consola.log(`User ${user_id} wants do ${action}`);
   const guardian_email = req.body.guardian_email;
 
-  console.log(
+  consola.log(
     `${action} is going to do: ${user_id}, ${guardian_id} or ${guardian_email}`
   );
 
@@ -806,7 +817,7 @@ app.put("/user/:user_id/guardian", async function (req, res) {
     !(await db_user.findByID(user_id)) ||
     !(await db_user.findByID(guardian_id))
   ) {
-    console.log("One of the users does not exist", user_id, guardian_id);
+    consola.log("One of the users does not exist", user_id, guardian_id);
     res.json(util.Err(util.ErrCode.Unknown, "one of the users does not exist"));
     return;
   }
@@ -817,10 +828,10 @@ app.put("/user/:user_id/guardian", async function (req, res) {
       // NOTE: When send a guardian confirm, self is responder, guardian is requester
       result = await friend_list.confirm(guardian_id, user_id);
       if (result) {
-        console.log("Confirm a guardian request success!");
+        consola.log("Confirm a guardian request success!");
         return res.json(util.Succ(result));
       } else {
-        console.log("Confirm a guardian request fail!");
+        consola.log("Confirm a guardian request fail!");
         return res.json(
           util.Err(util.ErrCode.Unknown, "fail to confirm a guardian request")
         );
@@ -829,10 +840,10 @@ app.put("/user/:user_id/guardian", async function (req, res) {
       // NOTE: When send a guardian reject, self is responder, guardian is requester
       result = await friend_list.reject(guardian_id, user_id);
       if (result) {
-        console.log("Reject a guardian request success!");
+        consola.log("Reject a guardian request success!");
         return res.json(util.Succ(result));
       } else {
-        console.log("Reject a guardian fail!");
+        consola.log("Reject a guardian fail!");
         return res.json(
           util.Err(util.ErrCode.Unknown, "fail to reject a guardian request")
         );
@@ -847,7 +858,7 @@ app.put("/user/:user_id/guardian", async function (req, res) {
 app.delete("/user/:user_id/guardian", async function (req, res) {
   const user_id = req.params.user_id;
   if (!util.check_user_id(req, user_id)) {
-    console.log("user_id does not match with decoded JWT");
+    consola.error("user_id does not match with decoded JWT");
     res.json(
       util.Err(
         util.ErrCode.InvalidAuth,
@@ -862,7 +873,7 @@ app.delete("/user/:user_id/guardian", async function (req, res) {
     return;
   }
 
-  console.log(`User ${user_id} wants delete guardian`);
+  consola.log(`User ${user_id} wants delete guardian`);
   const guardian_email = req.body.guardian_email;
 
   if (guardian_id !== undefined && guardian_email) {
@@ -904,17 +915,17 @@ app.delete("/user/:user_id/guardian", async function (req, res) {
     !(await db_user.findByID(user_id)) ||
     !(await db_user.findByID(guardian_id))
   ) {
-    console.log("One of the users does not exist", user_id, guardian_id);
+    consola.error("One of the users does not exist", user_id, guardian_id);
     res.json(util.Err(util.ErrCode.Unknown, "one of the users does not exist"));
     return;
   }
 
   const result = await friend_list.remove(user_id, guardian_id);
   if (result) {
-    console.log("Remove a guardian request success!");
+    consola.log("Remove a guardian request success!");
     return res.json(util.Succ(result));
   } else {
-    console.log("Remove a guardian fail!");
+    consola.log("Remove a guardian fail!");
     return res.json(
       util.Err(util.ErrCode.Unknown, "fail to remove a guardian")
     );
@@ -924,7 +935,7 @@ app.delete("/user/:user_id/guardian", async function (req, res) {
 app.put("/user/:user_id/otpauth", async function (req, res) {
   const user_id = req.params.user_id;
   if (!util.check_user_id(req, user_id)) {
-    console.log("user_id does not match with decoded JWT");
+    consola.error("user_id does not match with decoded JWT");
     res.json(
       util.Err(
         util.ErrCode.InvalidAuth,
@@ -942,11 +953,11 @@ app.put("/user/:user_id/otpauth", async function (req, res) {
   const result = await db_user.updateSecret(user_id, secret);
 
   if (result) {
-    console.log("Save a otpauth secret success!");
+    consola.log("Save a otpauth secret success!");
     res.json(util.Succ(result));
     return;
   } else {
-    console.log("Save a otpauth secret fail!");
+    consola.log("Save a otpauth secret fail!");
     res.json(util.Err(util.ErrCode.Unknown, "fail to save a otpauth secret"));
     return;
   }
@@ -956,7 +967,7 @@ app.put("/user/:user_id/otpauth", async function (req, res) {
 app.post("/user/:user_id/otpauth", async function (req, res) {
   const user_id = req.params.user_id;
   if (!util.check_user_id(req, user_id)) {
-    console.log("user_id does not match with decoded JWT");
+    consola.error("user_id does not match with decoded JWT");
     res.json(
       util.Err(
         util.ErrCode.InvalidAuth,
@@ -969,7 +980,7 @@ app.post("/user/:user_id/otpauth", async function (req, res) {
   if (!util.has_value(user_id) || !util.has_value(code)) {
     return res.json(util.Err(1, "missing fields"));
   }
-  console.log(req.body);
+  consola.log(req.body);
   const user = await db_user.findByID(user_id);
   if (user) {
     if (user.secret) {
@@ -978,12 +989,12 @@ app.post("/user/:user_id/otpauth", async function (req, res) {
       res.json(util.Succ(result));
       return;
     } else {
-      console.log("The secret does not exist ", user_id);
+      consola.error("The secret does not exist ", user_id);
       res.json(util.Err(util.ErrCode.Unknown, "secret does not exist"));
       return;
     }
   } else {
-    console.log("The user does not exist ", user_id);
+    consola.error("The user does not exist ", user_id);
     res.json(util.Err(util.ErrCode.Unknown, "user does not exist"));
     return;
   }
@@ -993,7 +1004,7 @@ app.post("/user/:user_id/otpauth", async function (req, res) {
 app.get("/user/:user_id/statistics", async function (req, res) {
   const user_id = req.params.user_id;
   if (!util.check_user_id(req, user_id)) {
-    console.log("user_id does not match with decoded JWT");
+    consola.error("user_id does not match with decoded JWT");
     res.json(
       util.Err(
         util.ErrCode.InvalidAuth,
@@ -1006,11 +1017,11 @@ app.get("/user/:user_id/statistics", async function (req, res) {
   var kind = req.query.kind;
 
   if (kind === undefined) {
-    console.log("Satistics kind is not given ", user_id);
+    consola.info("Satistics kind is not given ", user_id);
     res.json(util.Err(util.ErrCode.Unknown, "satistics kind is not given"));
     return;
   } else {
-    console.log(`[Statistics: ${kind}] (${user_id})`);
+    consola.info(`[Statistics: ${kind}] (${user_id})`);
     return res.json(util.Succ(""));
   }
 });
@@ -1018,7 +1029,7 @@ app.get("/user/:user_id/statistics", async function (req, res) {
 app.post("/user/:user_id/allowance", async function (req, res) {
   const user_id = req.params.user_id;
   if (!util.check_user_id(req, user_id)) {
-    console.log("user_id does not match with decoded JWT");
+    consola.error("user_id does not match with decoded JWT");
     res.json(
       util.Err(
         util.ErrCode.InvalidAuth,
@@ -1042,7 +1053,7 @@ app.post("/user/:user_id/allowance", async function (req, res) {
   ) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
   }
-  console.log(req.body);
+  consola.log(req.body);
 
   const result = db_allowance.updateOrAdd(
     network_id,
@@ -1057,7 +1068,7 @@ app.post("/user/:user_id/allowance", async function (req, res) {
 app.get("/user/:user_id/allowance", async function (req, res) {
   const user_id = req.params.user_id;
   if (!util.check_user_id(req, user_id)) {
-    console.log("user_id does not match with decoded JWT");
+    consola.error("user_id does not match with decoded JWT");
     res.json(
       util.Err(
         util.ErrCode.InvalidAuth,
@@ -1067,7 +1078,7 @@ app.get("/user/:user_id/allowance", async function (req, res) {
     return;
   }
 
-  console.log(req.query);
+  consola.log(req.query);
 
   const user_address = req.query.user_address;
   const token_address = req.query.token_address;
@@ -1090,7 +1101,7 @@ app.get("/user/:user_id/allowance", async function (req, res) {
   );
 
   if (allowance === undefined) {
-    console.log("The allowance record does not exist: ", user_id);
+    consola.error("The allowance record does not exist: ", user_id);
     res.json(
       util.Err(util.ErrCode.Unknown, "the allowance record does not exist")
     );
@@ -1104,7 +1115,7 @@ app.get("/user/:user_id/allowance", async function (req, res) {
 app.get("/user/:user_id/allowances", async function (req, res) {
   const user_id = req.params.user_id;
   if (!util.check_user_id(req, user_id)) {
-    console.log("user_id does not match with decoded JWT");
+    consola.error("user_id does not match with decoded JWT");
     res.json(
       util.Err(
         util.ErrCode.InvalidAuth,
@@ -1114,7 +1125,7 @@ app.get("/user/:user_id/allowances", async function (req, res) {
     return;
   }
 
-  console.log(req.query);
+  consola.log(req.query);
 
   const user_address = req.query.user_address;
   const network_id = req.query.network_id;
@@ -1127,7 +1138,7 @@ app.get("/user/:user_id/allowances", async function (req, res) {
     user_address
   );
 
-  console.log(allowances);
+  consola.log(allowances);
 
   let allowance_list = [];
 
@@ -1189,7 +1200,7 @@ app.get("/user/:user_id/allowances", async function (req, res) {
 app.post("/user/:user_id/address", async function (req, res) {
   const user_id = req.params.user_id;
   if (!util.check_user_id(req, user_id)) {
-    console.log("user_id does not match with decoded JWT");
+    consola.error("user_id does not match with decoded JWT");
     res.json(
       util.Err(
         util.ErrCode.InvalidAuth,
@@ -1205,7 +1216,7 @@ app.post("/user/:user_id/address", async function (req, res) {
   if (!util.has_value(user_address) || !util.has_value(network_id)) {
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
   }
-  console.log("Add address information: ", req.body);
+  consola.log("Add address information: ", req.body);
 
   const result = db_address.updateOrAdd(
     user_id,
@@ -1219,7 +1230,7 @@ app.post("/user/:user_id/address", async function (req, res) {
 app.get("/user/:user_id/addresses", async function (req, res) {
   const user_id = req.params.user_id;
   if (!util.check_user_id(req, user_id)) {
-    console.log("user_id does not match with decoded JWT");
+    consola.error("user_id does not match with decoded JWT");
     res.json(
       util.Err(
         util.ErrCode.InvalidAuth,
@@ -1229,11 +1240,11 @@ app.get("/user/:user_id/addresses", async function (req, res) {
     return;
   }
 
-  console.log(req.query);
+  consola.log(req.query);
   let filter;
 
   if (util.has_value(req.query.address) && util.has_value(req.query.email)) {
-    console.log("address and emial can not both exist");
+    consola.error("address and emial can not both exist");
     res.json(
       util.Err(util.ErrCode.InvalidAuth, "address and emial can not both exist")
     );
@@ -1248,7 +1259,7 @@ app.get("/user/:user_id/addresses", async function (req, res) {
       res.json(util.Succ([]));
       return;
     }
-    console.log(user);
+    consola.log(user);
     let found_user_id = user["user_id"];
     filter = { user_id: found_user_id };
   } else {
@@ -1267,7 +1278,7 @@ app.get("/user/:user_id/friends_addresses", async function (req, res) {
   // TODO: search friends and then return addresses
   const user_id = req.params.user_id;
   if (!util.check_user_id(req, user_id)) {
-    console.log("user_id does not match with decoded JWT");
+    consola.error("user_id does not match with decoded JWT");
     res.json(
       util.Err(
         util.ErrCode.InvalidAuth,
@@ -1277,11 +1288,11 @@ app.get("/user/:user_id/friends_addresses", async function (req, res) {
     return;
   }
 
-  console.log(req.query);
+  consola.log(req.query);
   let filter;
 
   if (util.has_value(req.query.address) && util.has_value(req.query.email)) {
-    console.log("address and emial can not both exist");
+    consola.error("address and emial can not both exist");
     res.json(
       util.Err(util.ErrCode.InvalidAuth, "address and emial can not both exist")
     );
@@ -1296,7 +1307,7 @@ app.get("/user/:user_id/friends_addresses", async function (req, res) {
       res.json(util.Succ([]));
       return;
     }
-    console.log(user);
+    consola.log(user);
     let found_user_id = user["user_id"];
     filter = { user_id: found_user_id };
   } else {
@@ -1312,7 +1323,7 @@ app.get("/user/:user_id/friends_addresses", async function (req, res) {
   // should remove duplicate addresses
   let unique_addresses = [...new Set(addresses)];
 
-  console.log("Return all addresses:", unique_addresses);
+  consola.log("Return all addresses:", unique_addresses);
 
   res.json(util.Succ(unique_addresses));
   return;
@@ -1324,5 +1335,5 @@ require("./wallet/wallet")(app);
 require("./message")(app);
 
 app.listen(3000, function () {
-  console.log("Eigen Service listening on port 3000!");
+  consola.log("Eigen Service listening on port 3000!");
 });

@@ -6,6 +6,8 @@
  */
 
 import { Sequelize, DataTypes, Op } from "sequelize";
+const consola = require("consola");
+
 const sequelize = new Sequelize({
   dialect: "sqlite",
 
@@ -112,7 +114,7 @@ sequelize
     });
   })
   .then(function (row: any) {
-    console.log(
+    consola.log(
       row.get({
         user_id: 1,
         wallet_address: "0x",
@@ -126,7 +128,7 @@ sequelize
     });
   })
   .catch(function (err) {
-    console.log("Unable to connect to the database:", err);
+    consola.log("Unable to connect to the database:", err);
   });
 
 const add = function (
@@ -207,7 +209,7 @@ const updateOwnerAddress = function (user_id, wallet_id, owner_address) {
   return walletdb
     .findOne({ where: { wallet_id, user_id } })
     .then(function (row: any) {
-      console.log(row);
+      consola.log(row);
       if (row === null) {
         return false;
       }
@@ -216,11 +218,11 @@ const updateOwnerAddress = function (user_id, wallet_id, owner_address) {
           address: owner_address,
         })
         .then(function (result) {
-          console.log("Update owner address success: ", owner_address);
+          consola.log("Update owner address success: ", owner_address);
           return true;
         })
         .catch(function (err) {
-          console.log(
+          consola.log(
             "Update owner address error (" + err,
             "): ",
             owner_address
@@ -279,11 +281,11 @@ const updateOrAddByOwner = function (
       return row
         .update(actual_update_dict)
         .then(function (result) {
-          console.log("Update success: " + JSON.stringify(result));
+          consola.log("Update success: " + JSON.stringify(result));
           return true;
         })
         .catch(function (err) {
-          console.log("Update error: " + err);
+          consola.log("Update error: " + err);
           return false;
         });
     });
@@ -305,7 +307,7 @@ const updateOrAddBySigner = function (
     .then(function (row: any) {
       if (row === null) {
         // The signer belows no owner?
-        console.log(
+        consola.log(
           `The signer ${signer_address} want to update information, but the signer belows no owner`
         );
         return false;
@@ -349,11 +351,11 @@ const updateOrAddBySigner = function (
           return row
             .update(actual_update_dict)
             .then(function (result) {
-              console.log("Update success: " + JSON.stringify(result));
+              consola.log("Update success: " + JSON.stringify(result));
               return true;
             })
             .catch(function (err) {
-              console.log("Update error: " + err);
+              consola.log("Update error: " + err);
               return false;
             });
         });

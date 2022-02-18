@@ -6,6 +6,8 @@
  */
 
 import fs from "fs";
+const consola = require("consola");
+
 import * as util from "../util";
 require("dotenv").config();
 
@@ -119,9 +121,9 @@ const UNISWAP_ADDRESSES = JSON.parse(
   fs.readFileSync("./token_directory/uniswap_address.json", "utf-8")
 );
 const UNISWAP_V3_ADDRESSES = UNISWAP_ADDRESSES.UNISWAP_V3_ADDRESSES;
-console.log(UNISWAP_V3_ADDRESSES);
+consola.log(UNISWAP_V3_ADDRESSES);
 const UNISWAP_V2_ADDRESSES = UNISWAP_ADDRESSES.UNISWAP_V2_ADDRESSES;
-console.log(UNISWAP_V2_ADDRESSES);
+consola.log(UNISWAP_V2_ADDRESSES);
 
 export const NETWORK_TYPE_TO_UNISWAP_V3 = {
   [ROPSTEN]: UNISWAP_V3_ADDRESSES,

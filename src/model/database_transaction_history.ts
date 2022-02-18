@@ -6,6 +6,7 @@
  */
 
 import { Sequelize, Op, DataTypes, Order } from "sequelize";
+const consola = require("consola");
 
 const getOrder = (order): Order => {
   if (order === "1") return [["updatedAt", "DESC"]];
@@ -84,7 +85,7 @@ sequelize
     });
   })
   .then(function (row: any) {
-    console.log(
+    consola.log(
       row.get({
         plain: true,
       })
@@ -92,7 +93,7 @@ sequelize
     thdb.destroy({ where: { txid: row.txid } });
   })
   .catch(function (err) {
-    console.log("Unable to connect to the database:", err);
+    consola.log("Unable to connect to the database:", err);
   });
 
 const add = function (dict) {
@@ -122,12 +123,12 @@ const delByTxid = (txid) => {
 };
 
 const search = async function (filter_dict, page, page_size, order) {
-  console.log("Search filter: ", filter_dict);
+  consola.log("Search filter: ", filter_dict);
   // Seq will throw for all undefined keys in where options.  https://sequelize.org/v5/manual/upgrade-to-v5.html
 
   if (page) {
-    console.log("page = ", page);
-    console.log("page_size = ", page_size);
+    consola.log("page = ", page);
+    consola.log("page_size = ", page_size);
 
     const { count, rows } = await thdb.findAndCountAll({
       where: filter_dict,
@@ -136,8 +137,8 @@ const search = async function (filter_dict, page, page_size, order) {
       offset: (page - 1) * page_size,
       raw: true,
     });
-    console.log("count = ", count);
-    console.log("rows = ", rows);
+    consola.log("count = ", count);
+    consola.log("rows = ", rows);
     const total_page = Math.ceil(count / page_size);
     return {
       transactions: rows,
@@ -193,7 +194,7 @@ const search_with_multisig = async (
 };
 
 const search_both_sizes = async function (filter_dict, page, page_size, order) {
-  console.log("Search both sizes filter: ", filter_dict);
+  consola.log("Search both sizes filter: ", filter_dict);
   const address = filter_dict.address;
   delete filter_dict.address;
   const address_filter = {
@@ -211,10 +212,10 @@ const search_both_sizes = async function (filter_dict, page, page_size, order) {
   };
 
   if (page) {
-    console.log("page = ", page);
-    console.log("page_size = ", page_size);
+    consola.log("page = ", page);
+    consola.log("page_size = ", page_size);
 
-    console.log("Reverse order is enabled");
+    consola.log("Reverse order is enabled");
 
     const { count, rows } = await thdb.findAndCountAll({
       ...address_filter,
@@ -223,8 +224,8 @@ const search_both_sizes = async function (filter_dict, page, page_size, order) {
       offset: (page - 1) * page_size,
       raw: true,
     });
-    console.log("count = ", count);
-    console.log("rows = ", rows);
+    consola.log("count = ", count);
+    consola.log("rows = ", rows);
     const total_page = Math.ceil(count / page_size);
     return {
       transactions: rows,
@@ -248,22 +249,22 @@ const findAll = function () {
 
 const updateOrAdd = function (txid, update_dict) {
   thdb.findOne({ where: { txid } }).then(function (row: any) {
-    console.log("find: ", row);
+    consola.log("find: ", row);
     if (row === null) {
       add(update_dict);
       return true;
     }
     var concatenated = { ...row["dataValues"], ...update_dict };
-    console.log("Concatenated: ", concatenated);
+    consola.log("Concatenated: ", concatenated);
 
     return row
       .update(concatenated)
       .then(function (result) {
-        console.log("Update success: " + JSON.stringify(result));
+        consola.log("Update success: " + JSON.stringify(result));
         return true;
       })
       .catch(function (err) {
-        console.log("Update error: " + err);
+        consola.log("Update error: " + err);
         return false;
       });
   });
@@ -278,7 +279,7 @@ const account_count_l2 = function () {
       },
       raw: true,
     });
-    console.log(l2_to_l1);
+    consola.log(l2_to_l1);
     const accounts = new Set();
     for (let i = 0; i < l2_to_l1.length; i++) {
       accounts.add(l2_to_l1[i].account);
@@ -295,7 +296,7 @@ const account_count_l2 = function () {
       raw: true,
     });
 
-    console.log(l2_to_l2);
+    consola.log(l2_to_l2);
     for (let i = 0; i < l2_to_l2.length; i++) {
       accounts.add(l2_to_l2[i].account);
     }

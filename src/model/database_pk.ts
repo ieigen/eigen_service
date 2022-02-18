@@ -6,6 +6,8 @@
  */
 
 import { Sequelize, DataTypes } from "sequelize";
+const consola = require("consola");
+
 const sequelize = new Sequelize({
   dialect: "sqlite",
 
@@ -32,7 +34,7 @@ sequelize
     });
   })
   .then(function (row: any) {
-    console.log(
+    consola.log(
       row.get({
         plain: true,
       })
@@ -40,7 +42,7 @@ sequelize
     pkdb.destroy({ where: { digest: row.digest } });
   })
   .catch(function (err) {
-    console.log("Unable to connect to the database:", err);
+    consola.log("Unable to connect to the database:", err);
   });
 
 const add = function (digest, pk) {
@@ -60,7 +62,7 @@ const findAll = function () {
 
 const updateOrAdd = function (old_dig, new_dig, new_pk) {
   pkdb.findOne({ where: { digest: old_dig } }).then(function (row: any) {
-    console.log(row);
+    consola.log(row);
     if (row === null) {
       add(new_dig, new_pk);
       return true;
@@ -71,11 +73,11 @@ const updateOrAdd = function (old_dig, new_dig, new_pk) {
         public_key: new_pk,
       })
       .then(function (result) {
-        console.log("Update success: " + result);
+        consola.log("Update success: " + result);
         return true;
       })
       .catch(function (err) {
-        console.log("Update error: " + err);
+        consola.log("Update error: " + err);
         return false;
       });
   });

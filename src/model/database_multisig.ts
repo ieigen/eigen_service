@@ -7,6 +7,8 @@
 
 import { v4 as uuidv4 } from "uuid";
 import { Sequelize, DataTypes, Op } from "sequelize";
+const consola = require("consola");
+
 // FIXME don't depend another model, move them to controller
 import * as walletdb from "./database_wallet";
 import * as txhdb from "./database_transaction_history";
@@ -89,7 +91,7 @@ sequelizeMeta
     });
   })
   .then(function (row: any) {
-    console.log(
+    consola.log(
       row.get({
         user_id: 1,
         wallet_address: "0x",
@@ -103,7 +105,7 @@ sequelizeMeta
     });
   })
   .catch(function (err) {
-    console.log("Unable to connect to the database:", err);
+    consola.log("Unable to connect to the database:", err);
   });
 
 sequelizeSignHistory
@@ -118,7 +120,7 @@ sequelizeSignHistory
     });
   })
   .then(function (row: any) {
-    console.log(
+    consola.log(
       row.get({
         id: row.id,
       })
@@ -130,7 +132,7 @@ sequelizeSignHistory
     });
   })
   .catch(function (err) {
-    console.log("Unable to connect to the database:", err);
+    consola.log("Unable to connect to the database:", err);
   });
 
 const addMultisigMeta = function (
@@ -145,7 +147,7 @@ const addMultisigMeta = function (
   // Here we should get a txid value in order to add it into multisigMetaDB
   let txid = uuidv4();
   // mock a txh
-  console.log("txid", txid);
+  consola.log("txid", txid);
   txhdb.add({
     txid: txid,
     network_id: network_id,
@@ -190,11 +192,11 @@ const updateMultisigMeta = function (id, txid) {
       return row
         .update(actual_update_dict)
         .then(function (result) {
-          console.log("Update success: " + JSON.stringify(result));
+          consola.log("Update success: " + JSON.stringify(result));
           return true;
         })
         .catch(function (err) {
-          console.log("Update error: " + err);
+          consola.log("Update error: " + err);
           return false;
         });
     });
@@ -243,7 +245,7 @@ function getSignatures(sign_messages, returnBadSignatures = false) {
   for (let index = 0; index < sign_messages.length; index += 1) {
     let sig = sign_messages[index];
 
-    console.log(sig);
+    consola.log(sig);
 
     if (returnBadSignatures) {
       sig += "a1";

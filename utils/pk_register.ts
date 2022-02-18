@@ -1,5 +1,6 @@
 const axios = require("axios");
 import querystring from "querystring";
+const consola = require("consola");
 
 const relay_sdk = require("relay_sdk");
 let relayutil = relay_sdk.util;
@@ -32,16 +33,16 @@ const main = () => {
     Number(process.env.RELAY_PORT)
   );
 
-  console.log("Client created: ", client);
+  consola.log("Client created: ", client);
 
   try {
-    console.log("Going to submit task");
+    consola.log("Going to submit task");
     client.submit_task("EigenTEERegister", "", (public_key) => {
       if (public_key.length === 0) {
         throw new Error("Get public key failed");
       }
 
-      console.log("Get public key from fns: ", public_key);
+      consola.log("Get public key from fns: ", public_key);
 
       axios
         .post(
@@ -57,7 +58,7 @@ const main = () => {
           }
         )
         .then(function (res) {
-          console.log("Success post, and return: ", res.data);
+          consola.log("Success post, and return: ", res.data);
           process.exit(0);
         })
         .catch((error) => {
@@ -66,10 +67,10 @@ const main = () => {
         });
     });
   } catch (e) {
-    console.log("Fail to submit task: ", e);
+    consola.log("Fail to submit task: ", e);
   }
 
-  console.log("OK");
+  consola.log("OK");
 };
 
 main();

@@ -8,6 +8,7 @@
 import { ethers } from "ethers";
 import { format } from "path/posix";
 import { Sequelize, Op, DataTypes } from "sequelize";
+const consola = require("consola");
 
 import * as CONSTANTS from "./constants";
 
@@ -60,7 +61,7 @@ sequelize
     });
   })
   .then(function (row: any) {
-    console.log(
+    consola.log(
       row.get({
         plain: true,
       })
@@ -75,7 +76,7 @@ sequelize
     });
   })
   .catch(function (err) {
-    console.log("Unable to connect to the database:", err);
+    consola.log("Unable to connect to the database:", err);
   });
 
 const add = function (
@@ -111,7 +112,7 @@ const updateOrAdd = function (
       },
     })
     .then(function (row: any) {
-      console.log(row);
+      consola.log(row);
       if (row === null) {
         add(network_id, token_address, user_address, swap_address, allowance);
         return true;
@@ -125,11 +126,11 @@ const updateOrAdd = function (
           allowance,
         })
         .then(function (result) {
-          console.log("Update success: " + result);
+          consola.log("Update success: " + result);
           return true;
         })
         .catch(function (err) {
-          console.log("Update error: " + err);
+          consola.log("Update error: " + err);
           return false;
         });
     });
@@ -172,17 +173,17 @@ export const get_allowance = function (
   swap_address
 ) {
   let provider = ethers.getDefaultProvider(CONSTANTS.getRpcUrl(network));
-  console.log("Provider: ", provider);
+  consola.log("Provider: ", provider);
 
   const token = new ethers.Contract(
     token_address,
     CONSTANTS.ERC20_ALLOWANCE_ABI,
     provider
   );
-  console.log("erc20: ", token);
+  consola.log("erc20: ", token);
 
   token.allowance(user_address, swap_address).then(function (res) {
-    console.log(res);
+    consola.log(res);
     return res;
   });
 };
@@ -193,15 +194,15 @@ const get_allowances_for_all_tokens_on_a_network = async function (
   swap_address
 ) {
   let provider = ethers.getDefaultProvider(CONSTANTS.getRpcUrl(network));
-  console.log("Provider: ", provider);
+  consola.log("Provider: ", provider);
 
   for (let token_info in CONSTANTS.MAINNET_TOKENS.tokens) {
     // const token = new ethers.Contract(token_info.address, ERC20_ABI, provider);
-    // console.log("erc20: ", token);
+    // consola.log("erc20: ", token);
     // token.allowance(user_address, swap_address).then(function (res) {
-    //   console.log(res);
+    //   consola.log(res);
     //   return res;
     // });
-    console.log(token_info);
+    consola.log(token_info);
   }
 };

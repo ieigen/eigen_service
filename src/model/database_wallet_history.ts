@@ -6,6 +6,7 @@
  */
 
 import { Sequelize, DataTypes } from "sequelize";
+const consola = require("consola");
 
 import { WalletStatus } from "./database_wallet";
 
@@ -56,7 +57,7 @@ sequelize
     });
   })
   .then(function (row: any) {
-    console.log(
+    consola.log(
       row.get({
         wallet_id: 1,
         from: WalletStatus.None,
@@ -76,7 +77,7 @@ sequelize
     });
   })
   .catch(function (err) {
-    console.log("Unable to connect to the database:", err);
+    consola.log("Unable to connect to the database:", err);
   });
 
 const add = function (wallet_id, from, to, txid, cause) {

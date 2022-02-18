@@ -1,15 +1,16 @@
-import * as sec from "../src/crypto/secretshare"
-import * as mocha from 'mocha';
-import {expect} from 'chai';
+import * as sec from "../src/crypto/secretshare";
+import * as mocha from "mocha";
+import { expect } from "chai";
+const consola = require("consola");
 
 describe("secret share lib", () => {
-    it("should be combine correctly", () => {
-        let key = sec.generate_key()
-        key = key.slice(2) // remove prefix 0x
-        let shares = sec.split(key, sec.SecLevel.WEAK)
-        console.log(shares)
-        let comb = sec.combine(shares)
-        console.log(key, comb)
-        expect(comb).to.equal(key)
-    })
-})
+  it("should be combine correctly", () => {
+    let key = sec.generate_key();
+    key = key.slice(2); // remove prefix 0x
+    let shares = sec.split(key, sec.SecLevel.WEAK);
+    consola.log(shares);
+    let comb = sec.combine(shares);
+    consola.log(key, comb);
+    expect(comb).to.equal(key);
+  });
+});

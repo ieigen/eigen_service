@@ -6,6 +6,7 @@
  */
 
 import { Sequelize, Op, DataTypes } from "sequelize";
+const consola = require("consola");
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
@@ -55,7 +56,7 @@ sequelize
     });
   })
   .then(function (row: any) {
-    console.log(
+    consola.log(
       row.get({
         plain: true,
       })
@@ -68,7 +69,7 @@ sequelize
     });
   })
   .catch(function (err) {
-    console.log("Unable to connect to the database:", err);
+    consola.log("Unable to connect to the database:", err);
   });
 
 const getRelationship = function (user1_id, user2_id) {
@@ -104,12 +105,12 @@ const request = function (requester_id, responder_id) {
           });
           return true;
         } else {
-          console.log("We can't make friends with ourselves.");
+          consola.log("We can't make friends with ourselves.");
           return false;
         }
       } else {
         if (row.type === NOT_FRIENDS) {
-          console.log(
+          consola.log(
             "They were friends: ",
             requester_id,
             " and ",
@@ -122,11 +123,11 @@ const request = function (requester_id, responder_id) {
                 type: PENDING_FIRST_SECOND,
               })
               .then(function (result) {
-                console.log("Update success: " + result);
+                consola.log("Update success: " + result);
                 return true;
               })
               .catch(function (err) {
-                console.log("Update error: " + err);
+                consola.log("Update error: " + err);
                 return false;
               });
           } else if (requester_id > responder_id) {
@@ -135,19 +136,19 @@ const request = function (requester_id, responder_id) {
                 type: PENDING_SECOND_FIRST,
               })
               .then(function (result) {
-                console.log("Update success: " + result);
+                consola.log("Update success: " + result);
                 return true;
               })
               .catch(function (err) {
-                console.log("Update error: " + err);
+                consola.log("Update error: " + err);
                 return false;
               });
           } else {
-            console.log("We can't make friends with ourselves.");
+            consola.log("We can't make friends with ourselves.");
             return false;
           }
         } else {
-          console.log(
+          consola.log(
             "Pending friend request or already friend: ",
             requester_id,
             " and ",
@@ -159,7 +160,7 @@ const request = function (requester_id, responder_id) {
       }
     })
     .catch(function (err) {
-      console.log("Unable to connect to the database:", err);
+      consola.log("Unable to connect to the database:", err);
     });
 };
 
@@ -171,7 +172,7 @@ const change_pending_status = function (requester_id, responder_id, status) {
       })
       .then(function (row: any) {
         if (row === null) {
-          console.log(
+          consola.log(
             "User: ",
             requester_id,
             " has not sent request to ",
@@ -186,15 +187,15 @@ const change_pending_status = function (requester_id, responder_id, status) {
               type: status,
             })
             .then(function (result) {
-              console.log("Update success: " + result);
+              consola.log("Update success: " + result);
               return true;
             })
             .catch(function (err) {
-              console.log("Update error: " + err);
+              consola.log("Update error: " + err);
               return false;
             });
         } else {
-          console.log(
+          consola.log(
             "User: ",
             requester_id,
             " has not sent request to ",
@@ -212,7 +213,7 @@ const change_pending_status = function (requester_id, responder_id, status) {
       })
       .then(function (row: any) {
         if (row === null) {
-          console.log(
+          consola.log(
             "User: ",
             requester_id,
             " has not sent request to ",
@@ -227,15 +228,15 @@ const change_pending_status = function (requester_id, responder_id, status) {
               type: status,
             })
             .then(function (result) {
-              console.log("Update success: " + result);
+              consola.log("Update success: " + result);
               return true;
             })
             .catch(function (err) {
-              console.log("Update error: " + err);
+              consola.log("Update error: " + err);
               return false;
             });
         } else {
-          console.log(
+          consola.log(
             "User: ",
             requester_id,
             " has not sent request to ",
@@ -268,7 +269,7 @@ const remove = function (requester_id, responder_id) {
       })
       .then(function (row: any) {
         if (row === null) {
-          console.log(
+          consola.log(
             "User: ",
             requester_id,
             " has not sent request to ",
@@ -283,15 +284,15 @@ const remove = function (requester_id, responder_id) {
               type: NOT_FRIENDS,
             })
             .then(function (result) {
-              console.log("Update success: " + result);
+              consola.log("Update success: " + result);
               return true;
             })
             .catch(function (err) {
-              console.log("Update error: " + err);
+              consola.log("Update error: " + err);
               return false;
             });
         } else {
-          console.log(
+          consola.log(
             "User: ",
             requester_id,
             " and ",
@@ -309,7 +310,7 @@ const remove = function (requester_id, responder_id) {
       })
       .then(function (row: any) {
         if (row === null) {
-          console.log(
+          consola.log(
             "User: ",
             requester_id,
             " has not sent request to ",
@@ -324,15 +325,15 @@ const remove = function (requester_id, responder_id) {
               type: NOT_FRIENDS,
             })
             .then(function (result) {
-              console.log("Update success: " + result);
+              consola.log("Update success: " + result);
               return true;
             })
             .catch(function (err) {
-              console.log("Update error: " + err);
+              consola.log("Update error: " + err);
               return false;
             });
         } else {
-          console.log(
+          consola.log(
             "User: ",
             requester_id,
             " and ",
@@ -361,7 +362,7 @@ const getFriendListByUserId = function (user_id) {
       },
       raw: true,
     });
-    console.log("Friends on first position: ", first);
+    consola.log("Friends on first position: ", first);
     const friends = new Set();
     for (let i = 0; i < first.length; i++) {
       friends.add(first[i].user_id);
@@ -375,7 +376,7 @@ const getFriendListByUserId = function (user_id) {
       },
       raw: true,
     });
-    console.log("Friends on second position: ", second);
+    consola.log("Friends on second position: ", second);
     for (let i = 0; i < second.length; i++) {
       friends.add(second[i].user_id);
     }
@@ -396,7 +397,7 @@ const getKnownByUserId = function (user_id) {
       },
       raw: true,
     });
-    console.log("Known persons on first position: ", first);
+    consola.log("Known persons on first position: ", first);
     const persons = new Set();
     for (let i = 0; i < first.length; i++) {
       persons.add(first[i].user_id);
@@ -412,7 +413,7 @@ const getKnownByUserId = function (user_id) {
       },
       raw: true,
     });
-    console.log("Known persons on second position: ", second);
+    consola.log("Known persons on second position: ", second);
     for (let i = 0; i < second.length; i++) {
       persons.add(second[i].user_id);
     }
@@ -436,7 +437,7 @@ const getStatusByUserId = function (user_id) {
       },
       raw: true,
     });
-    console.log("Known persons on first position: ", first);
+    consola.log("Known persons on first position: ", first);
     const relationships = new Array();
     for (let i = 0; i < first.length; i++) {
       var status;
@@ -472,7 +473,7 @@ const getStatusByUserId = function (user_id) {
       },
       raw: true,
     });
-    console.log("Known persons on first position: ", second);
+    consola.log("Known persons on first position: ", second);
     for (let i = 0; i < second.length; i++) {
       var status;
       switch (second[i].type) {

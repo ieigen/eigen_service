@@ -11,6 +11,7 @@ import ss from "secrets.js-grempe";
 import "@ethersproject/shims";
 import * as ethers from "ethers";
 import * as crypto from "crypto";
+const consola = require("consola");
 
 import {
   defaultPath,
@@ -91,7 +92,7 @@ export function generate_mnemonic(typ: SecLevel): string {
 //  var comb = secrets.combine( shares.slice(1,3) );
 //  convert back to UTF string:
 //  comb = secrets.hex2str(comb);
-//  console.log( comb === pw  ); // => false
+//  consola.log( comb === pw  ); // => false
 export function split(secret: string, level: SecLevel): string[] {
   const lvl = kShareSchema.get(level);
   //secret
