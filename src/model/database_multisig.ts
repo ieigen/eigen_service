@@ -6,7 +6,7 @@
  */
 
 import { v4 as uuidv4 } from "uuid";
-import { Sequelize, DataTypes, Op } from "sequelize";
+import { Sequelize, DataTypes } from "sequelize";
 import consola from "consola";
 
 // FIXME don't depend another model, move them to controller
@@ -145,7 +145,7 @@ const addMultisigMeta = function (
   operation
 ) {
   // Here we should get a txid value in order to add it into multisigMetaDB
-  let txid = uuidv4();
+  const txid = uuidv4();
   // mock a txh
   consola.log("txid", txid);
   txhdb.add({
@@ -187,7 +187,7 @@ const updateMultisigMeta = function (id, txid) {
       // delete the fake txh
       txhdb.delByTxid(row["txid"]);
 
-      let actual_update_dict = { txid: txid };
+      const actual_update_dict = { txid: txid };
 
       return row
         .update(actual_update_dict)

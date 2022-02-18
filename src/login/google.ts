@@ -64,7 +64,7 @@ module.exports = function (app) {
     redirectUri: string;
   }): Promise<{
     access_token: string;
-    expires_in: Number;
+    expires_in: number;
     refresh_token: string;
     scope: string;
     id_token: string;
@@ -186,8 +186,8 @@ module.exports = function (app) {
 
     consola.log("user record: ", user_record);
 
-    let hash = crypto.createHash("sha256");
-    let hashcode = hash.update(token).digest("hex");
+    const hash = crypto.createHash("sha256");
+    const hashcode = hash.update(token).digest("hex");
     consola.log(hashcode);
     Session.add_token(hashcode, new Session.session(token, 3600));
     res.redirect(

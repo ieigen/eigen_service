@@ -249,8 +249,8 @@ const updateOrAddByOwner = function (
     })
     .then(function (row: any) {
       if (row === null) {
-        let name = update_dict.name || "";
-        let status =
+        const name = update_dict.name || "";
+        const status =
           update_dict.status ||
           (role == WALLET_USER_ADDRESS_ROLE_OWNER
             ? SignerStatus.None
@@ -268,7 +268,7 @@ const updateOrAddByOwner = function (
         return true;
       }
 
-      let actual_update_dict = {};
+      const actual_update_dict = {};
 
       if (update_dict.name !== undefined) {
         actual_update_dict["name"] = update_dict.name;
@@ -313,7 +313,7 @@ const updateOrAddBySigner = function (
         return false;
       }
 
-      let user_id = row["user_id"];
+      const user_id = row["user_id"];
       return walletdb
         .findOne({
           where: {
@@ -324,8 +324,8 @@ const updateOrAddBySigner = function (
         })
         .then(function (row: any) {
           if (row === null) {
-            let name = update_dict.name || "";
-            let status = update_dict.status || SignerStatus.ToBeConfirmed;
+            const name = update_dict.name || "";
+            const status = update_dict.status || SignerStatus.ToBeConfirmed;
             add(
               user_id,
               name,
@@ -338,7 +338,7 @@ const updateOrAddBySigner = function (
             return true;
           }
 
-          let actual_update_dict = {};
+          const actual_update_dict = {};
 
           if (update_dict.name !== undefined) {
             actual_update_dict["name"] = update_dict.name;

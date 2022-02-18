@@ -145,7 +145,7 @@ const search = async function (filter_dict, page, page_size, order) {
       total_page,
     };
   } else {
-    let list = await thdb.findAll({
+    const list = await thdb.findAll({
       where: filter_dict,
       order: getOrder(order),
       raw: true,
@@ -166,7 +166,7 @@ const search_with_multisig = async (
   page_size,
   order
 ) => {
-  let { count, rows } = await thdb.findAndCountAll({
+  const { count, rows } = await thdb.findAndCountAll({
     where: {
       [Op.or]: [
         {
@@ -186,7 +186,7 @@ const search_with_multisig = async (
     offset: (page - 1) * page_size,
     raw: true,
   });
-  let total_page = Math.ceil(count / page_size);
+  const total_page = Math.ceil(count / page_size);
   return {
     transactions: rows,
     total_page,
@@ -254,7 +254,7 @@ const updateOrAdd = function (txid, update_dict) {
       add(update_dict);
       return true;
     }
-    var concatenated = { ...row["dataValues"], ...update_dict };
+    const concatenated = { ...row["dataValues"], ...update_dict };
     consola.log("Concatenated: ", concatenated);
 
     return row

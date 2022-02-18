@@ -9,12 +9,12 @@ import express from "express";
 import * as util from "../util";
 import * as elliptic from "elliptic";
 const EC = elliptic.ec;
-const ec = new EC("p256");
+
 import consola from "consola";
 
 const relay_sdk = require("relay_sdk");
-let relayutil = relay_sdk.util;
-let relaysdk = relay_sdk.sdk;
+const relayutil = relay_sdk.util;
+const relaysdk = relay_sdk.sdk;
 
 relayutil.require_env_variables([
   "TEESDK_AUDITOR_BASE_DIR",

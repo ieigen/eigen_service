@@ -438,21 +438,25 @@ const getStatusByUserId = function (user_id) {
       raw: true,
     });
     consola.log("Known persons on first position: ", first);
-    const relationships = new Array();
+    const relationships = new Array<any>();
     for (let i = 0; i < first.length; i++) {
-      var status;
+      let status;
       switch (first[i].type) {
-        case FRIENDS:
+        case FRIENDS: {
           status = FRIEND_LIST_STATUS_MUTUAL;
           break;
-        case PENDING_FIRST_SECOND:
+        }
+        case PENDING_FIRST_SECOND: {
           status = FRIEND_LIST_STATUS_WAITING;
           break;
-        case PENDING_SECOND_FIRST:
+        }
+        case PENDING_SECOND_FIRST: {
           status = FRIEND_LIST_STATUS_CONFIRMING;
           break;
-        default:
+        }
+        default: {
           break;
+        }
       }
       relationships.push({
         user_id: first[i].user_id,
@@ -475,19 +479,23 @@ const getStatusByUserId = function (user_id) {
     });
     consola.log("Known persons on first position: ", second);
     for (let i = 0; i < second.length; i++) {
-      var status;
+      let status;
       switch (second[i].type) {
-        case FRIENDS:
+        case FRIENDS: {
           status = FRIEND_LIST_STATUS_MUTUAL;
           break;
-        case PENDING_FIRST_SECOND:
+        }
+        case PENDING_FIRST_SECOND: {
           status = FRIEND_LIST_STATUS_CONFIRMING;
           break;
-        case PENDING_SECOND_FIRST:
+        }
+        case PENDING_SECOND_FIRST: {
           status = FRIEND_LIST_STATUS_WAITING;
           break;
-        default:
+        }
+        default: {
           break;
+        }
       }
       relationships.push({
         user_id: second[i].user_id,

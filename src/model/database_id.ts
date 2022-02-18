@@ -6,10 +6,7 @@
  */
 
 import { Sequelize, DataTypes, Op } from "sequelize";
-import jwt from "express-jwt";
 import consola from "consola";
-
-import * as util from "../util";
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
@@ -121,7 +118,7 @@ const updateOrAdd = function (user_id, new_info) {
         add(new_info);
         return true;
       }
-      var concatenated = { ...row["dataValues"], ...new_info };
+      const concatenated = { ...row["dataValues"], ...new_info };
       consola.log("Concatenated: ", concatenated);
       return row
         .update(concatenated)
@@ -180,7 +177,7 @@ const findAllUserIDs = function () {
       if (row === null) {
         return new Set();
       }
-      var users = new Set();
+      const users = new Set();
       for (let i = 0; i < row.length; i++) {
         users.add(row[i].user_id);
       }
