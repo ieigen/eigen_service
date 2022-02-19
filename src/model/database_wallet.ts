@@ -5,7 +5,11 @@
  * @module database_wallet
  */
 
-import { Sequelize, DataTypes, Op } from "sequelize";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { Sequelize, DataTypes } from "sequelize";
+import consola from "consola";
+
 const sequelize = new Sequelize({
   dialect: "sqlite",
 
@@ -21,6 +25,11 @@ const sequelize = new Sequelize({
 export const WALLET_USER_ADDRESS_ROLE_OWNER = 0x0;
 export const WALLET_USER_ADDRESS_ROLE_SIGNER = 0x1;
 
+/**
+ * The signer status.
+ *
+ * @enum
+ */
 export enum SignerStatus {
   None = 0,
   ToBeConfirmed = 1,
@@ -32,6 +41,11 @@ export enum SignerStatus {
   IgnoreRecover = 7,
 }
 
+/**
+ * The wallet status.
+ *
+ * @enum
+ */
 export enum WalletStatus {
   None = 0,
   Creating = 1,
@@ -102,7 +116,7 @@ sequelize
     });
   })
   .then(function (row: any) {
-    console.log(
+    consola.log(
       row.get({
         user_id: 1,
         wallet_address: "0x",
@@ -116,7 +130,7 @@ sequelize
     });
   })
   .catch(function (err) {
-    console.log("Unable to connect to the database:", err);
+    consola.log("Unable to connect to the database:", err);
   });
 
 const add = function (
@@ -189,6 +203,7 @@ const isWalletBelongUser = function (user_id, wallet_id) {
       return row !== null;
     })
     .catch(function (err) {
+      consola.error(err);
       return false;
     });
 };
@@ -197,7 +212,7 @@ const updateOwnerAddress = function (user_id, wallet_id, owner_address) {
   return walletdb
     .findOne({ where: { wallet_id, user_id } })
     .then(function (row: any) {
-      console.log(row);
+      consola.log(row);
       if (row === null) {
         return false;
       }
@@ -206,11 +221,11 @@ const updateOwnerAddress = function (user_id, wallet_id, owner_address) {
           address: owner_address,
         })
         .then(function (result) {
-          console.log("Update owner address success: ", owner_address);
+          consola.log("Update owner address success: ", owner_address, result);
           return true;
         })
         .catch(function (err) {
-          console.log(
+          consola.log(
             "Update owner address error (" + err,
             "): ",
             owner_address
@@ -237,8 +252,8 @@ const updateOrAddByOwner = function (
     })
     .then(function (row: any) {
       if (row === null) {
-        let name = update_dict.name || "";
-        let status =
+        const name = update_dict.name || "";
+        const status =
           update_dict.status ||
           (role == WALLET_USER_ADDRESS_ROLE_OWNER
             ? SignerStatus.None
@@ -256,7 +271,7 @@ const updateOrAddByOwner = function (
         return true;
       }
 
-      let actual_update_dict = {};
+      const actual_update_dict = {};
 
       if (update_dict.name !== undefined) {
         actual_update_dict["name"] = update_dict.name;
@@ -269,11 +284,11 @@ const updateOrAddByOwner = function (
       return row
         .update(actual_update_dict)
         .then(function (result) {
-          console.log("Update success: " + JSON.stringify(result));
+          consola.log("Update success: " + JSON.stringify(result));
           return true;
         })
         .catch(function (err) {
-          console.log("Update error: " + err);
+          consola.log("Update error: " + err);
           return false;
         });
     });
@@ -295,13 +310,13 @@ const updateOrAddBySigner = function (
     .then(function (row: any) {
       if (row === null) {
         // The signer belows no owner?
-        console.log(
+        consola.log(
           `The signer ${signer_address} want to update information, but the signer belows no owner`
         );
         return false;
       }
 
-      let user_id = row["user_id"];
+      const user_id = row["user_id"];
       return walletdb
         .findOne({
           where: {
@@ -312,8 +327,8 @@ const updateOrAddBySigner = function (
         })
         .then(function (row: any) {
           if (row === null) {
-            let name = update_dict.name || "";
-            let status = update_dict.status || SignerStatus.ToBeConfirmed;
+            const name = update_dict.name || "";
+            const status = update_dict.status || SignerStatus.ToBeConfirmed;
             add(
               user_id,
               name,
@@ -326,7 +341,7 @@ const updateOrAddBySigner = function (
             return true;
           }
 
-          let actual_update_dict = {};
+          const actual_update_dict = {};
 
           if (update_dict.name !== undefined) {
             actual_update_dict["name"] = update_dict.name;
@@ -339,11 +354,11 @@ const updateOrAddBySigner = function (
           return row
             .update(actual_update_dict)
             .then(function (result) {
-              console.log("Update success: " + JSON.stringify(result));
+              consola.log("Update success: " + JSON.stringify(result));
               return true;
             })
             .catch(function (err) {
-              console.log("Update error: " + err);
+              consola.log("Update error: " + err);
               return false;
             });
         });

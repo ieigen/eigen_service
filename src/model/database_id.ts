@@ -5,10 +5,10 @@
  * @module database_id
  */
 
-import { Sequelize, DataTypes, Op } from "sequelize";
-import jwt from "express-jwt";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import * as util from "../util";
+import { Sequelize, DataTypes, Op } from "sequelize";
+import consola from "consola";
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
@@ -21,6 +21,11 @@ const sequelize = new Sequelize({
   storage: "./data/db_user.sqlite",
 });
 
+/**
+ * User kind, e.g., Google
+ *
+ * @enum
+ */
 export enum UserKind {
   GOOGLE,
 }
@@ -60,7 +65,7 @@ sequelize
     });
   })
   .then(function (row: any) {
-    console.log(
+    consola.log(
       row.get({
         plain: true,
       })
@@ -68,7 +73,7 @@ sequelize
     userdb.destroy({ where: { user_id: row.user_id } });
   })
   .catch(function (err) {
-    console.log("Unable to connect to the database:", err);
+    consola.log("Unable to connect to the database:", err);
   });
 
 const add = function (user_info) {
@@ -83,7 +88,7 @@ const findByID = function (user_id: string) {
   return userdb
     .findOne({ where: { user_id: user_id } })
     .then(function (row: any) {
-      console.log("yes", row);
+      consola.log("yes", row);
       return row;
     });
 };
@@ -92,7 +97,7 @@ const findByOpenID = function (id: string, kind: number) {
   return userdb
     .findOne({ where: { unique_id: id, kind: kind } })
     .then(function (row: any) {
-      console.log(row);
+      consola.log(row);
       return row;
     });
 };
@@ -101,7 +106,7 @@ const findByEmail = function (email: string) {
   return userdb
     .findOne({ where: { email: email.trim() }, raw: true })
     .then(function (row: any) {
-      console.log(row);
+      consola.log(row);
       return row;
     });
 };
@@ -110,21 +115,21 @@ const updateOrAdd = function (user_id, new_info) {
   return userdb
     .findOne({ where: { user_id: user_id } })
     .then(function (row: any) {
-      console.log("Find one user: ", row);
+      consola.log("Find one user: ", row);
       if (row === null) {
         add(new_info);
         return true;
       }
-      var concatenated = { ...row["dataValues"], ...new_info };
-      console.log("Concatenated: ", concatenated);
+      const concatenated = { ...row["dataValues"], ...new_info };
+      consola.log("Concatenated: ", concatenated);
       return row
         .update(concatenated)
         .then(function (result) {
-          console.log("Update success: " + JSON.stringify(result));
+          consola.log("Update success: " + JSON.stringify(result));
           return true;
         })
         .catch(function (err) {
-          console.log("Update error: " + err);
+          consola.log("Update error: " + err);
           return false;
         });
     });
@@ -133,7 +138,7 @@ const updateOrAdd = function (user_id, new_info) {
 const updateSecret = function (user_id, secret) {
   return userdb.findOne({ where: { user_id } }).then(function (row: any) {
     if (row === null) {
-      console.log("Update error: User does not exist");
+      consola.log("Update error: User does not exist");
       return false;
     }
     return row
@@ -141,11 +146,11 @@ const updateSecret = function (user_id, secret) {
         secret: secret,
       })
       .then(function (result) {
-        console.log("Update success: " + result);
+        consola.log("Update success: " + result);
         return true;
       })
       .catch(function (err) {
-        console.log("Update error: " + err);
+        consola.log("Update error: " + err);
         return false;
       });
   });
@@ -170,18 +175,18 @@ const findAllUserIDs = function () {
       raw: true,
     })
     .then(function (row: any) {
-      console.log(row);
+      consola.log(row);
       if (row === null) {
         return new Set();
       }
-      var users = new Set();
+      const users = new Set();
       for (let i = 0; i < row.length; i++) {
         users.add(row[i].user_id);
       }
       return users;
     })
     .catch(function (err) {
-      console.log("Find error: " + err);
+      consola.log("Find error: " + err);
       return new Set();
     });
 };

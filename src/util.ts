@@ -5,13 +5,15 @@
  * @module util
  */
 
+import consola from "consola";
+
 const require_env_variables = (envVars) => {
   for (const envVar of envVars) {
     if (!process.env[envVar]) {
       throw new Error(`Error: set your '${envVar}' environmental variable `);
     }
   }
-  console.log("Environmental variables properly set 👍");
+  consola.success("Environmental variables properly set 👍");
 };
 
 const BaseResp = function (errno, message, data) {
@@ -24,6 +26,11 @@ const Err = function (errno, message) {
   return BaseResp(errno, message, "");
 };
 
+/**
+ * Error code for a JSON responce.
+ *
+ * @enum
+ */
 export enum ErrCode {
   Unknown = -1,
   Success = 0,
@@ -44,7 +51,7 @@ const has_value = function (variable) {
 
 const check_user_id = function (req, user_id) {
   if (!has_value(user_id)) {
-    console.log("user_id is not given!");
+    consola.error("user_id is not given!");
     return false;
   }
 
@@ -54,12 +61,12 @@ const check_user_id = function (req, user_id) {
   }
 
   if (!has_value(req.user)) {
-    console.log("req.user does not exist, jwt is not used here?");
+    consola.error("req.user does not exist, jwt is not used here?");
     return false;
   }
 
   if (req.user.user_id != user_id) {
-    console.log(`expect ${req.user.user_id} but get ${user_id}`);
+    consola.error(`expect ${req.user.user_id} but get ${user_id}`);
     return false;
   }
 

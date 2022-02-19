@@ -5,7 +5,10 @@
  * @module database_transaction_history
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Sequelize, Op, DataTypes, Order } from "sequelize";
+import consola from "consola";
 
 const getOrder = (order): Order => {
   if (order === "1") return [["updatedAt", "DESC"]];
@@ -24,6 +27,11 @@ const sequelize = new Sequelize({
   storage: "./data/db_transaction_history.sqlite",
 });
 
+/**
+ * The kind of signature operation.
+ *
+ * @enum
+ */
 export enum TransactionStatus {
   Failed = -1,
   Sent = 0,
@@ -79,7 +87,7 @@ sequelize
     });
   })
   .then(function (row: any) {
-    console.log(
+    consola.log(
       row.get({
         plain: true,
       })
@@ -87,7 +95,7 @@ sequelize
     thdb.destroy({ where: { txid: row.txid } });
   })
   .catch(function (err) {
-    console.log("Unable to connect to the database:", err);
+    consola.log("Unable to connect to the database:", err);
   });
 
 const add = function (dict) {
@@ -117,12 +125,12 @@ const delByTxid = (txid) => {
 };
 
 const search = async function (filter_dict, page, page_size, order) {
-  console.log("Search filter: ", filter_dict);
+  consola.log("Search filter: ", filter_dict);
   // Seq will throw for all undefined keys in where options.  https://sequelize.org/v5/manual/upgrade-to-v5.html
 
   if (page) {
-    console.log("page = ", page);
-    console.log("page_size = ", page_size);
+    consola.log("page = ", page);
+    consola.log("page_size = ", page_size);
 
     const { count, rows } = await thdb.findAndCountAll({
       where: filter_dict,
@@ -131,15 +139,15 @@ const search = async function (filter_dict, page, page_size, order) {
       offset: (page - 1) * page_size,
       raw: true,
     });
-    console.log("count = ", count);
-    console.log("rows = ", rows);
+    consola.log("count = ", count);
+    consola.log("rows = ", rows);
     const total_page = Math.ceil(count / page_size);
     return {
       transactions: rows,
       total_page,
     };
   } else {
-    let list = await thdb.findAll({
+    const list = await thdb.findAll({
       where: filter_dict,
       order: getOrder(order),
       raw: true,
@@ -160,7 +168,7 @@ const search_with_multisig = async (
   page_size,
   order
 ) => {
-  let { count, rows } = await thdb.findAndCountAll({
+  const { count, rows } = await thdb.findAndCountAll({
     where: {
       [Op.or]: [
         {
@@ -180,7 +188,7 @@ const search_with_multisig = async (
     offset: (page - 1) * page_size,
     raw: true,
   });
-  let total_page = Math.ceil(count / page_size);
+  const total_page = Math.ceil(count / page_size);
   return {
     transactions: rows,
     total_page,
@@ -188,7 +196,7 @@ const search_with_multisig = async (
 };
 
 const search_both_sizes = async function (filter_dict, page, page_size, order) {
-  console.log("Search both sizes filter: ", filter_dict);
+  consola.log("Search both sizes filter: ", filter_dict);
   const address = filter_dict.address;
   delete filter_dict.address;
   const address_filter = {
@@ -206,10 +214,10 @@ const search_both_sizes = async function (filter_dict, page, page_size, order) {
   };
 
   if (page) {
-    console.log("page = ", page);
-    console.log("page_size = ", page_size);
+    consola.log("page = ", page);
+    consola.log("page_size = ", page_size);
 
-    console.log("Reverse order is enabled");
+    consola.log("Reverse order is enabled");
 
     const { count, rows } = await thdb.findAndCountAll({
       ...address_filter,
@@ -218,8 +226,8 @@ const search_both_sizes = async function (filter_dict, page, page_size, order) {
       offset: (page - 1) * page_size,
       raw: true,
     });
-    console.log("count = ", count);
-    console.log("rows = ", rows);
+    consola.log("count = ", count);
+    consola.log("rows = ", rows);
     const total_page = Math.ceil(count / page_size);
     return {
       transactions: rows,
@@ -243,22 +251,22 @@ const findAll = function () {
 
 const updateOrAdd = function (txid, update_dict) {
   thdb.findOne({ where: { txid } }).then(function (row: any) {
-    console.log("find: ", row);
+    consola.log("find: ", row);
     if (row === null) {
       add(update_dict);
       return true;
     }
-    var concatenated = { ...row["dataValues"], ...update_dict };
-    console.log("Concatenated: ", concatenated);
+    const concatenated = { ...row["dataValues"], ...update_dict };
+    consola.log("Concatenated: ", concatenated);
 
     return row
       .update(concatenated)
       .then(function (result) {
-        console.log("Update success: " + JSON.stringify(result));
+        consola.log("Update success: " + JSON.stringify(result));
         return true;
       })
       .catch(function (err) {
-        console.log("Update error: " + err);
+        consola.log("Update error: " + err);
         return false;
       });
   });
@@ -273,7 +281,7 @@ const account_count_l2 = function () {
       },
       raw: true,
     });
-    console.log(l2_to_l1);
+    consola.log(l2_to_l1);
     const accounts = new Set();
     for (let i = 0; i < l2_to_l1.length; i++) {
       accounts.add(l2_to_l1[i].account);
@@ -290,7 +298,7 @@ const account_count_l2 = function () {
       raw: true,
     });
 
-    console.log(l2_to_l2);
+    consola.log(l2_to_l2);
     for (let i = 0; i < l2_to_l2.length; i++) {
       accounts.add(l2_to_l2[i].account);
     }

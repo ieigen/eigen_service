@@ -5,43 +5,47 @@
  * @module message
  */
 
-const http = require("http");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { Server } = require("socket.io");
+import consola from "consola";
+import PubSub from "pubsub-js";
+
 import * as txh from "./model/database_transaction_history";
 import * as db_wallet from "./model/database_wallet";
 import { Session } from "./session";
-import PubSub from "pubsub-js";
 
-module.exports = function (app) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+module.exports = function (_app) {
   //const server = http.createServer(app);
   const io = new Server(8080, { cors: true });
 
   io.on("connection", (socket) => {
-    console.log("a user connected");
+    consola.info("a user connected");
 
     socket.emit("start", { message: "Welcome!", id: socket.id });
 
     socket.on("confirmed", async (data) => {
-      console.log(data);
+      consola.info("Confirmed: ", data);
       // {network_id, from, token, confirmed_txlist}
       // check token
       if (Session.check_token(data.token) == null) {
-        console.log("Invalid token in socket");
+        consola.error("Invalid token in socket");
         return;
       }
       //update status
-      let confirmed_list: string[] = data.confirmed_txlist;
-      console.log("confirmed_list", confirmed_list);
-      for (var i = 0; i < confirmed_list.length; i++) {
-        let tx = confirmed_list[i];
+      const confirmed_list: string[] = data.confirmed_txlist;
+      consola.info("confirmed_list: ", confirmed_list);
+      for (let i = 0; i < confirmed_list.length; i++) {
+        const tx = confirmed_list[i];
 
-        let res = await txh.updateOrAdd(tx["txid"], {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const res = await txh.updateOrAdd(tx["txid"], {
           status: tx["status"],
           block_num: tx["block_num"],
         });
 
         if (tx["txid"] !== undefined) {
-          console.log("Publish transaction: ", tx["txid"]);
+          consola.info("Publish transaction: ", tx["txid"]);
 
           PubSub.publish(`Transaction.${tx["txid"]}`, {
             status: tx["status"],
@@ -51,18 +55,18 @@ module.exports = function (app) {
       }
 
       // get unconfirmed tx list
-      let as_owners = [data.from];
-      let wallets = await db_wallet.findAll({
+      const as_owners = [data.from];
+      const wallets = await db_wallet.findAll({
         address: data.from,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       });
       if (wallets) {
-        for (let wallet of wallets) {
+        for (const wallet of wallets) {
           as_owners.push(wallet["wallet_address"]);
         }
       }
 
-      let confirming_list = await txh.search_with_multisig(
+      const confirming_list = await txh.search_with_multisig(
         as_owners,
         [],
         {
@@ -73,15 +77,15 @@ module.exports = function (app) {
         10,
         false
       );
-      console.log(confirming_list);
-      let txid_list: string[] = [];
+      consola.info(confirming_list);
+      const txid_list: string[] = [];
       if (confirming_list.transactions) {
-        for (var i = 0; i < confirming_list.transactions.length; i++) {
-          console.log(confirming_list.transactions[i]);
+        for (let i = 0; i < confirming_list.transactions.length; i++) {
+          consola.info(confirming_list.transactions[i]);
           txid_list.push(confirming_list.transactions[i]["txid"]);
         }
       }
-      console.log("Comfirming", txid_list);
+      consola.info("Comfirming", txid_list);
       socket.emit("confirming", {
         unconfirmed_txlist: txid_list,
         id: socket.id,

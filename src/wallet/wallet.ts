@@ -5,9 +5,9 @@
  * @module wallet
  */
 
-import express from "express";
 import PubSub from "pubsub-js";
 import { Op } from "sequelize";
+import consola from "consola";
 
 import * as util from "../util";
 import * as db_wallet from "../model/database_wallet";
@@ -22,27 +22,28 @@ import * as db_wh from "../model/database_wallet_history";
 import * as db_multisig from "../model/database_multisig";
 
 // Records txid => wallet, wallet is a Sequelize model which can be used to update status
-let TRANSACTION_ADD_SIGNER_BY_OWNER_MAP = new Map();
-let TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP = new Map();
-let TRANSACTION_DELETE_SIGNER_MAP = new Map();
+const TRANSACTION_ADD_SIGNER_BY_OWNER_MAP = new Map();
+const TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP = new Map();
+const TRANSACTION_DELETE_SIGNER_MAP = new Map();
 
 function addWalletStatusSubscriber(txid, wallet_id) {
-  console.log("Add wallet status subscriber: ", txid, wallet_id);
+  consola.log("Add wallet status subscriber: ", txid, wallet_id);
   // TRANSACTION_WALLET_MAP[txid] = wallet;
 
   return function (msg, transaction) {
-    var [_, txid] = msg.split(".");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_, txid] = msg.split(".");
 
     db_wallet.findByWalletId(wallet_id).then((wallet) => {
       if (wallet === null) {
-        console.log(`Transaction ${txid} is not related to wallet`);
+        consola.log(`Transaction ${txid} is not related to wallet`);
         return false;
       }
 
       const wallet_status = wallet["dataValues"]["wallet_status"];
       const transaction_status = transaction["status"];
 
-      console.log(
+      consola.log(
         `[addWalletStatusSubscriber]: ${txid}, ${JSON.stringify(wallet)}`
       );
 
@@ -70,13 +71,13 @@ function addWalletStatusSubscriber(txid, wallet_id) {
               wallet_status: next_status_success,
             })
             .then(function (result) {
-              console.log(
+              consola.log(
                 "Update wallet status success: " + JSON.stringify(result)
               );
               return true;
             })
             .catch(function (err) {
-              console.log("Update wallet status error: " + err);
+              consola.log("Update wallet status error: " + err);
               return false;
             });
         } else if (transaction_status == db_txh.TransactionStatus.Failed) {
@@ -92,19 +93,19 @@ function addWalletStatusSubscriber(txid, wallet_id) {
               wallet_status: next_status_fail,
             })
             .then(function (result) {
-              console.log(
+              consola.log(
                 "Update wallet status success: " + JSON.stringify(result)
               );
               return true;
             })
             .catch(function (err) {
-              console.log("Update wallet status error: " + err);
+              consola.log("Update wallet status error: " + err);
               return false;
             });
         }
       }
 
-      console.log(
+      consola.log(
         `Do not handle Transaction (${txid}) and Wallet (${wallet["dataValues"]["wallet_id"]})`
       );
 
@@ -114,20 +115,19 @@ function addWalletStatusSubscriber(txid, wallet_id) {
 }
 
 function addSignerByOwnerSubscriber(txid, data) {
-  console.log("Add signer by owner add subscriber: ", txid, data);
+  consola.log("Add signer by owner add subscriber: ", txid, data);
   TRANSACTION_ADD_SIGNER_BY_OWNER_MAP[txid] = data;
   return function (msg, transaction) {
-    var [_, txid] = msg.split(".");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_, txid] = msg.split(".");
 
-    let signer_data = TRANSACTION_ADD_SIGNER_BY_OWNER_MAP[txid];
+    const signer_data = TRANSACTION_ADD_SIGNER_BY_OWNER_MAP[txid];
     if (signer_data === undefined) {
-      console.log(`Transaction ${txid} is not related to signer`);
+      consola.log(`Transaction ${txid} is not related to signer`);
       return false;
     }
 
-    const transaction_status = transaction["status"];
-
-    console.log(`[addSignerByOwnerSubscriber]: ${txid}, ${data}`);
+    consola.log(`[addSignerByOwnerSubscriber]: ${txid}, ${data}`);
 
     if (transaction.status == db_txh.TransactionStatus.Success) {
       return db_wallet.updateOrAddByOwner(
@@ -154,20 +154,19 @@ function addSignerByOwnerSubscriber(txid, data) {
 }
 
 function addSignerBySignerSubscriber(txid, data) {
-  console.log("Add signer by signer add subscriber: ", txid, data);
+  consola.log("Add signer by signer add subscriber: ", txid, data);
   TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP[txid] = data;
   return function (msg, transaction) {
-    var [_, txid] = msg.split(".");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_, txid] = msg.split(".");
 
-    let signer_data = TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP[txid];
+    const signer_data = TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP[txid];
     if (signer_data === undefined) {
-      console.log(`Transaction ${txid} is not related to signer`);
+      consola.log(`Transaction ${txid} is not related to signer`);
       return false;
     }
 
-    const transaction_status = transaction["status"];
-
-    console.log(`[addSignerBySignerSubscriber]: ${txid}, ${data}`);
+    consola.log(`[addSignerBySignerSubscriber]: ${txid}, ${data}`);
 
     if (transaction.status == db_txh.TransactionStatus.Success) {
       return db_wallet.updateOrAddBySigner(data.wallet_address, data.address, {
@@ -182,21 +181,22 @@ function addSignerBySignerSubscriber(txid, data) {
 }
 
 function addDeleteSubscriber(txid, data) {
-  console.log("Delete signer by signer add subscriber: ", txid, data);
+  consola.log("Delete signer by signer add subscriber: ", txid, data);
   TRANSACTION_DELETE_SIGNER_MAP[txid] = data;
   return function (msg, transaction) {
-    var [_, txid] = msg.split(".");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_, txid] = msg.split(".");
 
-    let signer_data = TRANSACTION_DELETE_SIGNER_MAP[txid];
+    const signer_data = TRANSACTION_DELETE_SIGNER_MAP[txid];
     if (signer_data === undefined) {
-      console.log(`Transaction ${txid} is not related to signer`);
+      consola.log(`Transaction ${txid} is not related to signer`);
       return false;
     }
 
     const transaction_status = transaction["status"];
 
     if (transaction_status == db_txh.TransactionStatus.Success) {
-      console.log(
+      consola.log(
         `Going to remove: wallet_address: ${data.wallet_address}, address: ${data.address}`
       );
       return db_wallet.remove(
@@ -205,7 +205,7 @@ function addDeleteSubscriber(txid, data) {
         db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER
       );
     } else {
-      console.log(
+      consola.log(
         `Fail to remove: wallet_address: ${data.wallet_address}, address: ${data.address}, mark it rejected`
       );
       return db_wallet.updateOrAddBySigner(data.wallet_address, data.address, {
@@ -219,7 +219,7 @@ module.exports = function (app) {
   app.post("/user/:user_id/wallet", async function (req, res) {
     const user_id = req.params.user_id;
     if (!util.check_user_id(req, user_id)) {
-      console.log("user_id does not match with decoded JWT");
+      consola.log("user_id does not match with decoded JWT");
       res.json(
         util.Err(
           util.ErrCode.InvalidAuth,
@@ -232,7 +232,6 @@ module.exports = function (app) {
     const wallet_address = req.body.wallet_address;
     const address = req.body.address;
     const name = req.body.name;
-    const ens = req.body.ens || "";
     const signers = req.body.signers;
     const txid = req.body.txid;
     if (
@@ -242,7 +241,7 @@ module.exports = function (app) {
     ) {
       return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
     }
-    console.log(req.body);
+    consola.log(req.body);
 
     const result = await db_wallet.add(
       user_id,
@@ -264,7 +263,7 @@ module.exports = function (app) {
       db_wh.StatusTransitionCause.Create
     );
 
-    console.log(
+    consola.log(
       `[[addWalletStatusSubscriber]]: PubSub.subscribeOnce(Transaction.${txid}, ${wallet_id})`
     );
 
@@ -273,8 +272,8 @@ module.exports = function (app) {
       addWalletStatusSubscriber(txid, wallet_id)
     );
 
-    for (let signer of signers) {
-      console.log(`Add ${signer} into wallet ${wallet_id}]}`);
+    for (const signer of signers) {
+      consola.log(`Add ${signer} into wallet ${wallet_id}]}`);
       db_wallet.add(
         user_id,
         name,
@@ -292,7 +291,7 @@ module.exports = function (app) {
     const user_id = req.params.user_id;
     const wallet_id = req.params.wallet_id;
     if (!util.check_user_id(req, user_id)) {
-      console.log("user_id does not match with decoded JWT");
+      consola.log("user_id does not match with decoded JWT");
       res.json(
         util.Err(
           util.ErrCode.InvalidAuth,
@@ -302,10 +301,10 @@ module.exports = function (app) {
       return;
     }
 
-    let wallet = await db_wallet.findOwnerWalletById(user_id, wallet_id);
+    const wallet = await db_wallet.findOwnerWalletById(user_id, wallet_id);
 
     if (wallet === null) {
-      console.log(
+      consola.log(
         `The wallet (${wallet_id}) does not belong to (user_id: ${user_id})`
       );
       res.json(
@@ -322,7 +321,7 @@ module.exports = function (app) {
     const status = req.body.status;
     if (util.has_value(owner_address)) {
       if (util.has_value(txid) || util.has_value(status)) {
-        console.log("owner_address cannot co-exists with txid or status");
+        consola.log("owner_address cannot co-exists with txid or status");
         res.json(
           util.Err(
             util.ErrCode.Unknown,
@@ -332,7 +331,7 @@ module.exports = function (app) {
         return;
       }
 
-      let result = await db_wallet.updateOwnerAddress(
+      const result = await db_wallet.updateOwnerAddress(
         user_id,
         wallet_id,
         owner_address
@@ -342,23 +341,23 @@ module.exports = function (app) {
       return;
     } else {
       if (!util.has_value(txid) || !util.has_value(status)) {
-        console.log("mising txid or status");
+        consola.log("mising txid or status");
         res.json(util.Err(util.ErrCode.Unknown, "mising txid or status"));
         return;
       }
 
-      let wallet = await db_wallet.findByWalletId(wallet_id);
+      const wallet = await db_wallet.findByWalletId(wallet_id);
 
       if (wallet === null) {
-        console.log("wallet does not exist: ", wallet_id);
+        consola.log("wallet does not exist: ", wallet_id);
         res.json(util.Err(util.ErrCode.Unknown, "wallet does not exist"));
         return;
       }
 
-      let wallet_status = wallet["dataValues"]["wallet_status"];
+      const wallet_status = wallet["dataValues"]["wallet_status"];
 
       if (!db_wallet.WALLET_STATUS_MACHINE_STATE_CHECK[wallet_status][status]) {
-        console.log(
+        consola.log(
           `wallet status transition invalid: ${db_wallet.WalletStatus[wallet_status]} -> ${db_wallet.WalletStatus[status]}`
         );
         res.json(
@@ -396,7 +395,7 @@ module.exports = function (app) {
         wallet_status: status,
       });
 
-      console.log(
+      consola.log(
         `[[addWalletStatusSubscriber]]: PubSub.subscribeOnce(Transaction.${txid}, ${wallet}): ${db_wallet.WalletStatus[wallet_status]} -> ${db_wallet.WalletStatus[status]}`
       );
 
@@ -413,7 +412,7 @@ module.exports = function (app) {
   app.get("/user/:user_id/wallets", async function (req, res) {
     const user_id = req.params.user_id;
     if (!util.check_user_id(req, user_id)) {
-      console.log("user_id does not match with decoded JWT");
+      consola.log("user_id does not match with decoded JWT");
       res.json(
         util.Err(
           util.ErrCode.InvalidAuth,
@@ -423,7 +422,7 @@ module.exports = function (app) {
       return;
     }
 
-    console.log("Query wallets with ", req.query);
+    consola.log("Query wallets with ", req.query);
 
     const address = req.query.address;
 
@@ -442,19 +441,19 @@ module.exports = function (app) {
       };
     }
 
-    let wallets: any = await db_wallet.findAll(filter);
+    const wallets = await db_wallet.findAll(filter);
 
-    console.log("Find wallets: ", wallets);
+    consola.log("Find wallets: ", wallets);
 
-    for (let wallet of wallets) {
-      let wallet_address = wallet["wallet_address"];
+    for (const wallet of wallets) {
+      const wallet_address = wallet["wallet_address"];
 
       const singer_filter = {
         wallet_address: wallet_address,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
       };
 
-      let signers: any = await db_wallet.search({
+      const signers = await db_wallet.search({
         attributes: [
           "createdAt",
           "updatedAt",
@@ -476,7 +475,7 @@ module.exports = function (app) {
   app.get("/user/:user_id/as_signers", async function (req, res) {
     const user_id = req.params.user_id;
     if (!util.check_user_id(req, user_id)) {
-      console.log("user_id does not match with decoded JWT");
+      consola.log("user_id does not match with decoded JWT");
       res.json(
         util.Err(
           util.ErrCode.InvalidAuth,
@@ -486,10 +485,10 @@ module.exports = function (app) {
       return;
     }
 
-    console.log(req.query);
+    consola.log(req.query);
 
-    let address = req.query.address;
-    let arttributes = [
+    const address = req.query.address;
+    const arttributes = [
       "createdAt",
       "updatedAt",
       "name",
@@ -506,13 +505,13 @@ module.exports = function (app) {
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
       };
     } else {
-      let address_map_array: any = await db_address.findAll({ user_id });
+      const address_map_array = await db_address.findAll({ user_id });
       // TODO: This may effect other interface, we could use "raw" search
-      let addresses = address_map_array.map(
+      const addresses = address_map_array.map(
         (a) => a["dataValues"]["user_address"]
       );
 
-      console.log("Find all addresses: ", addresses);
+      consola.log("Find all addresses: ", addresses);
 
       filter = {
         address: {
@@ -522,34 +521,34 @@ module.exports = function (app) {
       };
     }
 
-    let signers = await db_wallet.search({
+    const signers = await db_wallet.search({
       attributes: arttributes,
       where: filter,
       raw: true,
     });
 
-    console.log(signers);
+    consola.log(signers);
 
     for (let i = 0; i < signers.length; i++) {
-      let signer = signers[i];
-      let wallet_address = signer["wallet_address"];
-      let owner = await db_wallet.findOne({
+      const signer = signers[i];
+      const wallet_address = signer["wallet_address"];
+      const owner = await db_wallet.findOne({
         wallet_address,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       });
-      let owner_address = owner["address"];
+      const owner_address = owner["address"];
       signers[i]["owner_address"] = owner_address;
       signers[i]["wallet_id"] = owner["wallet_id"];
       signers[i]["wallet_status"] = owner["wallet_status"];
 
       // Find the latest mtxid for recovery
 
-      let latest_mtxid =
+      const latest_mtxid =
         await db_multisig.findLatestRecoveryMtxidByWalletAddress(
           wallet_address
         );
 
-      console.log("Latest recovery mtxid: ", latest_mtxid);
+      consola.log("Latest recovery mtxid: ", latest_mtxid);
 
       signers[i]["mtxid"] = latest_mtxid ? latest_mtxid["id"] : null;
     }
@@ -564,7 +563,7 @@ module.exports = function (app) {
       const user_id = req.params.user_id;
       const wallet_id = req.params.wallet_id;
       if (!util.check_user_id(req, user_id)) {
-        console.log("user_id does not match with decoded JWT");
+        consola.log("user_id does not match with decoded JWT");
         res.json(
           util.Err(
             util.ErrCode.InvalidAuth,
@@ -574,28 +573,27 @@ module.exports = function (app) {
         return;
       }
 
-      let wallet = await db_wallet.findOwnerWalletById(user_id, wallet_id);
+      const wallet = await db_wallet.findOwnerWalletById(user_id, wallet_id);
 
       if (wallet === null) {
-        console.log(
+        consola.log(
           `It is the signer (user_id: ${user_id}) update the signer (which belongs to wallet_id: ${wallet_id}) status`
         );
 
-        let found_wallet = await db_wallet.findOne({
+        const found_wallet = await db_wallet.findOne({
           wallet_id,
           role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
         });
 
         if (found_wallet === null) {
-          console.log("wallet does not exist: ", wallet_id);
+          consola.log("wallet does not exist: ", wallet_id);
           res.json(util.Err(util.ErrCode.Unknown, "wallet does not exist"));
           return;
         }
 
         const wallet_address = found_wallet["wallet_address"];
-        console.log("Wallet address found: ", wallet_address);
-        console.log("Req body: ", req.body);
-        const name = req.body.name;
+        consola.log("Wallet address found: ", wallet_address);
+        consola.log("Req body: ", req.body);
         const status = req.body.status;
         const address = req.body.address;
         const txid = req.body.txid;
@@ -603,12 +601,12 @@ module.exports = function (app) {
         // status is undefined means add a signer
         if (status === undefined) {
           if (!util.has_value(address)) {
-            console.log("address should be given");
+            consola.log("address should be given");
             res.json(util.Err(util.ErrCode.Unknown, "missing fields: address"));
             return;
           }
           // Update status subscribe
-          console.log(
+          consola.log(
             `[[addSignerBySignerSubscriber]]: PubSub.subscribeOnce(Transaction.${txid}, ${{
               wallet_address,
               address,
@@ -625,7 +623,7 @@ module.exports = function (app) {
           return res.json(util.Succ(false));
         } else {
           // Legacy: sign_message is updated and checked here
-          console.log("Update signer: ", req.body);
+          consola.log("Update signer: ", req.body);
           await db_wallet.updateOrAddBySigner(
             wallet_address,
             address,
@@ -635,13 +633,12 @@ module.exports = function (app) {
           return res.json(util.Succ(true));
         }
       } else {
-        console.log(
+        consola.log(
           `It is the owner (user_id: ${user_id}) update the signer (which belongs to wallet_id: ${wallet_id}) status`
         );
         const wallet_address = wallet["wallet_address"];
-        console.log("Wallet address found: ", wallet_address);
-        console.log("Req body: ", req.body);
-        const name = req.body.name;
+        consola.log("Wallet address found: ", wallet_address);
+        consola.log("Req body: ", req.body);
         const status = req.body.status;
         const address = req.body.address;
         const txid = req.body.txid;
@@ -649,14 +646,14 @@ module.exports = function (app) {
         // Status is undefined means add a signer!
         if (status === undefined) {
           if (!util.has_value(address) || !util.has_value(txid)) {
-            console.log("address should be given");
+            consola.log("address should be given");
             res.json(
               util.Err(util.ErrCode.Unknown, "missing fields: address or txid")
             );
             return;
           }
           // Update status subscribe
-          console.log(
+          consola.log(
             `[[addSignerByOwnerSubscriber]]: PubSub.subscribeOnce(Transaction.${txid}, ${{
               user_id,
               wallet_address,
@@ -676,7 +673,7 @@ module.exports = function (app) {
           return res.json(util.Succ(false));
         } else {
           // Legacy: sign_message is updated and checked here
-          console.log("Update signer: ", req.body);
+          consola.log("Update signer: ", req.body);
           await db_wallet.updateOrAddByOwner(
             user_id,
             wallet_address,
@@ -696,7 +693,7 @@ module.exports = function (app) {
       const user_id = req.params.user_id;
       const wallet_id = req.params.wallet_id;
       if (!util.check_user_id(req, user_id)) {
-        console.log("user_id does not match with decoded JWT");
+        consola.log("user_id does not match with decoded JWT");
         res.json(
           util.Err(
             util.ErrCode.InvalidAuth,
@@ -710,34 +707,34 @@ module.exports = function (app) {
       const mtxid = req.query.mtxid;
 
       if (!util.has_value(address) || !util.has_value(mtxid)) {
-        console.log("address and mtxid should be given");
+        consola.log("address and mtxid should be given");
         res.json(
           util.Err(util.ErrCode.Unknown, "missing fields: address or mtxid")
         );
         return;
       }
 
-      let wallet = await db_wallet.findOne({
+      const wallet = await db_wallet.findOne({
         wallet_id,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       });
 
       if (wallet === null) {
-        console.log("wallet_id does not exist");
+        consola.log("wallet_id does not exist");
         res.json(util.Err(util.ErrCode.Unknown, "wallet_id does not exist"));
         return;
       }
 
-      let wallet_address = wallet["wallet_address"];
+      const wallet_address = wallet["wallet_address"];
 
-      let signer = await db_wallet.findOne({
+      const signer = await db_wallet.findOne({
         wallet_address,
         address,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
       });
 
       if (signer === null) {
-        console.log(
+        consola.log(
           "The signer couldn't get sign_message, because it doesn't belong to the wallet"
         );
         res.json(
@@ -749,9 +746,9 @@ module.exports = function (app) {
         return;
       }
 
-      console.log("Request sign_mesage for a given wallet");
+      consola.log("Request sign_mesage for a given wallet");
 
-      let all_recover_signers = await db_wallet.findAll({
+      const all_recover_signers = await db_wallet.findAll({
         wallet_address: wallet_address,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
         status: {
@@ -762,13 +759,13 @@ module.exports = function (app) {
       // Check if the signers is greater than 1/2
       const sign_messages = await db_multisig.getRecoverySignMessages(mtxid);
 
-      console.log("Sign messages: ", sign_messages);
+      consola.log("Sign messages: ", sign_messages);
 
-      let sign_messages_array = sign_messages.map((x) => x["sign_message"]);
+      const sign_messages_array = sign_messages.map((x) => x["sign_message"]);
 
       if (sign_messages_array.length >= all_recover_signers.length / 2) {
-        let sigs = db_multisig.getSignatures(sign_messages_array);
-        console.log("The recover sign_message could be return: ", sigs);
+        const sigs = db_multisig.getSignatures(sign_messages_array);
+        consola.log("The recover sign_message could be return: ", sigs);
         return res.json(util.Succ(sigs));
       } else {
         return res.json(util.Succ(""));
@@ -782,7 +779,7 @@ module.exports = function (app) {
       const user_id = req.params.user_id;
       const wallet_id = req.params.wallet_id;
       if (!util.check_user_id(req, user_id)) {
-        console.log("user_id does not match with decoded JWT");
+        consola.log("user_id does not match with decoded JWT");
         res.json(
           util.Err(
             util.ErrCode.InvalidAuth,
@@ -793,7 +790,7 @@ module.exports = function (app) {
       }
 
       if (!db_wallet.isWalletBelongUser(user_id, wallet_id)) {
-        console.log("wallet_id does not match with user_id");
+        consola.log("wallet_id does not match with user_id");
         res.json(
           util.Err(
             util.ErrCode.InvalidAuth,
@@ -803,29 +800,29 @@ module.exports = function (app) {
         return;
       }
 
-      console.log("Request signers for a given wallet:", req.query);
+      consola.log("Request signers for a given wallet:", req.query);
 
       const wallet_filter = {
         wallet_id: wallet_id,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       };
 
-      let wallet: any = await db_wallet.findOne(wallet_filter);
+      const wallet = await db_wallet.findOne(wallet_filter);
 
       if (wallet === null) {
-        console.log("wallet does not exist");
+        consola.log("wallet does not exist");
         res.json(util.Err(util.ErrCode.InvalidAuth, "wallet does not exist"));
         return;
       }
 
-      let wallet_address = wallet["wallet_address"];
+      const wallet_address = wallet["wallet_address"];
 
       const singer_filter = {
         wallet_address: wallet_address,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
       };
 
-      let signers: any = await db_wallet.search({
+      const signers = await db_wallet.search({
         attributes: [
           "createdAt",
           "updatedAt",
@@ -838,7 +835,7 @@ module.exports = function (app) {
         raw: true,
       });
 
-      console.log(
+      consola.log(
         `Find all signers for wallet ${wallet_id}: ${JSON.stringify(signers)}`
       );
 
@@ -853,7 +850,7 @@ module.exports = function (app) {
       const user_id = req.params.user_id;
       const wallet_id = req.params.wallet_id;
       if (!util.check_user_id(req, user_id)) {
-        console.log("user_id does not match with decoded JWT");
+        consola.log("user_id does not match with decoded JWT");
         res.json(
           util.Err(
             util.ErrCode.InvalidAuth,
@@ -863,10 +860,10 @@ module.exports = function (app) {
         return;
       }
 
-      let wallet = await db_wallet.findOwnerWalletById(user_id, wallet_id);
+      const wallet = await db_wallet.findOwnerWalletById(user_id, wallet_id);
 
       if (wallet === null) {
-        console.log(
+        consola.log(
           `user_id (${user_id}) and wallet_id (${wallet_id}) does not own a wallet`
         );
         res.json(
@@ -880,7 +877,7 @@ module.exports = function (app) {
 
       const wallet_address = wallet["wallet_address"];
 
-      console.log("Wallet address found: ", wallet_address);
+      consola.log("Wallet address found: ", wallet_address);
 
       const address = req.body.address;
       const txid = req.body.txid;
@@ -889,7 +886,7 @@ module.exports = function (app) {
         return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
       }
 
-      console.log(
+      consola.log(
         `[[addDeleteSubscriber]]: PubSub.subscribeOnce(Transaction.${txid}, ${{
           wallet_address,
           address,
@@ -912,7 +909,7 @@ module.exports = function (app) {
     const user_id = req.params.user_id;
 
     if (!util.check_user_id(req, user_id)) {
-      console.log("user_id does not match with decoded JWT");
+      consola.log("user_id does not match with decoded JWT");
       res.json(
         util.Err(
           util.ErrCode.InvalidAuth,
@@ -922,7 +919,7 @@ module.exports = function (app) {
       return;
     }
 
-    console.log(req.query);
+    consola.log(req.query);
 
     const email = req.query.email;
     const address = req.query.ens;
@@ -942,41 +939,39 @@ module.exports = function (app) {
     }
 
     if (email !== undefined) {
-      let addresses = await db_user
-        .findByEmail(email)
-        .then(function (row: any) {
-          console.log(row);
-          if (row === null) {
-            return [];
-          }
-          let found_user_id = row["user_id"];
-          console.log("Find user id: ", found_user_id);
-          return db_address
-            .findAll({
-              where: { user_id: found_user_id },
-              raw: true,
-            })
-            .then(function (rows: any) {
-              let addresses = [];
-              console.log(rows);
-              for (let i = 0; i < rows.length; i++) {
-                console.log(rows[i]);
-                addresses.push(rows[i]["user_address"]);
-              }
-              return addresses;
-            });
-        });
+      const addresses = await db_user.findByEmail(email).then(function (row) {
+        consola.log(row);
+        if (row === null) {
+          return [];
+        }
+        const found_user_id = row["user_id"];
+        consola.log("Find user id: ", found_user_id);
+        return db_address
+          .findAll({
+            where: { user_id: found_user_id },
+            raw: true,
+          })
+          .then(function (rows) {
+            const addresses = [];
+            consola.log(rows);
+            for (let i = 0; i < rows.length; i++) {
+              consola.log(rows[i]);
+              addresses.push(rows[i]["user_address"]);
+            }
+            return addresses;
+          });
+      });
 
-      console.log(addresses);
+      consola.log(addresses);
 
       res.json(util.Succ(addresses));
       return;
     } else if (address !== undefined) {
       // address
-      let addresses = await db_wallet
+      const addresses = await db_wallet
         .findOne({ address })
-        .then(function (row: any) {
-          console.log(row);
+        .then(function (row) {
+          consola.log(row);
           if (row === null) {
             return [""];
           }

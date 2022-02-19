@@ -5,7 +5,11 @@
  * @module database_addresses
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Sequelize, DataTypes } from "sequelize";
+import consola from "consola";
+
 const sequelize = new Sequelize({
   dialect: "sqlite",
 
@@ -54,7 +58,7 @@ sequelize
     });
   })
   .then(function (row: any) {
-    console.log(
+    consola.log(
       row.get({
         usr_id: 1,
         network_id: "id",
@@ -70,7 +74,7 @@ sequelize
     });
   })
   .catch(function (err) {
-    console.log("Unable to connect to the database:", err);
+    consola.log("Unable to connect to the database:", err);
   });
 
 const add = function (user_id, network_id, user_address, cipher_key) {
@@ -93,7 +97,7 @@ const updateOrAdd = function (user_id, network_id, user_address, cipher_key) {
   addressdb
     .findOne({ where: { user_id, network_id, user_address } })
     .then(function (row: any) {
-      console.log(row);
+      consola.log(row);
       if (row === null) {
         add(user_id, network_id, user_address, cipher_key);
       }

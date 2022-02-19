@@ -5,8 +5,12 @@
  * @module database_multisig
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { v4 as uuidv4 } from "uuid";
-import { Sequelize, DataTypes, Op } from "sequelize";
+import { Sequelize, DataTypes } from "sequelize";
+import consola from "consola";
+
 // FIXME don't depend another model, move them to controller
 import * as walletdb from "./database_wallet";
 import * as txhdb from "./database_transaction_history";
@@ -56,6 +60,11 @@ const sequelizeSignHistory = new Sequelize({
   storage: "./data/db_sign_history.sqlite",
 });
 
+/**
+ * The kind of signature operation.
+ *
+ * @enum
+ */
 export enum SignOperation {
   None = 0,
   Recovery = 1,
@@ -84,7 +93,7 @@ sequelizeMeta
     });
   })
   .then(function (row: any) {
-    console.log(
+    consola.log(
       row.get({
         user_id: 1,
         wallet_address: "0x",
@@ -98,7 +107,7 @@ sequelizeMeta
     });
   })
   .catch(function (err) {
-    console.log("Unable to connect to the database:", err);
+    consola.log("Unable to connect to the database:", err);
   });
 
 sequelizeSignHistory
@@ -113,7 +122,7 @@ sequelizeSignHistory
     });
   })
   .then(function (row: any) {
-    console.log(
+    consola.log(
       row.get({
         id: row.id,
       })
@@ -125,7 +134,7 @@ sequelizeSignHistory
     });
   })
   .catch(function (err) {
-    console.log("Unable to connect to the database:", err);
+    consola.log("Unable to connect to the database:", err);
   });
 
 const addMultisigMeta = function (
@@ -138,9 +147,9 @@ const addMultisigMeta = function (
   operation
 ) {
   // Here we should get a txid value in order to add it into multisigMetaDB
-  let txid = uuidv4();
+  const txid = uuidv4();
   // mock a txh
-  console.log("txid", txid);
+  consola.log("txid", txid);
   txhdb.add({
     txid: txid,
     network_id: network_id,
@@ -180,16 +189,16 @@ const updateMultisigMeta = function (id, txid) {
       // delete the fake txh
       txhdb.delByTxid(row["txid"]);
 
-      let actual_update_dict = { txid: txid };
+      const actual_update_dict = { txid: txid };
 
       return row
         .update(actual_update_dict)
         .then(function (result) {
-          console.log("Update success: " + JSON.stringify(result));
+          consola.log("Update success: " + JSON.stringify(result));
           return true;
         })
         .catch(function (err) {
-          console.log("Update error: " + err);
+          consola.log("Update error: " + err);
           return false;
         });
     });
@@ -238,7 +247,7 @@ function getSignatures(sign_messages, returnBadSignatures = false) {
   for (let index = 0; index < sign_messages.length; index += 1) {
     let sig = sign_messages[index];
 
-    console.log(sig);
+    consola.log(sig);
 
     if (returnBadSignatures) {
       sig += "a1";

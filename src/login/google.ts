@@ -5,17 +5,19 @@
  * @module login
  */
 
-import express from "express";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import jsonwebtoken from "jsonwebtoken";
 import axios from "axios";
-import bodyParser from "body-parser";
 import querystring from "querystring";
 import * as crypto from "crypto";
+import consola from "consola";
+import "dotenv/config";
+
 import { Session } from "../session";
 
 import * as util from "../util";
 import * as userdb from "../model/database_id";
-require("dotenv").config();
 
 util.require_env_variables([
   "SERVER_ROOT_URI",
@@ -63,7 +65,7 @@ module.exports = function (app) {
     redirectUri: string;
   }): Promise<{
     access_token: string;
-    expires_in: Number;
+    expires_in: number;
     refresh_token: string;
     scope: string;
     id_token: string;
@@ -81,7 +83,7 @@ module.exports = function (app) {
       grant_type: "authorization_code",
     };
 
-    console.log(values);
+    consola.log(values);
     return <any>axios
       .post(url, querystring.stringify(values), {
         headers: {
@@ -97,14 +99,14 @@ module.exports = function (app) {
   // Getting the user from Google with the code
   app.get(`/${redirectURI}`, async (req, res) => {
     const code = req.query.code as string;
-    console.log("res", req.query);
+    consola.log("res", req.query);
     const { id_token, access_token } = await getTokens({
       code,
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       redirectUri: `${process.env.SERVER_ROOT_URI}/${redirectURI}`,
     });
-    console.log("token", id_token, access_token);
+    consola.log("token", id_token, access_token);
 
     // Fetch the user's profile with the access token and bearer
     const user: any = await axios
@@ -121,13 +123,13 @@ module.exports = function (app) {
         console.error(`Failed to fetch user`);
         throw new Error(error.message);
       });
-    console.log("user", user);
+    consola.log("user", user);
 
     const exist_user: any = await userdb.findByOpenID(
       user.id,
       userdb.UserKind.GOOGLE
     );
-    console.log("exist_user", exist_user);
+    consola.log("exist_user", exist_user);
     let user_info;
     let isNew = 0;
     if (exist_user === null) {
@@ -144,10 +146,10 @@ module.exports = function (app) {
         verified_email: user.verified_email,
         secret: "",
       };
-      console.log(user_info);
+      consola.log(user_info);
       const result = await userdb.add(user_info);
       isNew = 1;
-      console.log("add", result);
+      consola.log("add", result);
     } else {
       user_info = {
         email: user.email || exist_user.email,
@@ -159,7 +161,7 @@ module.exports = function (app) {
         verified_email: user.verified_email || exist_user.verified_email,
       };
       const result = await userdb.updateOrAdd(exist_user.user_id, user_info);
-      console.log("update", result);
+      consola.log("update", result);
     }
 
     const user_record: any = await userdb.findByOpenID(
@@ -170,7 +172,7 @@ module.exports = function (app) {
     user_info.user_id = user_record.user_id;
 
     const token = jsonwebtoken.sign(user_info, process.env.JWT_SECRET);
-    console.log("user cookie", token);
+    consola.log("user cookie", token);
 
     /*
     res.cookie(COOKIE_NAME, token, {
@@ -183,11 +185,11 @@ module.exports = function (app) {
     });
    */
 
-    console.log("user record: ", user_record);
+    consola.log("user record: ", user_record);
 
-    let hash = crypto.createHash("sha256");
-    let hashcode = hash.update(token).digest("hex");
-    console.log(hashcode);
+    const hash = crypto.createHash("sha256");
+    const hashcode = hash.update(token).digest("hex");
+    consola.log(hashcode);
     Session.add_token(hashcode, new Session.session(token, 3600));
     res.redirect(
       `${process.env.UI_ROOT_URI}?id=${user_record.user_id}&${process.env.COOKIE_NAME}=${hashcode}&new=${isNew}`

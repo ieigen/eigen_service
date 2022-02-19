@@ -5,8 +5,11 @@
  * @module database_recovery
  */
 
-import { stringify } from "querystring";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Sequelize, DataTypes } from "sequelize";
+import consola from "consola";
+
 const sequelize = new Sequelize({
   dialect: "sqlite",
 
@@ -41,7 +44,7 @@ sequelize
     });
   })
   .then(function (row: any) {
-    console.log(
+    consola.log(
       row.get({
         plain: true,
       })
@@ -49,7 +52,7 @@ sequelize
     recoverydb.destroy({ where: { id: row.id } });
   })
   .catch(function (err) {
-    console.log("Unable to connect to the database:", err);
+    consola.log("Unable to connect to the database:", err);
   });
 
 const add = function (
@@ -87,7 +90,7 @@ const updateOrAdd = function (
   friends
 ) {
   recoverydb.findOne({ where: { user_id: user_id } }).then(function (row: any) {
-    console.log(row);
+    consola.log(row);
     if (row === null) {
       add(user_id, name, desc, total_shared_num, threshold, friends);
       return true;
@@ -99,11 +102,11 @@ const updateOrAdd = function (
         friends,
       })
       .then(function (result) {
-        console.log("Update success: " + result);
+        consola.log("Update success: " + result);
         return true;
       })
       .catch(function (err) {
-        console.log("Update error: " + err);
+        consola.log("Update error: " + err);
         return false;
       });
   });

@@ -5,15 +5,14 @@
  * @module relay
  */
 
-import express from "express";
-import * as util from "../util";
-import * as elliptic from "elliptic";
-const EC = elliptic.ec;
-const ec = new EC("p256");
+import consola from "consola";
 
+import * as util from "../util";
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const relay_sdk = require("relay_sdk");
-let relayutil = relay_sdk.util;
-let relaysdk = relay_sdk.sdk;
+const relayutil = relay_sdk.util;
+const relaysdk = relay_sdk.sdk;
 
 relayutil.require_env_variables([
   "TEESDK_AUDITOR_BASE_DIR",
@@ -52,8 +51,8 @@ module.exports = function (app) {
     }
 
     // encrypt by kms
-    let encryptMsg = `encrypt|${c1}|${cc1}|`;
-    console.log(encryptMsg);
+    const encryptMsg = `encrypt|${c1}|${cc1}|`;
+    consola.log(encryptMsg);
     const client = new relaysdk.EigenRelayClient(
       "fns",
       PUB,
@@ -65,7 +64,7 @@ module.exports = function (app) {
     );
     try {
       client.submit_task("relay", encryptMsg, async (c2) => {
-        // console.log(c2)
+        // consola.log(c2)
         res.json(util.Succ(c2));
       });
     } catch (e) {
@@ -94,8 +93,8 @@ module.exports = function (app) {
     }
 
     // decrypt by kms
-    let encryptMsg = `decrypt|${cc2}|${c1}|${cr1}`;
-    console.log(encryptMsg);
+    const encryptMsg = `decrypt|${cc2}|${c1}|${cr1}`;
+    consola.log(encryptMsg);
 
     const client = new relaysdk.EigenRelayClient(
       "fns",

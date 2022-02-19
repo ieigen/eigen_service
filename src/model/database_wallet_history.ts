@@ -5,7 +5,10 @@
  * @module database_wallet_history
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Sequelize, DataTypes } from "sequelize";
+import consola from "consola";
 
 import { WalletStatus } from "./database_wallet";
 
@@ -21,6 +24,11 @@ const sequelize = new Sequelize({
   storage: "./data/db_wallet_history.sqlite",
 });
 
+/**
+ * The cause of a status transaction change.
+ *
+ * @enum
+ */
 export enum StatusTransitionCause {
   None = 0,
   Create = 1,
@@ -51,7 +59,7 @@ sequelize
     });
   })
   .then(function (row: any) {
-    console.log(
+    consola.log(
       row.get({
         wallet_id: 1,
         from: WalletStatus.None,
@@ -71,7 +79,7 @@ sequelize
     });
   })
   .catch(function (err) {
-    console.log("Unable to connect to the database:", err);
+    consola.log("Unable to connect to the database:", err);
   });
 
 const add = function (wallet_id, from, to, txid, cause) {
