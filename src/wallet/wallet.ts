@@ -23,16 +23,16 @@ import * as db_wh from "../model/database_wallet_history";
 import * as db_multisig from "../model/database_multisig";
 
 // Records txid => wallet, wallet is a Sequelize model which can be used to update status
-let TRANSACTION_ADD_SIGNER_BY_OWNER_MAP = new Map();
-let TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP = new Map();
-let TRANSACTION_DELETE_SIGNER_MAP = new Map();
+const TRANSACTION_ADD_SIGNER_BY_OWNER_MAP = new Map();
+const TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP = new Map();
+const TRANSACTION_DELETE_SIGNER_MAP = new Map();
 
 function addWalletStatusSubscriber(txid, wallet_id) {
   consola.log("Add wallet status subscriber: ", txid, wallet_id);
   // TRANSACTION_WALLET_MAP[txid] = wallet;
 
   return function (msg, transaction) {
-    var [_, txid] = msg.split(".");
+    const [_, txid] = msg.split(".");
 
     db_wallet.findByWalletId(wallet_id).then((wallet) => {
       if (wallet === null) {
@@ -118,15 +118,13 @@ function addSignerByOwnerSubscriber(txid, data) {
   consola.log("Add signer by owner add subscriber: ", txid, data);
   TRANSACTION_ADD_SIGNER_BY_OWNER_MAP[txid] = data;
   return function (msg, transaction) {
-    var [_, txid] = msg.split(".");
+    const [_, txid] = msg.split(".");
 
-    let signer_data = TRANSACTION_ADD_SIGNER_BY_OWNER_MAP[txid];
+    const signer_data = TRANSACTION_ADD_SIGNER_BY_OWNER_MAP[txid];
     if (signer_data === undefined) {
       consola.log(`Transaction ${txid} is not related to signer`);
       return false;
     }
-
-    const transaction_status = transaction["status"];
 
     consola.log(`[addSignerByOwnerSubscriber]: ${txid}, ${data}`);
 
@@ -158,15 +156,13 @@ function addSignerBySignerSubscriber(txid, data) {
   consola.log("Add signer by signer add subscriber: ", txid, data);
   TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP[txid] = data;
   return function (msg, transaction) {
-    var [_, txid] = msg.split(".");
+    const [_, txid] = msg.split(".");
 
-    let signer_data = TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP[txid];
+    const signer_data = TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP[txid];
     if (signer_data === undefined) {
       consola.log(`Transaction ${txid} is not related to signer`);
       return false;
     }
-
-    const transaction_status = transaction["status"];
 
     consola.log(`[addSignerBySignerSubscriber]: ${txid}, ${data}`);
 
@@ -186,9 +182,9 @@ function addDeleteSubscriber(txid, data) {
   consola.log("Delete signer by signer add subscriber: ", txid, data);
   TRANSACTION_DELETE_SIGNER_MAP[txid] = data;
   return function (msg, transaction) {
-    var [_, txid] = msg.split(".");
+    const [_, txid] = msg.split(".");
 
-    let signer_data = TRANSACTION_DELETE_SIGNER_MAP[txid];
+    const signer_data = TRANSACTION_DELETE_SIGNER_MAP[txid];
     if (signer_data === undefined) {
       consola.log(`Transaction ${txid} is not related to signer`);
       return false;
@@ -274,7 +270,7 @@ module.exports = function (app) {
       addWalletStatusSubscriber(txid, wallet_id)
     );
 
-    for (let signer of signers) {
+    for (const signer of signers) {
       consola.log(`Add ${signer} into wallet ${wallet_id}]}`);
       db_wallet.add(
         user_id,
@@ -303,7 +299,7 @@ module.exports = function (app) {
       return;
     }
 
-    let wallet = await db_wallet.findOwnerWalletById(user_id, wallet_id);
+    const wallet = await db_wallet.findOwnerWalletById(user_id, wallet_id);
 
     if (wallet === null) {
       consola.log(
@@ -333,7 +329,7 @@ module.exports = function (app) {
         return;
       }
 
-      let result = await db_wallet.updateOwnerAddress(
+      const result = await db_wallet.updateOwnerAddress(
         user_id,
         wallet_id,
         owner_address
@@ -348,7 +344,7 @@ module.exports = function (app) {
         return;
       }
 
-      let wallet = await db_wallet.findByWalletId(wallet_id);
+      const wallet = await db_wallet.findByWalletId(wallet_id);
 
       if (wallet === null) {
         consola.log("wallet does not exist: ", wallet_id);
@@ -356,7 +352,7 @@ module.exports = function (app) {
         return;
       }
 
-      let wallet_status = wallet["dataValues"]["wallet_status"];
+      const wallet_status = wallet["dataValues"]["wallet_status"];
 
       if (!db_wallet.WALLET_STATUS_MACHINE_STATE_CHECK[wallet_status][status]) {
         consola.log(
@@ -443,19 +439,19 @@ module.exports = function (app) {
       };
     }
 
-    let wallets: any = await db_wallet.findAll(filter);
+    const wallets: any = await db_wallet.findAll(filter);
 
     consola.log("Find wallets: ", wallets);
 
-    for (let wallet of wallets) {
-      let wallet_address = wallet["wallet_address"];
+    for (const wallet of wallets) {
+      const wallet_address = wallet["wallet_address"];
 
       const singer_filter = {
         wallet_address: wallet_address,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
       };
 
-      let signers: any = await db_wallet.search({
+      const signers: any = await db_wallet.search({
         attributes: [
           "createdAt",
           "updatedAt",
@@ -489,8 +485,8 @@ module.exports = function (app) {
 
     consola.log(req.query);
 
-    let address = req.query.address;
-    let arttributes = [
+    const address = req.query.address;
+    const arttributes = [
       "createdAt",
       "updatedAt",
       "name",
@@ -507,9 +503,9 @@ module.exports = function (app) {
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
       };
     } else {
-      let address_map_array: any = await db_address.findAll({ user_id });
+      const address_map_array: any = await db_address.findAll({ user_id });
       // TODO: This may effect other interface, we could use "raw" search
-      let addresses = address_map_array.map(
+      const addresses = address_map_array.map(
         (a) => a["dataValues"]["user_address"]
       );
 
@@ -523,7 +519,7 @@ module.exports = function (app) {
       };
     }
 
-    let signers = await db_wallet.search({
+    const signers = await db_wallet.search({
       attributes: arttributes,
       where: filter,
       raw: true,
@@ -532,20 +528,20 @@ module.exports = function (app) {
     consola.log(signers);
 
     for (let i = 0; i < signers.length; i++) {
-      let signer = signers[i];
-      let wallet_address = signer["wallet_address"];
-      let owner = await db_wallet.findOne({
+      const signer = signers[i];
+      const wallet_address = signer["wallet_address"];
+      const owner = await db_wallet.findOne({
         wallet_address,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       });
-      let owner_address = owner["address"];
+      const owner_address = owner["address"];
       signers[i]["owner_address"] = owner_address;
       signers[i]["wallet_id"] = owner["wallet_id"];
       signers[i]["wallet_status"] = owner["wallet_status"];
 
       // Find the latest mtxid for recovery
 
-      let latest_mtxid =
+      const latest_mtxid =
         await db_multisig.findLatestRecoveryMtxidByWalletAddress(
           wallet_address
         );
@@ -575,14 +571,14 @@ module.exports = function (app) {
         return;
       }
 
-      let wallet = await db_wallet.findOwnerWalletById(user_id, wallet_id);
+      const wallet = await db_wallet.findOwnerWalletById(user_id, wallet_id);
 
       if (wallet === null) {
         consola.log(
           `It is the signer (user_id: ${user_id}) update the signer (which belongs to wallet_id: ${wallet_id}) status`
         );
 
-        let found_wallet = await db_wallet.findOne({
+        const found_wallet = await db_wallet.findOne({
           wallet_id,
           role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
         });
@@ -718,7 +714,7 @@ module.exports = function (app) {
         return;
       }
 
-      let wallet = await db_wallet.findOne({
+      const wallet = await db_wallet.findOne({
         wallet_id,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       });
@@ -729,9 +725,9 @@ module.exports = function (app) {
         return;
       }
 
-      let wallet_address = wallet["wallet_address"];
+      const wallet_address = wallet["wallet_address"];
 
-      let signer = await db_wallet.findOne({
+      const signer = await db_wallet.findOne({
         wallet_address,
         address,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
@@ -752,7 +748,7 @@ module.exports = function (app) {
 
       consola.log("Request sign_mesage for a given wallet");
 
-      let all_recover_signers = await db_wallet.findAll({
+      const all_recover_signers = await db_wallet.findAll({
         wallet_address: wallet_address,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
         status: {
@@ -765,10 +761,10 @@ module.exports = function (app) {
 
       consola.log("Sign messages: ", sign_messages);
 
-      let sign_messages_array = sign_messages.map((x) => x["sign_message"]);
+      const sign_messages_array = sign_messages.map((x) => x["sign_message"]);
 
       if (sign_messages_array.length >= all_recover_signers.length / 2) {
-        let sigs = db_multisig.getSignatures(sign_messages_array);
+        const sigs = db_multisig.getSignatures(sign_messages_array);
         consola.log("The recover sign_message could be return: ", sigs);
         return res.json(util.Succ(sigs));
       } else {
@@ -811,7 +807,7 @@ module.exports = function (app) {
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       };
 
-      let wallet: any = await db_wallet.findOne(wallet_filter);
+      const wallet: any = await db_wallet.findOne(wallet_filter);
 
       if (wallet === null) {
         consola.log("wallet does not exist");
@@ -819,14 +815,14 @@ module.exports = function (app) {
         return;
       }
 
-      let wallet_address = wallet["wallet_address"];
+      const wallet_address = wallet["wallet_address"];
 
       const singer_filter = {
         wallet_address: wallet_address,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
       };
 
-      let signers: any = await db_wallet.search({
+      const signers: any = await db_wallet.search({
         attributes: [
           "createdAt",
           "updatedAt",
@@ -864,7 +860,7 @@ module.exports = function (app) {
         return;
       }
 
-      let wallet = await db_wallet.findOwnerWalletById(user_id, wallet_id);
+      const wallet = await db_wallet.findOwnerWalletById(user_id, wallet_id);
 
       if (wallet === null) {
         consola.log(
@@ -943,14 +939,14 @@ module.exports = function (app) {
     }
 
     if (email !== undefined) {
-      let addresses = await db_user
+      const addresses = await db_user
         .findByEmail(email)
         .then(function (row: any) {
           consola.log(row);
           if (row === null) {
             return [];
           }
-          let found_user_id = row["user_id"];
+          const found_user_id = row["user_id"];
           consola.log("Find user id: ", found_user_id);
           return db_address
             .findAll({
@@ -958,7 +954,7 @@ module.exports = function (app) {
               raw: true,
             })
             .then(function (rows: any) {
-              let addresses = [];
+              const addresses = [];
               consola.log(rows);
               for (let i = 0; i < rows.length; i++) {
                 consola.log(rows[i]);
@@ -974,7 +970,7 @@ module.exports = function (app) {
       return;
     } else if (address !== undefined) {
       // address
-      let addresses = await db_wallet
+      const addresses = await db_wallet
         .findOne({ address })
         .then(function (row: any) {
           consola.log(row);
