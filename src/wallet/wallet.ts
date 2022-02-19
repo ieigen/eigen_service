@@ -5,7 +5,6 @@
  * @module wallet
  */
 
-import express from "express";
 import PubSub from "pubsub-js";
 import { Op } from "sequelize";
 import consola from "consola";
@@ -32,6 +31,7 @@ function addWalletStatusSubscriber(txid, wallet_id) {
   // TRANSACTION_WALLET_MAP[txid] = wallet;
 
   return function (msg, transaction) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, txid] = msg.split(".");
 
     db_wallet.findByWalletId(wallet_id).then((wallet) => {
@@ -118,6 +118,7 @@ function addSignerByOwnerSubscriber(txid, data) {
   consola.log("Add signer by owner add subscriber: ", txid, data);
   TRANSACTION_ADD_SIGNER_BY_OWNER_MAP[txid] = data;
   return function (msg, transaction) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, txid] = msg.split(".");
 
     const signer_data = TRANSACTION_ADD_SIGNER_BY_OWNER_MAP[txid];
@@ -156,6 +157,7 @@ function addSignerBySignerSubscriber(txid, data) {
   consola.log("Add signer by signer add subscriber: ", txid, data);
   TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP[txid] = data;
   return function (msg, transaction) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, txid] = msg.split(".");
 
     const signer_data = TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP[txid];
@@ -182,6 +184,7 @@ function addDeleteSubscriber(txid, data) {
   consola.log("Delete signer by signer add subscriber: ", txid, data);
   TRANSACTION_DELETE_SIGNER_MAP[txid] = data;
   return function (msg, transaction) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, txid] = msg.split(".");
 
     const signer_data = TRANSACTION_DELETE_SIGNER_MAP[txid];
@@ -229,7 +232,6 @@ module.exports = function (app) {
     const wallet_address = req.body.wallet_address;
     const address = req.body.address;
     const name = req.body.name;
-    const ens = req.body.ens || "";
     const signers = req.body.signers;
     const txid = req.body.txid;
     if (
@@ -439,7 +441,7 @@ module.exports = function (app) {
       };
     }
 
-    const wallets: any = await db_wallet.findAll(filter);
+    const wallets = await db_wallet.findAll(filter);
 
     consola.log("Find wallets: ", wallets);
 
@@ -451,7 +453,7 @@ module.exports = function (app) {
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
       };
 
-      const signers: any = await db_wallet.search({
+      const signers = await db_wallet.search({
         attributes: [
           "createdAt",
           "updatedAt",
@@ -503,7 +505,7 @@ module.exports = function (app) {
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
       };
     } else {
-      const address_map_array: any = await db_address.findAll({ user_id });
+      const address_map_array = await db_address.findAll({ user_id });
       // TODO: This may effect other interface, we could use "raw" search
       const addresses = address_map_array.map(
         (a) => a["dataValues"]["user_address"]
@@ -592,7 +594,6 @@ module.exports = function (app) {
         const wallet_address = found_wallet["wallet_address"];
         consola.log("Wallet address found: ", wallet_address);
         consola.log("Req body: ", req.body);
-        const name = req.body.name;
         const status = req.body.status;
         const address = req.body.address;
         const txid = req.body.txid;
@@ -638,7 +639,6 @@ module.exports = function (app) {
         const wallet_address = wallet["wallet_address"];
         consola.log("Wallet address found: ", wallet_address);
         consola.log("Req body: ", req.body);
-        const name = req.body.name;
         const status = req.body.status;
         const address = req.body.address;
         const txid = req.body.txid;
@@ -807,7 +807,7 @@ module.exports = function (app) {
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       };
 
-      const wallet: any = await db_wallet.findOne(wallet_filter);
+      const wallet = await db_wallet.findOne(wallet_filter);
 
       if (wallet === null) {
         consola.log("wallet does not exist");
@@ -822,7 +822,7 @@ module.exports = function (app) {
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
       };
 
-      const signers: any = await db_wallet.search({
+      const signers = await db_wallet.search({
         attributes: [
           "createdAt",
           "updatedAt",
@@ -939,30 +939,28 @@ module.exports = function (app) {
     }
 
     if (email !== undefined) {
-      const addresses = await db_user
-        .findByEmail(email)
-        .then(function (row: any) {
-          consola.log(row);
-          if (row === null) {
-            return [];
-          }
-          const found_user_id = row["user_id"];
-          consola.log("Find user id: ", found_user_id);
-          return db_address
-            .findAll({
-              where: { user_id: found_user_id },
-              raw: true,
-            })
-            .then(function (rows: any) {
-              const addresses = [];
-              consola.log(rows);
-              for (let i = 0; i < rows.length; i++) {
-                consola.log(rows[i]);
-                addresses.push(rows[i]["user_address"]);
-              }
-              return addresses;
-            });
-        });
+      const addresses = await db_user.findByEmail(email).then(function (row) {
+        consola.log(row);
+        if (row === null) {
+          return [];
+        }
+        const found_user_id = row["user_id"];
+        consola.log("Find user id: ", found_user_id);
+        return db_address
+          .findAll({
+            where: { user_id: found_user_id },
+            raw: true,
+          })
+          .then(function (rows) {
+            const addresses = [];
+            consola.log(rows);
+            for (let i = 0; i < rows.length; i++) {
+              consola.log(rows[i]);
+              addresses.push(rows[i]["user_address"]);
+            }
+            return addresses;
+          });
+      });
 
       consola.log(addresses);
 
@@ -972,7 +970,7 @@ module.exports = function (app) {
       // address
       const addresses = await db_wallet
         .findOne({ address })
-        .then(function (row: any) {
+        .then(function (row) {
           consola.log(row);
           if (row === null) {
             return [""];

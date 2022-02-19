@@ -5,6 +5,8 @@
  * @module login
  */
 
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import ss from "secrets.js-grempe";
 
 //why need: https://docs.ethers.io/v5/cookbook/react-native/#cookbook-reactnative-security
@@ -54,7 +56,7 @@ kShareSchema.set(SecLevel.WEAK, [3, 2]); // 3-2
 const kCheckCodeLengh = 8;
 
 // returns hex string
-export function generate_key(options?: any): string {
+export function generate_key(options?): string {
   let entropy: Uint8Array = ethers.utils.randomBytes(32);
   if (!options) {
     options = {};
