@@ -10,25 +10,13 @@
 
 import express from "express";
 import jwt from "express-jwt";
-import jsonwebtoken from "jsonwebtoken";
 import cors from "cors";
 import consola from "consola";
-import TOTP from "totp.js";
 import "dotenv/config";
 
 import * as log4js from "./log";
-import * as db_pk from "./model/database_pk";
-import * as db_txh from "./model/database_transaction_history";
-import * as db_recovery from "./model/database_recovery";
-import * as friend_list from "./model/database_friend_relationship";
-import * as db_address from "./model/database_address";
 import * as util from "./util";
-import * as db_user from "./model/database_id";
 import { Session } from "./session";
-import * as TOKEN_CONSTANS from "./token/constants";
-import * as db_allowance from "./token/allowance";
-import * as db_multisig from "./model/database_multisig";
-import * as db_wallet from "./model/database_wallet";
 
 import * as service from "./service";
 
