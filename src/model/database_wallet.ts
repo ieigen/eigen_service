@@ -5,7 +5,9 @@
  * @module database_wallet
  */
 
-import { Sequelize, DataTypes, Op } from "sequelize";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { Sequelize, DataTypes } from "sequelize";
 import consola from "consola";
 
 const sequelize = new Sequelize({
@@ -201,6 +203,7 @@ const isWalletBelongUser = function (user_id, wallet_id) {
       return row !== null;
     })
     .catch(function (err) {
+      consola.error(err);
       return false;
     });
 };
@@ -218,7 +221,7 @@ const updateOwnerAddress = function (user_id, wallet_id, owner_address) {
           address: owner_address,
         })
         .then(function (result) {
-          consola.log("Update owner address success: ", owner_address);
+          consola.log("Update owner address success: ", owner_address, result);
           return true;
         })
         .catch(function (err) {

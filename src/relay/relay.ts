@@ -5,10 +5,9 @@
  * @module relay
  */
 
-import * as util from "../util";
-import * as elliptic from "elliptic";
-
 import consola from "consola";
+
+import * as util from "../util";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const relay_sdk = require("relay_sdk");

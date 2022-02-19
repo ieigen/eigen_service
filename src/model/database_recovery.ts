@@ -5,7 +5,8 @@
  * @module database_recovery
  */
 
-import { stringify } from "querystring";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Sequelize, DataTypes } from "sequelize";
 import consola from "consola";
 

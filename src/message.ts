@@ -14,7 +14,8 @@ import * as txh from "./model/database_transaction_history";
 import * as db_wallet from "./model/database_wallet";
 import { Session } from "./session";
 
-module.exports = function (app) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+module.exports = function (_app) {
   //const server = http.createServer(app);
   const io = new Server(8080, { cors: true });
 
@@ -37,6 +38,7 @@ module.exports = function (app) {
       for (let i = 0; i < confirmed_list.length; i++) {
         const tx = confirmed_list[i];
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const res = await txh.updateOrAdd(tx["txid"], {
           status: tx["status"],
           block_num: tx["block_num"],

@@ -5,6 +5,8 @@
  * @module database_friend_relationship
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Sequelize, Op, DataTypes } from "sequelize";
 import consola from "consola";
 
@@ -24,8 +26,11 @@ const NOT_FRIENDS = 0x0;
 const PENDING_FIRST_SECOND = 0x1;
 const PENDING_SECOND_FIRST = 0x2;
 const FRIENDS = 0x3;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const BLOCK_FIRST_SECOND = 0x4;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const BLOCK_SECOND_FIRST = 0x5;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const BLOCK_BOTH = 0x6;
 
 const FRIEND_LIST_STATUS_MUTUAL = 0x1;

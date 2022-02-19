@@ -5,6 +5,8 @@
  * @module database_id
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Sequelize, DataTypes, Op } from "sequelize";
 import consola from "consola";
 

@@ -6,6 +6,7 @@
  */
 
 /* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import express from "express";
 import jwt from "express-jwt";

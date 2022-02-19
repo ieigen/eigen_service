@@ -5,15 +5,16 @@
  * @module login
  */
 
-import express from "express";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import jsonwebtoken from "jsonwebtoken";
 import axios from "axios";
-import bodyParser from "body-parser";
 import querystring from "querystring";
 import * as crypto from "crypto";
-import { Session } from "../session";
 import consola from "consola";
 import "dotenv/config";
+
+import { Session } from "../session";
 
 import * as util from "../util";
 import * as userdb from "../model/database_id";

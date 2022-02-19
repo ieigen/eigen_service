@@ -5,6 +5,8 @@
  * @module database_transaction_history
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Sequelize, Op, DataTypes, Order } from "sequelize";
 import consola from "consola";
 

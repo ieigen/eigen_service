@@ -5,8 +5,9 @@
  * @module database_allowance
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { ethers } from "ethers";
-import { format } from "path/posix";
 import { Sequelize, Op, DataTypes } from "sequelize";
 import consola from "consola";
 
