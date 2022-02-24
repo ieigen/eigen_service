@@ -114,7 +114,7 @@ app.get("/mtx/sign/:mtxid", service.getSign);
 app.get("/user/:user_id", service.getUser);
 
 // TODO: Just for test
-app.post("/user", service.postUser);
+// app.post("/user", service.postUser);
 
 // Guardian add
 app.post("/user/:user_id/guardian", service.postGuardian);
