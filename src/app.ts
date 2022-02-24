@@ -84,7 +84,7 @@ app.get("/recovery", service.getRecovery);
 // get recovery data
 app.delete("/recovery", service.deleteRecovery);
 
-app.post("/recovery", service.postStore);
+app.post("/recovery", service.postRecovery);
 
 app.get("/txhs", service.getTxhs);
 
