@@ -127,7 +127,9 @@ function addSignerByOwnerSubscriber(txid, data) {
       return false;
     }
 
-    consola.log(`[addSignerByOwnerSubscriber]: ${txid}, ${signer_data}`);
+    consola.log(
+      `[addSignerByOwnerSubscriber]: ${txid}, ${JSON.stringify(signer_data)}`
+    );
 
     if (transaction.status == db_txh.TransactionStatus.Success) {
       return db_wallet.updateOrAddByOwner(
@@ -168,7 +170,9 @@ function addSignerBySignerSubscriber(txid, data) {
       return false;
     }
 
-    consola.log(`[addSignerBySignerSubscriber]: ${txid}, ${signer_data}`);
+    consola.log(
+      `[addSignerBySignerSubscriber]: ${txid}, ${JSON.stringify(signer_data)}`
+    );
 
     if (transaction.status == db_txh.TransactionStatus.Success) {
       return db_wallet.updateOrAddBySigner(
@@ -604,6 +608,7 @@ module.exports = function (app) {
         }
 
         const wallet_address = found_wallet["wallet_address"];
+        const wallet_name = found_wallet["name"];
         consola.log("Wallet address found: ", wallet_address);
         consola.log("Req body: ", req.body);
         const status = req.body.status;
@@ -622,6 +627,7 @@ module.exports = function (app) {
             `[[addSignerBySignerSubscriber]]: PubSub.subscribeOnce(Transaction.${txid}, ${{
               wallet_address,
               address,
+              name: wallet_name,
             }})`
           );
           PubSub.subscribeOnce(
@@ -629,6 +635,7 @@ module.exports = function (app) {
             addSignerBySignerSubscriber(txid, {
               wallet_address,
               address,
+              name: wallet_name,
             })
           );
 
@@ -649,6 +656,7 @@ module.exports = function (app) {
           `It is the owner (user_id: ${user_id}) update the signer (which belongs to wallet_id: ${wallet_id}) status`
         );
         const wallet_address = wallet["wallet_address"];
+        const wallet_name = wallet["name"];
         consola.log("Wallet address found: ", wallet_address);
         consola.log("Req body: ", req.body);
         const status = req.body.status;
@@ -670,6 +678,7 @@ module.exports = function (app) {
               user_id,
               wallet_address,
               address,
+              name: wallet_name,
             }})`
           );
 
@@ -679,6 +688,7 @@ module.exports = function (app) {
               user_id,
               wallet_address,
               address,
+              name: wallet_name,
             })
           );
 

@@ -253,7 +253,7 @@ const updateOrAddByOwner = function (
     .then(function (row: any) {
       if (row === null) {
         const name = update_dict.name;
-        consola.log("Add signes by owner with wallet name: ", name);
+        consola.log("Add signer by owner with wallet name: ", name);
         const status =
           update_dict.status ||
           (role == WALLET_USER_ADDRESS_ROLE_OWNER
@@ -331,7 +331,7 @@ const updateOrAddBySigner = function (
           if (row === null) {
             // NOTE: name should be set here
             const name = update_dict.name || wallet_name;
-            consola.log("Add signes by signer with wallet name: ", name);
+            consola.log("Add signer by signer with wallet name: ", name);
             const status = update_dict.status || SignerStatus.ToBeConfirmed;
             add(
               user_id,
