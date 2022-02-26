@@ -127,25 +127,27 @@ function addSignerByOwnerSubscriber(txid, data) {
       return false;
     }
 
-    consola.log(`[addSignerByOwnerSubscriber]: ${txid}, ${data}`);
+    consola.log(`[addSignerByOwnerSubscriber]: ${txid}, ${signer_data}`);
 
     if (transaction.status == db_txh.TransactionStatus.Success) {
       return db_wallet.updateOrAddByOwner(
-        data.user_id,
-        data.wallet_address,
-        data.address,
+        signer_data.user_id,
+        signer_data.wallet_address,
+        signer_data.address,
         db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
         {
+          name: signer_data.name,
           status: db_wallet.SignerStatus.Active,
         }
       );
     } else {
       return db_wallet.updateOrAddByOwner(
-        data.user_id,
-        data.wallet_address,
-        data.address,
+        signer_data.user_id,
+        signer_data.wallet_address,
+        signer_data.address,
         db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
         {
+          name: signer_data.name,
           status: db_wallet.SignerStatus.Rejected,
         }
       );
@@ -166,16 +168,26 @@ function addSignerBySignerSubscriber(txid, data) {
       return false;
     }
 
-    consola.log(`[addSignerBySignerSubscriber]: ${txid}, ${data}`);
+    consola.log(`[addSignerBySignerSubscriber]: ${txid}, ${signer_data}`);
 
     if (transaction.status == db_txh.TransactionStatus.Success) {
-      return db_wallet.updateOrAddBySigner(data.wallet_address, data.address, {
-        status: db_wallet.SignerStatus.Active,
-      });
+      return db_wallet.updateOrAddBySigner(
+        signer_data.wallet_address,
+        signer_data.address,
+        {
+          name: signer_data.name,
+          status: db_wallet.SignerStatus.Active,
+        }
+      );
     } else {
-      return db_wallet.updateOrAddBySigner(data.wallet_address, data.address, {
-        status: db_wallet.SignerStatus.Rejected,
-      });
+      return db_wallet.updateOrAddBySigner(
+        signer_data.wallet_address,
+        signer_data.address,
+        {
+          name: signer_data.name,
+          status: db_wallet.SignerStatus.Rejected,
+        }
+      );
     }
   };
 }
@@ -623,7 +635,7 @@ module.exports = function (app) {
           return res.json(util.Succ(false));
         } else {
           // Legacy: sign_message is updated and checked here
-          consola.log("Update signer: ", req.body);
+          consola.info("Update signer by signer: ", req.body);
           await db_wallet.updateOrAddBySigner(
             wallet_address,
             address,
@@ -673,7 +685,7 @@ module.exports = function (app) {
           return res.json(util.Succ(false));
         } else {
           // Legacy: sign_message is updated and checked here
-          consola.log("Update signer: ", req.body);
+          consola.info("Update signer by owner: ", req.body);
           await db_wallet.updateOrAddByOwner(
             user_id,
             wallet_address,
