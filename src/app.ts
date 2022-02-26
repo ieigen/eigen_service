@@ -40,7 +40,13 @@ const filterFunc = function (req) {
     return true;
   }
   consola.info(req.url);
-  const bypass = ["/auth/google/url", "/stores", "/store", "/txhs"];
+  const bypass = [
+    "/auth/google/url",
+    "/stores",
+    "/store",
+    "/txhs",
+    "/auth/metamask",
+  ];
   consola.info(bypass.indexOf(req.url), req.method);
   if (bypass.indexOf(req.url) >= 0 && req.method == "GET") {
     return true;
