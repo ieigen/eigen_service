@@ -1,6 +1,6 @@
 // google.ts
 /**
- * Provides google related login processes
+ * Provide google related login processes
  *
  * @module login
  */
