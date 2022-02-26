@@ -317,6 +317,7 @@ const updateOrAddBySigner = function (
       }
 
       const user_id = owner_row["user_id"];
+      const wallet_name = owner_row["name"];
       return walletdb
         .findOne({
           where: {
@@ -328,7 +329,7 @@ const updateOrAddBySigner = function (
         .then(function (row: any) {
           if (row === null) {
             // NOTE: name should be set here
-            const name = update_dict.name || owner_row["name"];
+            const name = update_dict.name || wallet_name;
             consola.log("Add signer with wallet name: ", name);
             const status = update_dict.status || SignerStatus.ToBeConfirmed;
             add(
