@@ -826,7 +826,7 @@ module.exports = function (app) {
         attributes: [
           "createdAt",
           "updatedAt",
-          "name",
+          ["name", "wallet_name"],
           "address",
           "status",
           "wallet_address",
@@ -838,6 +838,26 @@ module.exports = function (app) {
       consola.log(
         `Find all signers for wallet ${wallet_id}: ${JSON.stringify(signers)}`
       );
+
+      for (const signer of signers) {
+        const address = signer["address"];
+        const user_address = await db_address.findOne({
+          user_address: address,
+        });
+
+        if (!user_address) {
+          consola.error("User address is not existed in database: ", address);
+        } else {
+          const user_id = user_address["user_id"];
+
+          const user = await db_user.findByID(user_id);
+          if (!user) {
+            consola.error("User id can not be found: ", user_id);
+          } else {
+            signer["name"] = user["name"];
+          }
+        }
+      }
 
       res.json(util.Succ(signers));
       return;
