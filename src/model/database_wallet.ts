@@ -328,7 +328,8 @@ const updateOrAddBySigner = function (
         .then(function (row: any) {
           if (row === null) {
             // NOTE: name should be set here
-            const name = owner_row["name"];
+            const name = update_dict.name || owner_row["name"];
+            consola.log("Add signer with wallet name: ", name);
             const status = update_dict.status || SignerStatus.ToBeConfirmed;
             add(
               user_id,
