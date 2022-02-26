@@ -848,7 +848,10 @@ module.exports = function (app) {
         if (!user_address) {
           consola.error("User address is not existed in database: ", address);
         } else {
+          consola.info("Found user address record: ", user_address);
           const user_id = user_address["user_id"];
+
+          consola.log("Searching user_id: ", user_id);
 
           const user = await db_user.findByID(user_id);
           if (!user) {
