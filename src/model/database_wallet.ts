@@ -307,8 +307,8 @@ const updateOrAddBySigner = function (
       },
       raw: true,
     })
-    .then(function (row: any) {
-      if (row === null) {
+    .then(function (owner_row: any) {
+      if (owner_row === null) {
         // The signer belows no owner?
         consola.log(
           `The signer ${signer_address} want to update information, but the signer belows no owner`
@@ -316,7 +316,7 @@ const updateOrAddBySigner = function (
         return false;
       }
 
-      const user_id = row["user_id"];
+      const user_id = owner_row["user_id"];
       return walletdb
         .findOne({
           where: {
@@ -327,7 +327,8 @@ const updateOrAddBySigner = function (
         })
         .then(function (row: any) {
           if (row === null) {
-            const name = update_dict.name || "";
+            // NOTE: name should be set here
+            const name = owner_row["name"];
             const status = update_dict.status || SignerStatus.ToBeConfirmed;
             add(
               user_id,
