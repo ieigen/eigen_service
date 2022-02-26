@@ -8,8 +8,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import jsonwebtoken from "jsonwebtoken";
-import axios from "axios";
-import querystring from "querystring";
 import * as crypto from "crypto";
 import consola from "consola";
 import "dotenv/config";
@@ -20,7 +18,6 @@ import { Session } from "../session";
 import * as util from "../util";
 import * as userdb from "../model/database_id";
 import * as addressdb from "../model/database_address";
-import { add } from "../model/database_pk";
 
 util.require_env_variables([
   "SERVER_ROOT_URI",
