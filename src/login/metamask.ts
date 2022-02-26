@@ -47,7 +47,7 @@ module.exports = function (app) {
 
     const nonce = crypto.randomBytes(32).toString("base64");
 
-    NONCE_MAP[address] = nonce;
+    NONCE_MAP.set(address, nonce);
 
     return res.json(util.Succ(nonce));
   });
@@ -74,7 +74,8 @@ module.exports = function (app) {
       return;
     }
 
-    const nonce = NONCE_MAP[address];
+    const nonce = NONCE_MAP.get(address);
+    NONCE_MAP.delete(address);
 
     if (!util.has_value(nonce)) {
       consola.error("a nonce should be generated first");
