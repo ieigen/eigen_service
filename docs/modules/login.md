@@ -35,7 +35,7 @@ Provides secret share functions
 
 #### Defined in
 
-[crypto/secretshare.ts:52](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/crypto/secretshare.ts#L52)
+[crypto/secretshare.ts:59](https://github.com/ieigen/eigen_service/blob/5c9c266/src/crypto/secretshare.ts#L59)
 
 ___
 
@@ -55,7 +55,7 @@ ___
 
 #### Defined in
 
-[crypto/secretshare.ts:67](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/crypto/secretshare.ts#L67)
+[crypto/secretshare.ts:74](https://github.com/ieigen/eigen_service/blob/5c9c266/src/crypto/secretshare.ts#L74)
 
 ___
 
@@ -76,7 +76,7 @@ ___
 
 #### Defined in
 
-[crypto/secretshare.ts:90](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/crypto/secretshare.ts#L90)
+[crypto/secretshare.ts:97](https://github.com/ieigen/eigen_service/blob/5c9c266/src/crypto/secretshare.ts#L97)
 
 ___
 
@@ -96,4 +96,4 @@ ___
 
 #### Defined in
 
-[crypto/secretshare.ts:104](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/crypto/secretshare.ts#L104)
+[crypto/secretshare.ts:111](https://github.com/ieigen/eigen_service/blob/5c9c266/src/crypto/secretshare.ts#L111)

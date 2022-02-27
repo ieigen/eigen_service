@@ -4,6 +4,8 @@
 
 [util](../modules/util.md).ErrCode
 
+Error code for a JSON responce.
+
 ## Table of contents
 
 ### Enumeration members
@@ -22,7 +24,7 @@
 
 #### Defined in
 
-[util.ts:28](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/util.ts#L28)
+[util.ts:35](https://github.com/ieigen/eigen_service/blob/5c9c266/src/util.ts#L35)
 
 ___
 
@@ -32,7 +34,7 @@ ___
 
 #### Defined in
 
-[util.ts:29](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/util.ts#L29)
+[util.ts:36](https://github.com/ieigen/eigen_service/blob/5c9c266/src/util.ts#L36)
 
 ___
 
@@ -42,7 +44,7 @@ ___
 
 #### Defined in
 
-[util.ts:30](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/util.ts#L30)
+[util.ts:37](https://github.com/ieigen/eigen_service/blob/5c9c266/src/util.ts#L37)
 
 ___
 
@@ -52,7 +54,7 @@ ___
 
 #### Defined in
 
-[util.ts:31](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/util.ts#L31)
+[util.ts:38](https://github.com/ieigen/eigen_service/blob/5c9c266/src/util.ts#L38)
 
 ___
 
@@ -62,4 +64,4 @@ ___
 
 #### Defined in
 
-[util.ts:32](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/util.ts#L32)
+[util.ts:39](https://github.com/ieigen/eigen_service/blob/5c9c266/src/util.ts#L39)

@@ -36,7 +36,7 @@ Allowance management model definition
 
 #### Defined in
 
-[token/allowance.ts:81](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/allowance.ts#L81)
+[token/allowance.ts:83](https://github.com/ieigen/eigen_service/blob/5c9c266/src/token/allowance.ts#L83)
 
 ___
 
@@ -60,7 +60,7 @@ ___
 
 #### Defined in
 
-[token/allowance.ts:97](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/allowance.ts#L97)
+[token/allowance.ts:99](https://github.com/ieigen/eigen_service/blob/5c9c266/src/token/allowance.ts#L99)
 
 ___
 
@@ -83,7 +83,7 @@ ___
 
 #### Defined in
 
-[token/allowance.ts:138](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/allowance.ts#L138)
+[token/allowance.ts:140](https://github.com/ieigen/eigen_service/blob/5c9c266/src/token/allowance.ts#L140)
 
 ___
 
@@ -104,7 +104,7 @@ ___
 
 #### Defined in
 
-[token/allowance.ts:144](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/allowance.ts#L144)
+[token/allowance.ts:146](https://github.com/ieigen/eigen_service/blob/5c9c266/src/token/allowance.ts#L146)
 
 ___
 
@@ -127,4 +127,4 @@ ___
 
 #### Defined in
 
-[token/allowance.ts:168](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/allowance.ts#L168)
+[token/allowance.ts:170](https://github.com/ieigen/eigen_service/blob/5c9c266/src/token/allowance.ts#L170)

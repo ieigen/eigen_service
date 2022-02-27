@@ -34,7 +34,7 @@ Addresses model definition
 
 #### Defined in
 
-[model/database_address.ts:76](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_address.ts#L76)
+[model/database_address.ts:80](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_address.ts#L80)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[model/database_address.ts:85](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_address.ts#L85)
+[model/database_address.ts:89](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_address.ts#L89)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[model/database_address.ts:88](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_address.ts#L88)
+[model/database_address.ts:92](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_address.ts#L92)
 
 ___
 
@@ -97,4 +97,4 @@ ___
 
 #### Defined in
 
-[model/database_address.ts:92](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_address.ts#L92)
+[model/database_address.ts:96](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_address.ts#L96)

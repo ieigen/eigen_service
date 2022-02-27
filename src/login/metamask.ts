@@ -28,6 +28,13 @@ util.require_env_variables([
 
 const NONCE_MAP = new Map();
 
+/**
+ * Get a nonce in order to login with metamask
+ *
+ * @param req the request information, including these fields:
+ *            1. address
+ * @param res the response, if OK, it is a nonce (a 32-length base64)
+ */
 async function getAuthMetamask(req, res) {
   consola.info(
     "Going to query a nonce to login with address",
@@ -49,6 +56,16 @@ async function getAuthMetamask(req, res) {
   return res.json(util.Succ(nonce));
 }
 
+/**
+ * Verify the signature with the previous nonce, if success, response with
+ * a UID and JWT
+ *
+ * @param req the request information, including these fields:
+ *            1. address
+ *            2. email
+ *            3. signature
+ * @param res the response, if OK, it will redirect to a logged in page
+ */
 async function postAuthMetamask(req, res) {
   const signature = req.query.signature;
   const address = req.query.address;

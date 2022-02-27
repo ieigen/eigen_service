@@ -4,6 +4,8 @@
 
 [database_multisig](../modules/database_multisig.md).SignOperation
 
+The kind of signature operation.
+
 ## Table of contents
 
 ### Enumeration members
@@ -20,7 +22,7 @@
 
 #### Defined in
 
-[model/database_multisig.ts:60](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_multisig.ts#L60)
+[model/database_multisig.ts:69](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_multisig.ts#L69)
 
 ___
 
@@ -30,7 +32,7 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:61](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_multisig.ts#L61)
+[model/database_multisig.ts:70](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_multisig.ts#L70)
 
 ___
 
@@ -40,4 +42,4 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:62](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_multisig.ts#L62)
+[model/database_multisig.ts:71](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_multisig.ts#L71)

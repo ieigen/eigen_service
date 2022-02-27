@@ -40,7 +40,7 @@ Transaction history model definition
 
 #### Defined in
 
-[model/database_transaction_history.ts:54](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L54)
+[model/database_transaction_history.ts:62](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L62)
 
 ___
 
@@ -50,7 +50,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:55](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L55)
+[model/database_transaction_history.ts:63](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L63)
 
 ___
 
@@ -60,7 +60,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:56](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L56)
+[model/database_transaction_history.ts:64](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L64)
 
 ___
 
@@ -70,7 +70,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:57](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L57)
+[model/database_transaction_history.ts:65](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L65)
 
 ___
 
@@ -80,7 +80,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:59](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L59)
+[model/database_transaction_history.ts:67](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L67)
 
 ___
 
@@ -90,7 +90,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:60](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L60)
+[model/database_transaction_history.ts:68](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L68)
 
 ## Functions
 
@@ -110,7 +110,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:93](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L93)
+[model/database_transaction_history.ts:101](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L101)
 
 ___
 
@@ -130,7 +130,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:111](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L111)
+[model/database_transaction_history.ts:119](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L119)
 
 ___
 
@@ -150,7 +150,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:115](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L115)
+[model/database_transaction_history.ts:123](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L123)
 
 ___
 
@@ -173,7 +173,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:119](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L119)
+[model/database_transaction_history.ts:127](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L127)
 
 ___
 
@@ -198,7 +198,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:155](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L155)
+[model/database_transaction_history.ts:163](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L163)
 
 ___
 
@@ -221,7 +221,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:190](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L190)
+[model/database_transaction_history.ts:198](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L198)
 
 ___
 
@@ -235,7 +235,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:240](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L240)
+[model/database_transaction_history.ts:248](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L248)
 
 ___
 
@@ -256,7 +256,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:244](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L244)
+[model/database_transaction_history.ts:252](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L252)
 
 ___
 
@@ -270,7 +270,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:267](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L267)
+[model/database_transaction_history.ts:275](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L275)
 
 ___
 
@@ -284,4 +284,4 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:302](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L302)
+[model/database_transaction_history.ts:310](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L310)

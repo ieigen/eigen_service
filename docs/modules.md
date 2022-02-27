@@ -18,6 +18,7 @@
 - [database\_transaction\_history](modules/database_transaction_history.md)
 - [database\_wallet](modules/database_wallet.md)
 - [database\_wallet\_history](modules/database_wallet_history.md)
+- [main](modules/main.md)
 - [session](modules/session.md)
 - [database\_allowance](modules/database_allowance.md)
 - [constants](modules/constants.md)

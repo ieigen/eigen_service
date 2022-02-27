@@ -4,6 +4,8 @@
 
 [database_transaction_history](../modules/database_transaction_history.md).TransactionStatus
 
+The kind of signature operation.
+
 ## Table of contents
 
 ### Enumeration members
@@ -21,7 +23,7 @@
 
 #### Defined in
 
-[model/database_transaction_history.ts:28](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L28)
+[model/database_transaction_history.ts:36](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L36)
 
 ___
 
@@ -31,7 +33,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:29](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L29)
+[model/database_transaction_history.ts:37](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L37)
 
 ___
 
@@ -41,7 +43,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:30](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L30)
+[model/database_transaction_history.ts:38](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L38)
 
 ___
 
@@ -51,4 +53,4 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:31](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_transaction_history.ts#L31)
+[model/database_transaction_history.ts:39](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_transaction_history.ts#L39)
