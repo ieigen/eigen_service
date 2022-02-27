@@ -9,6 +9,7 @@
 - [crypto](modules/crypto.md)
 - [login](modules/login.md)
 - [log](modules/log.md)
+- [login](modules/login.md)
 - [database\_addresses](modules/database_addresses.md)
 - [database\_friend\_relationship](modules/database_friend_relationship.md)
 - [database\_id](modules/database_id.md)

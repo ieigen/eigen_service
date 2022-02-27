@@ -22,7 +22,7 @@ Secret Level.
 
 #### Defined in
 
-[crypto/secretshare.ts:41](https://github.com/ieigen/eigen_service/blob/5c9c266/src/crypto/secretshare.ts#L41)
+[crypto/secretshare.ts:41](https://github.com/ieigen/eigen_service/blob/760a065/src/crypto/secretshare.ts#L41)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[crypto/secretshare.ts:42](https://github.com/ieigen/eigen_service/blob/5c9c266/src/crypto/secretshare.ts#L42)
+[crypto/secretshare.ts:42](https://github.com/ieigen/eigen_service/blob/760a065/src/crypto/secretshare.ts#L42)
 
 ___
 
@@ -42,4 +42,4 @@ ___
 
 #### Defined in
 
-[crypto/secretshare.ts:43](https://github.com/ieigen/eigen_service/blob/5c9c266/src/crypto/secretshare.ts#L43)
+[crypto/secretshare.ts:43](https://github.com/ieigen/eigen_service/blob/760a065/src/crypto/secretshare.ts#L43)

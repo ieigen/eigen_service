@@ -36,7 +36,7 @@ Recovery model definition
 
 #### Defined in
 
-[model/database_recovery.ts:58](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_recovery.ts#L58)
+[model/database_recovery.ts:58](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_recovery.ts#L58)
 
 ___
 
@@ -56,7 +56,7 @@ ___
 
 #### Defined in
 
-[model/database_recovery.ts:76](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_recovery.ts#L76)
+[model/database_recovery.ts:76](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_recovery.ts#L76)
 
 ___
 
@@ -76,7 +76,7 @@ ___
 
 #### Defined in
 
-[model/database_recovery.ts:80](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_recovery.ts#L80)
+[model/database_recovery.ts:80](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_recovery.ts#L80)
 
 ___
 
@@ -101,4 +101,4 @@ ___
 
 #### Defined in
 
-[model/database_recovery.ts:84](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_recovery.ts#L84)
+[model/database_recovery.ts:84](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_recovery.ts#L84)

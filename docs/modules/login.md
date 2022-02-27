@@ -2,98 +2,58 @@
 
 # Module: login
 
-Provides secret share functions
+Provide metamask related login processes
 
 ## Table of contents
 
-### Enumerations
-
-- [SecLevel](../enums/login.SecLevel.md)
-
 ### Functions
 
-- [generate\_key](login.md#generate_key)
-- [generate\_mnemonic](login.md#generate_mnemonic)
-- [split](login.md#split)
-- [combine](login.md#combine)
+- [getAuthMetamask](login.md#getauthmetamask)
+- [postAuthMetamask](login.md#postauthmetamask)
 
 ## Functions
 
-### generate\_key
+### getAuthMetamask
 
-▸ **generate_key**(`options?`): `string`
+▸ **getAuthMetamask**(`req`, `res`): `Promise`<`any`\>
+
+Get a nonce in order to login with metamask
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options?` | `any` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `req` | `any` | the request information, including these fields:            1. address |
+| `res` | `any` | the response, if OK, it is a nonce (a 32-length base64) |
 
 #### Returns
 
-`string`
+`Promise`<`any`\>
 
 #### Defined in
 
-[crypto/secretshare.ts:59](https://github.com/ieigen/eigen_service/blob/5c9c266/src/crypto/secretshare.ts#L59)
+[login/metamask.ts:38](https://github.com/ieigen/eigen_service/blob/760a065/src/login/metamask.ts#L38)
 
 ___
 
-### generate\_mnemonic
+### postAuthMetamask
 
-▸ **generate_mnemonic**(`typ`): `string`
+▸ **postAuthMetamask**(`req`, `res`): `Promise`<`void`\>
 
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `typ` | [`SecLevel`](../enums/login.SecLevel.md) |
-
-#### Returns
-
-`string`
-
-#### Defined in
-
-[crypto/secretshare.ts:74](https://github.com/ieigen/eigen_service/blob/5c9c266/src/crypto/secretshare.ts#L74)
-
-___
-
-### split
-
-▸ **split**(`secret`, `level`): `string`[]
+Verify the signature with the previous nonce, if success, response with
+a UID and JWT
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `secret` | `string` |
-| `level` | [`SecLevel`](../enums/login.SecLevel.md) |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `req` | `any` | the request information, including these fields:            1. address            2. email            3. signature |
+| `res` | `any` | the response, if OK, it will redirect to a logged in page |
 
 #### Returns
 
-`string`[]
+`Promise`<`void`\>
 
 #### Defined in
 
-[crypto/secretshare.ts:97](https://github.com/ieigen/eigen_service/blob/5c9c266/src/crypto/secretshare.ts#L97)
-
-___
-
-### combine
-
-▸ **combine**(`shares`): `string`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `shares` | `string`[] |
-
-#### Returns
-
-`string`
-
-#### Defined in
-
-[crypto/secretshare.ts:111](https://github.com/ieigen/eigen_service/blob/5c9c266/src/crypto/secretshare.ts#L111)
+[login/metamask.ts:69](https://github.com/ieigen/eigen_service/blob/760a065/src/login/metamask.ts#L69)

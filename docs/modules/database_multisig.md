@@ -33,7 +33,7 @@ Multi signature model definition
 
 #### Defined in
 
-[model/database_multisig.ts:74](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_multisig.ts#L74)
+[model/database_multisig.ts:74](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L74)
 
 ## Functions
 
@@ -59,7 +59,7 @@ Multi signature model definition
 
 #### Defined in
 
-[model/database_multisig.ts:140](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_multisig.ts#L140)
+[model/database_multisig.ts:140](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L140)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:174](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_multisig.ts#L174)
+[model/database_multisig.ts:174](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L174)
 
 ___
 
@@ -100,7 +100,7 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:178](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_multisig.ts#L178)
+[model/database_multisig.ts:178](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L178)
 
 ___
 
@@ -124,7 +124,7 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:207](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_multisig.ts#L207)
+[model/database_multisig.ts:207](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L207)
 
 ___
 
@@ -144,7 +144,7 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:223](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_multisig.ts#L223)
+[model/database_multisig.ts:223](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L223)
 
 ___
 
@@ -164,7 +164,7 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:227](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_multisig.ts#L227)
+[model/database_multisig.ts:227](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L227)
 
 ___
 
@@ -184,7 +184,7 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:235](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_multisig.ts#L235)
+[model/database_multisig.ts:235](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L235)
 
 ___
 
@@ -205,4 +205,4 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:244](https://github.com/ieigen/eigen_service/blob/5c9c266/src/model/database_multisig.ts#L244)
+[model/database_multisig.ts:244](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L244)

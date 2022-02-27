@@ -35,7 +35,7 @@ const NONCE_MAP = new Map();
  *            1. address
  * @param res the response, if OK, it is a nonce (a 32-length base64)
  */
-async function getAuthMetamask(req, res) {
+export async function getAuthMetamask(req, res) {
   consola.info(
     "Going to query a nonce to login with address",
     req.query.address
@@ -66,7 +66,7 @@ async function getAuthMetamask(req, res) {
  *            3. signature
  * @param res the response, if OK, it will redirect to a logged in page
  */
-async function postAuthMetamask(req, res) {
+export async function postAuthMetamask(req, res) {
   const signature = req.query.signature;
   const address = req.query.address;
 
