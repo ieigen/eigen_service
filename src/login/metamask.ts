@@ -21,9 +21,7 @@ import * as addressdb from "../model/database_address";
 
 util.require_env_variables([
   "SERVER_ROOT_URI",
-  "GOOGLE_CLIENT_ID",
   "JWT_SECRET",
-  "GOOGLE_CLIENT_SECRET",
   "COOKIE_NAME",
   "UI_ROOT_URI",
 ]);
