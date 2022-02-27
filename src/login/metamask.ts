@@ -67,12 +67,12 @@ export async function getAuthMetamask(req, res) {
  * @param res the response, if OK, it will redirect to a logged in page
  */
 export async function postAuthMetamask(req, res) {
-  const signature = req.query.signature;
-  const address = req.query.address;
+  const signature = req.body.signature;
+  const address = req.body.address;
 
   // email here is a fake one
-  const email = req.query.email;
-  consola.info(`Going to verify a nonce ${signature} with addredd ${address}`);
+  const email = req.body.email;
+  consola.info(`Going to verify a nonce ${signature} with address ${address}`);
 
   // Fetch the user's profile with the access token and bearer
   if (!util.has_value(signature) || !util.has_value(address)) {
