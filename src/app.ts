@@ -152,6 +152,7 @@ app.get("/user/:user_id/addresses", service.getAddresses);
 app.get("/user/:user_id/friends_addresses", service.getFriendsAddresses);
 
 require("./login/google")(app);
+require("./login/metamask")(app);
 require("./relay/relay")(app);
 require("./wallet/wallet")(app);
 require("./message")(app);
