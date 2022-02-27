@@ -99,7 +99,9 @@ export async function postAuthMetamask(req, res) {
 
   const sign_address = ethers.utils.verifyMessage(nonce, signature);
 
-  if (sign_address === address) {
+  if (
+    ethers.utils.getAddress(sign_address) === ethers.utils.getAddress(address)
+  ) {
     // Verified!
     consola.success("Verfied with address ", address);
 
@@ -149,7 +151,9 @@ export async function postAuthMetamask(req, res) {
     );
   } else {
     // Fail to verify
-    consola.error("Failed to login due to fail to verification");
+    consola.error(
+      `Failed to login due to fail to verification: ${address} != ${sign_address}`
+    );
     res.json(
       util.Err(
         util.ErrCode.InvalidAuth,
