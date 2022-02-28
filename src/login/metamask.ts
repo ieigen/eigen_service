@@ -154,7 +154,7 @@ export async function postAuthMetamask(req, res) {
     Session.add_token(hashcode, new Session.session(token, 3600));
     const redir_content = `${process.env.UI_ROOT_URI}?id=${user_id}&${process.env.COOKIE_NAME}=${hashcode}&new=${isNew}`;
     consola.log(redir_content);
-    res.redirect(redir_content);
+    // res.redirect(redir_content);
     return res.json(util.Succ(redir_content));
   } else {
     // Fail to verify
