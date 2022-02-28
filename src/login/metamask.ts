@@ -105,7 +105,9 @@ export async function postAuthMetamask(req, res) {
     // Verified!
     consola.success("Verfied with address ", address);
 
-    const address_record: any = await addressdb.findOne({ address });
+    const address_record: any = await addressdb.findOne({
+      user_address: address,
+    });
     let isNew = 0;
     let user_id;
 
