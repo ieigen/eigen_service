@@ -143,7 +143,10 @@ export async function postAuthMetamask(req, res) {
     }
 
     const user_info = await userdb.findByID(user_id);
-    const token = jsonwebtoken.sign(user_info, process.env.JWT_SECRET);
+    const token = jsonwebtoken.sign(
+      user_info["dataValues"],
+      process.env.JWT_SECRET
+    );
     consola.log("user cookie", token);
     const hash = crypto.createHash("sha256");
     const hashcode = hash.update(token).digest("hex");
