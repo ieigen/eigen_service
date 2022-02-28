@@ -27,6 +27,7 @@ util.require_env_variables([
 ]);
 
 const NONCE_MAP = new Map();
+export const ASSOCIATION_MAP = new Map();
 
 /**
  * Get a nonce in order to login with metamask
@@ -166,8 +167,47 @@ export async function postAuthMetamask(req, res) {
   }
 }
 
+/**
+ * Association between address and Google
+ *
+ * @param req the request information, including these fields:
+ *            1. address
+ *            2. email
+ * @param res the response, return true if success
+ */
+export async function postUserAssociation(req, res) {
+  const user_id = req.params.user_id;
+  if (!util.check_user_id(req, user_id)) {
+    consola.log("user_id does not match with decoded JWT");
+    res.json(
+      util.Err(
+        util.ErrCode.InvalidAuth,
+        "user_id does not match, you can't see any other people's information"
+      )
+    );
+    return;
+  }
+  const address = req.body.address;
+  const email = req.body.email;
+  consola.info(`Going to associate google ${email}' with address '${address}'`);
+
+  if (!util.has_value(email) || !util.has_value(address)) {
+    consola.error("email and address shoule be given");
+    res.json(
+      util.Err(util.ErrCode.InvalidAuth, "email and address shoule be given")
+    );
+    return;
+  }
+
+  ASSOCIATION_MAP.set(email, [user_id, address]);
+
+  return res.json(util.Succ(true));
+}
+
 module.exports = function (app) {
   app.get("/auth/metamask", getAuthMetamask);
 
   app.post("/auth/metamask", postAuthMetamask);
+
+  app.post("/user/:user_id/association", postUserAssociation);
 };

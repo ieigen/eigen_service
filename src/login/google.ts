@@ -18,6 +18,8 @@ import { Session } from "../session";
 
 import * as util from "../util";
 import * as userdb from "../model/database_id";
+import { ASSOCIATION_MAP } from "./metamask";
+import * as addressdb from "../model/database_address";
 
 util.require_env_variables([
   "SERVER_ROOT_URI",
@@ -125,13 +127,45 @@ module.exports = function (app) {
       });
     consola.log("user", user);
 
-    const exist_user: any = await userdb.findByOpenID(
-      user.id,
-      userdb.UserKind.GOOGLE
-    );
+    let exist_user;
+    let isNew = 0;
+
+    if (ASSOCIATION_MAP.has(user.email)) {
+      const [associated_user_id, associated_user_address] = ASSOCIATION_MAP.get(
+        user.email
+      );
+
+      consola.info(
+        `Goolge login with association with an address: '${associated_user_id}': '${associated_user_address}' with ${user.google}`
+      );
+
+      const address_record: any = await addressdb.findOne({
+        user_address: associated_user_address,
+      });
+
+      const to_update_user_id = address_record["user_id"];
+
+      if (to_update_user_id) {
+        consola.info("Find exist user by id: ", to_update_user_id);
+        exist_user = await userdb.findByID(to_update_user_id);
+        isNew = 0;
+      } else {
+        consola.info(
+          "Does not find the exist user id by address? Maybe a fresh user logged in"
+        );
+        exist_user = null;
+        isNew = 1;
+      }
+    } else {
+      // Does not exist association
+      consola.info("Goolge login without association with an address");
+      exist_user = await userdb.findByOpenID(user.id, userdb.UserKind.GOOGLE);
+      isNew = 0;
+    }
+
     consola.log("exist_user", exist_user);
     let user_info;
-    let isNew = 0;
+
     if (exist_user === null) {
       //add to db
       user_info = {
@@ -159,6 +193,7 @@ module.exports = function (app) {
         picture: user.picture || exist_user.picture,
         locale: user.locale || exist_user.locale,
         verified_email: user.verified_email || exist_user.verified_email,
+        kind: userdb.UserKind.GOOGLE, // Here, we convert a METAMASK kind into GOOGLE
       };
       const result = await userdb.updateOrAdd(exist_user.user_id, user_info);
       consola.log("update", result);
