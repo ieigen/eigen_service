@@ -137,7 +137,7 @@ export async function postAuthMetamask(req, res) {
         verified_email: "",
         secret: "",
       };
-      const result = await user_info;
+      const result = await userdb.add(user_info);
       consola.log("update", result);
       user_id = result["user_id"];
     }
