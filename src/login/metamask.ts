@@ -152,9 +152,9 @@ export async function postAuthMetamask(req, res) {
     const hashcode = hash.update(token).digest("hex");
     consola.log(hashcode);
     Session.add_token(hashcode, new Session.session(token, 3600));
-    res.redirect(
-      `${process.env.UI_ROOT_URI}?id=${user_id}&${process.env.COOKIE_NAME}=${hashcode}&new=${isNew}`
-    );
+    const redir_content = `${process.env.UI_ROOT_URI}?id=${user_id}&${process.env.COOKIE_NAME}=${hashcode}&new=${isNew}`;
+    consola.log(redir_content);
+    res.redirect(redir_content);
   } else {
     // Fail to verify
     consola.error(
