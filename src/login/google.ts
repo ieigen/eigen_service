@@ -156,6 +156,7 @@ module.exports = function (app) {
         exist_user = null;
         isNew = 1;
       }
+      ASSOCIATION_MAP.delete(user.email);
     } else {
       // Does not exist association
       consola.info("Goolge login without association with an address");
