@@ -139,7 +139,7 @@ export async function postAuthMetamask(req, res) {
       };
       const result = await userdb.add(user_info);
       consola.log("update", result);
-      user_id = result["user_id"];
+      user_id = result["dataValues"]["user_id"];
     }
 
     const user_info = await userdb.findByID(user_id);
