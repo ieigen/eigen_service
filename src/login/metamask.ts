@@ -212,7 +212,7 @@ export async function postUserAssociation(req, res) {
     return;
   }
 
-  ASSOCIATION_MAP.set(email, [user_id, address]);
+  association.METAMASK_GOOGLE_ASSOCIATION_MAP.set(email, [user_id, address]);
 
   return res.json(util.Succ(true));
 }
