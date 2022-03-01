@@ -17,7 +17,7 @@ import { Session } from "../session";
 
 import * as util from "../util";
 import * as userdb from "../model/database_id";
-import * as addressdb from "../model/database_address";
+import * as idmapdb from "../model/database_id_map";
 import * as association from "../association";
 
 util.require_env_variables([
@@ -106,17 +106,18 @@ export async function postAuthMetamask(req, res) {
     // Verified!
     consola.success("Verfied with address ", address);
 
-    const address_record: any = await addressdb.findOne({
-      user_address: address,
-    });
+    const id_map: any = await idmapdb.findByValueAndKind(
+      ethers.utils.getAddress(address),
+      userdb.UserKind.METAMASK
+    );
     let isNew = 0;
     let user_id;
 
-    if (address_record) {
+    if (id_map) {
       // Address is associated with a UID,
       // which means the user logged in before
-      consola.info("Address existed: ", address_record);
-      user_id = address_record["dataValues"]["user_id"];
+      consola.info("Address existed: ", id_map);
+      user_id = id_map["user_id"];
     } else {
       if (!util.has_value(email)) {
         consola.error("a fake email should be given");
@@ -141,16 +142,17 @@ export async function postAuthMetamask(req, res) {
       const result = await userdb.add(user_info);
       consola.log("update", result);
       user_id = result["dataValues"]["user_id"];
+
+      idmapdb.add({
+        user_id: user_id,
+        kind: userdb.UserKind.METAMASK,
+        value: ethers.utils.getAddress(address),
+      });
     }
 
     const user_info = await userdb.findByID(user_id);
 
     consola.info("The user id is ", user_id);
-
-    // TODO: Cipher?
-    // addressdb.updateOrAdd(user_id, 0, address, "");
-
-    // consola.info("Update or add an address: ", address);
 
     const token = jsonwebtoken.sign(
       user_info["dataValues"],

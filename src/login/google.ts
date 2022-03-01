@@ -19,7 +19,7 @@ import { Session } from "../session";
 import * as util from "../util";
 import * as userdb from "../model/database_id";
 import * as association from "../association";
-import * as addressdb from "../model/database_address";
+import * as idmapdb from "../model/database_id_map";
 
 util.require_env_variables([
   "SERVER_ROOT_URI",
@@ -204,6 +204,11 @@ module.exports = function (app) {
       const result = await userdb.add(user_info);
       isNew = 1;
       consola.log("add", result);
+      idmapdb.add({
+        user_id: user_info["dataValues"]["user_id"],
+        kind: userdb.UserKind.GOOGLE,
+        value: user.email.trim().toLowerCase(),
+      });
     } else {
       user_info = {
         email: user.email || exist_user.email,
