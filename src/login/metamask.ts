@@ -143,6 +143,12 @@ export async function postAuthMetamask(req, res) {
     }
 
     const user_info = await userdb.findByID(user_id);
+
+    // TODO: Cipher?
+    const result = addressdb.updateOrAdd(user_id, 0, address, "");
+
+    consola.info("Update or add an address: ", JSON.stringify(result));
+
     const token = jsonwebtoken.sign(
       user_info["dataValues"],
       process.env.JWT_SECRET
@@ -152,10 +158,10 @@ export async function postAuthMetamask(req, res) {
     const hashcode = hash.update(token).digest("hex");
     consola.log(hashcode);
     Session.add_token(hashcode, new Session.session(token, 3600));
-    const redir_content = `${process.env.UI_ROOT_URI}?id=${user_id}&${process.env.COOKIE_NAME}=${hashcode}&new=${isNew}`;
-    consola.log(redir_content);
-    // res.redirect(redir_content);
-    return res.json(util.Succ(redir_content));
+    const redir_url = `${process.env.UI_ROOT_URI}?id=${user_id}&${process.env.COOKIE_NAME}=${hashcode}&new=${isNew}`;
+    consola.log("Redirect url: ", redir_url);
+    // res.redirect(redir_url);
+    return res.json(util.Succ(redir_url));
   } else {
     // Fail to verify
     consola.error(
