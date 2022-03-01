@@ -18,7 +18,7 @@ import { Session } from "../session";
 
 import * as util from "../util";
 import * as userdb from "../model/database_id";
-import * as metamask from "./metamask";
+import * as association from "../association";
 import * as addressdb from "../model/database_address";
 
 util.require_env_variables([
@@ -130,9 +130,9 @@ module.exports = function (app) {
     let exist_user;
     let isNew = 0;
 
-    if (metamask.hasAssociation(user.email)) {
+    if (association.METAMASK_GOOGLE_ASSOCIATION_MAP.has(user.email)) {
       const [associated_user_id, associated_user_address] =
-        metamask.getAssociation(user.email);
+        association.METAMASK_GOOGLE_ASSOCIATION_MAP.get(user.email);
 
       consola.info(
         `Goolge login with association with an address: '${associated_user_id}': '${associated_user_address}' with ${user.google}`
@@ -155,7 +155,7 @@ module.exports = function (app) {
         exist_user = null;
         isNew = 1;
       }
-      metamask.deleteAssociation(user.email);
+      association.METAMASK_GOOGLE_ASSOCIATION_MAP.delete(user.email);
     } else {
       // Does not exist association
       consola.info("Goolge login without association with an address");

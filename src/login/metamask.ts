@@ -18,6 +18,7 @@ import { Session } from "../session";
 import * as util from "../util";
 import * as userdb from "../model/database_id";
 import * as addressdb from "../model/database_address";
+import * as association from "../association";
 
 util.require_env_variables([
   "SERVER_ROOT_URI",
@@ -27,7 +28,6 @@ util.require_env_variables([
 ]);
 
 const NONCE_MAP = new Map();
-const ASSOCIATION_MAP = new Map();
 
 /**
  * Get a nonce in order to login with metamask
@@ -215,22 +215,6 @@ export async function postUserAssociation(req, res) {
   ASSOCIATION_MAP.set(email, [user_id, address]);
 
   return res.json(util.Succ(true));
-}
-
-export function getAssociation(email) {
-  return ASSOCIATION_MAP.get(email);
-}
-
-export function hasAssociation(email) {
-  return ASSOCIATION_MAP.has(email);
-}
-
-export function setAssociation(email, value) {
-  return ASSOCIATION_MAP.set(email, value);
-}
-
-export function deleteAssociation(email) {
-  return ASSOCIATION_MAP.delete(email);
 }
 
 module.exports = function (app) {
