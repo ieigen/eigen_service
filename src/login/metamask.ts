@@ -148,9 +148,9 @@ export async function postAuthMetamask(req, res) {
     consola.info("The user id is ", user_id);
 
     // TODO: Cipher?
-    addressdb.updateOrAdd(user_id, 0, address, "");
+    // addressdb.updateOrAdd(user_id, 0, address, "");
 
-    consola.info("Update or add an address: ", address);
+    // consola.info("Update or add an address: ", address);
 
     const token = jsonwebtoken.sign(
       user_info["dataValues"],
