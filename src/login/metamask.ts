@@ -27,7 +27,7 @@ util.require_env_variables([
 ]);
 
 const NONCE_MAP = new Map();
-export const ASSOCIATION_MAP = new Map();
+const ASSOCIATION_MAP = new Map();
 
 /**
  * Get a nonce in order to login with metamask
@@ -148,9 +148,9 @@ export async function postAuthMetamask(req, res) {
     consola.info("The user id is ", user_id);
 
     // TODO: Cipher?
-    const result = addressdb.updateOrAdd(user_id, 0, address, "");
+    addressdb.updateOrAdd(user_id, 0, address, "");
 
-    consola.info("Update or add an address: ", JSON.stringify(result));
+    consola.info("Update or add an address: ", address);
 
     const token = jsonwebtoken.sign(
       user_info["dataValues"],
@@ -215,6 +215,22 @@ export async function postUserAssociation(req, res) {
   ASSOCIATION_MAP.set(email, [user_id, address]);
 
   return res.json(util.Succ(true));
+}
+
+export function getAssociation(email) {
+  return ASSOCIATION_MAP.get(email);
+}
+
+export function hasAssociation(email) {
+  return ASSOCIATION_MAP.has(email);
+}
+
+export function setAssociation(email, value) {
+  return ASSOCIATION_MAP.set(email, value);
+}
+
+export function deleteAssociation(email) {
+  return ASSOCIATION_MAP.delete(email);
 }
 
 module.exports = function (app) {

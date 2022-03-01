@@ -130,9 +130,9 @@ module.exports = function (app) {
     let exist_user;
     let isNew = 0;
 
-    if (metamask.ASSOCIATION_MAP.has(user.email)) {
+    if (metamask.hasAssociation(user.email)) {
       const [associated_user_id, associated_user_address] =
-        metamask.ASSOCIATION_MAP.get(user.email);
+        metamask.getAssociation(user.email);
 
       consola.info(
         `Goolge login with association with an address: '${associated_user_id}': '${associated_user_address}' with ${user.google}`
@@ -155,7 +155,7 @@ module.exports = function (app) {
         exist_user = null;
         isNew = 1;
       }
-      metamask.ASSOCIATION_MAP.delete(user.email);
+      metamask.deleteAssociation(user.email);
     } else {
       // Does not exist association
       consola.info("Goolge login without association with an address");
