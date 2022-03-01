@@ -115,7 +115,8 @@ export async function postAuthMetamask(req, res) {
     if (address_record) {
       // Address is associated with a UID,
       // which means the user logged in before
-      user_id = address_record.id;
+      consola.info("Address existed: ", address_record);
+      user_id = address_record["dataValues"]["user_id"];
     } else {
       if (!util.has_value(email)) {
         consola.error("a fake email should be given");
@@ -143,6 +144,8 @@ export async function postAuthMetamask(req, res) {
     }
 
     const user_info = await userdb.findByID(user_id);
+
+    consola.info("The user id is ", user_id);
 
     // TODO: Cipher?
     const result = addressdb.updateOrAdd(user_id, 0, address, "");

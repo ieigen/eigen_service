@@ -60,7 +60,7 @@ sequelize
   .then(function (row: any) {
     consola.log(
       row.get({
-        usr_id: 1,
+        user_id: 1,
         network_id: "id",
         user_address: "0xUSER",
       })
