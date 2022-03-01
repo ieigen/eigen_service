@@ -181,10 +181,10 @@ export async function postAuthMetamask(req, res) {
 }
 
 /**
- * Association between address and Google
+ * Association between fake_email and Google email
  *
  * @param req the request information, including these fields:
- *            1. address
+ *            1. fake_email
  *            2. email
  * @param res the response, return true if success
  */
@@ -200,19 +200,21 @@ export async function postUserAssociation(req, res) {
     );
     return;
   }
-  const address = req.body.address;
+  const fake_email = req.body.fake_email;
   const email = req.body.email;
-  consola.info(`Going to associate google ${email}' with address '${address}'`);
+  consola.info(
+    `Going to associate google ${email}' with fake_email '${fake_email}'`
+  );
 
-  if (!util.has_value(email) || !util.has_value(address)) {
-    consola.error("email and address shoule be given");
+  if (!util.has_value(email) || !util.has_value(fake_email)) {
+    consola.error("email and fake_email shoule be given");
     res.json(
-      util.Err(util.ErrCode.InvalidAuth, "email and address shoule be given")
+      util.Err(util.ErrCode.InvalidAuth, "email and fake_email shoule be given")
     );
     return;
   }
 
-  association.METAMASK_GOOGLE_ASSOCIATION_MAP.set(email, [user_id, address]);
+  association.METAMASK_GOOGLE_ASSOCIATION_MAP.set(email, [user_id, fake_email]);
 
   return res.json(util.Succ(true));
 }
