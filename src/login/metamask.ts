@@ -119,7 +119,7 @@ export async function postAuthMetamask(req, res) {
     let user_id;
 
     if (email_id_map) {
-      consola.info("Email existed: ", email_id_map);
+      consola.info("Google email existed: ", email_id_map);
       user_id = email_id_map["user_id"];
     } else if (address_id_map) {
       // Address is associated with a UID,
