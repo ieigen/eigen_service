@@ -106,18 +106,26 @@ export async function postAuthMetamask(req, res) {
     // Verified!
     consola.success("Verfied with address ", address);
 
-    const id_map: any = await idmapdb.findByValueAndKind(
+    const address_id_map: any = await idmapdb.findByValueAndKind(
       ethers.utils.getAddress(address),
       userdb.UserKind.METAMASK
+    );
+
+    const email_id_map: any = await idmapdb.findByValueAndKind(
+      email.trim().toLowerCase(),
+      userdb.UserKind.GOOGLE
     );
     let isNew = 0;
     let user_id;
 
-    if (id_map) {
+    if (email_id_map) {
+      consola.info("Email existed: ", email_id_map);
+      user_id = email_id_map["user_id"];
+    } else if (address_id_map) {
       // Address is associated with a UID,
       // which means the user logged in before
-      consola.info("Address existed: ", id_map);
-      user_id = id_map["user_id"];
+      consola.info("Address existed: ", address_id_map);
+      user_id = address_id_map["user_id"];
     } else {
       if (!util.has_value(email)) {
         consola.error("a fake email should be given");
