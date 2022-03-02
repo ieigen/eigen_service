@@ -7,7 +7,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Sequelize, DataTypes, Op } from "sequelize";
+import { Sequelize, DataTypes } from "sequelize";
 import consola from "consola";
 
 import { UserKind } from "./database_id";
