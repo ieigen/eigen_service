@@ -28,6 +28,8 @@ const sequelize = new Sequelize({
  */
 export enum UserKind {
   GOOGLE,
+  TWITTER,
+  METAMASK,
 }
 
 const userdb = sequelize.define("user_st", {

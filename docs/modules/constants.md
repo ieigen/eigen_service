@@ -72,7 +72,7 @@ Some global constants are defined here
 
 #### Defined in
 
-[token/constants.ts:16](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L16)
+[token/constants.ts:18](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L18)
 
 ___
 
@@ -82,7 +82,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:17](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L17)
+[token/constants.ts:19](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L19)
 
 ___
 
@@ -92,7 +92,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:18](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L18)
+[token/constants.ts:20](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L20)
 
 ___
 
@@ -102,7 +102,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:19](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L19)
+[token/constants.ts:21](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L21)
 
 ___
 
@@ -112,7 +112,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:20](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L20)
+[token/constants.ts:22](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L22)
 
 ___
 
@@ -122,7 +122,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:21](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L21)
+[token/constants.ts:23](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L23)
 
 ___
 
@@ -132,7 +132,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:23](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L23)
+[token/constants.ts:25](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L25)
 
 ___
 
@@ -142,7 +142,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:24](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L24)
+[token/constants.ts:26](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L26)
 
 ___
 
@@ -152,7 +152,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:25](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L25)
+[token/constants.ts:27](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L27)
 
 ___
 
@@ -162,7 +162,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:26](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L26)
+[token/constants.ts:28](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L28)
 
 ___
 
@@ -172,7 +172,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:27](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L27)
+[token/constants.ts:29](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L29)
 
 ___
 
@@ -182,7 +182,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:28](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L28)
+[token/constants.ts:30](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L30)
 
 ___
 
@@ -192,7 +192,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:30](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L30)
+[token/constants.ts:32](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L32)
 
 ___
 
@@ -202,7 +202,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:31](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L31)
+[token/constants.ts:33](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L33)
 
 ___
 
@@ -212,7 +212,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:32](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L32)
+[token/constants.ts:34](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L34)
 
 ___
 
@@ -222,7 +222,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:33](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L33)
+[token/constants.ts:35](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L35)
 
 ___
 
@@ -232,7 +232,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:34](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L34)
+[token/constants.ts:36](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L36)
 
 ___
 
@@ -242,7 +242,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:35](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L35)
+[token/constants.ts:37](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L37)
 
 ___
 
@@ -252,7 +252,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:36](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L36)
+[token/constants.ts:38](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L38)
 
 ___
 
@@ -262,7 +262,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:37](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L37)
+[token/constants.ts:39](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L39)
 
 ___
 
@@ -272,7 +272,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:38](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L38)
+[token/constants.ts:40](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L40)
 
 ___
 
@@ -282,7 +282,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:39](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L39)
+[token/constants.ts:41](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L41)
 
 ___
 
@@ -292,7 +292,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:41](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L41)
+[token/constants.ts:43](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L43)
 
 ___
 
@@ -302,7 +302,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:43](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L43)
+[token/constants.ts:45](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L45)
 
 ___
 
@@ -312,7 +312,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:44](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L44)
+[token/constants.ts:46](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L46)
 
 ___
 
@@ -322,7 +322,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:45](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L45)
+[token/constants.ts:47](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L47)
 
 ___
 
@@ -332,7 +332,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:46](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L46)
+[token/constants.ts:48](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L48)
 
 ___
 
@@ -342,7 +342,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:47](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L47)
+[token/constants.ts:49](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L49)
 
 ___
 
@@ -352,7 +352,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:52](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L52)
+[token/constants.ts:54](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L54)
 
 ___
 
@@ -362,7 +362,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:53](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L53)
+[token/constants.ts:55](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L55)
 
 ___
 
@@ -372,7 +372,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:54](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L54)
+[token/constants.ts:56](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L56)
 
 ___
 
@@ -382,7 +382,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:55](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L55)
+[token/constants.ts:57](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L57)
 
 ___
 
@@ -392,7 +392,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:56](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L56)
+[token/constants.ts:58](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L58)
 
 ___
 
@@ -402,7 +402,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:58](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L58)
+[token/constants.ts:60](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L60)
 
 ___
 
@@ -412,7 +412,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:59](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L59)
+[token/constants.ts:61](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L61)
 
 ___
 
@@ -422,7 +422,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:60](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L60)
+[token/constants.ts:62](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L62)
 
 ___
 
@@ -432,7 +432,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:61](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L61)
+[token/constants.ts:63](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L63)
 
 ___
 
@@ -442,7 +442,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:62](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L62)
+[token/constants.ts:64](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L64)
 
 ___
 
@@ -452,7 +452,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:64](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L64)
+[token/constants.ts:66](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L66)
 
 ___
 
@@ -462,7 +462,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:66](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L66)
+[token/constants.ts:68](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L68)
 
 ___
 
@@ -494,7 +494,7 @@ Map of all build-in Infura networks to their network and chain IDs.
 
 #### Defined in
 
-[token/constants.ts:76](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L76)
+[token/constants.ts:78](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L78)
 
 ___
 
@@ -504,7 +504,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:84](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L84)
+[token/constants.ts:86](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L86)
 
 ___
 
@@ -514,7 +514,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:88](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L88)
+[token/constants.ts:90](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L90)
 
 ___
 
@@ -534,7 +534,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:110](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L110)
+[token/constants.ts:112](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L112)
 
 ___
 
@@ -554,7 +554,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:126](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L126)
+[token/constants.ts:128](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L128)
 
 ___
 
@@ -574,7 +574,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:134](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L134)
+[token/constants.ts:136](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L136)
 
 ___
 
@@ -604,7 +604,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:142](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L142)
+[token/constants.ts:144](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L144)
 
 ___
 
@@ -614,7 +614,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:162](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L162)
+[token/constants.ts:164](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L164)
 
 ___
 
@@ -634,7 +634,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:169](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L169)
+[token/constants.ts:171](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L171)
 
 ___
 
@@ -644,7 +644,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:177](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L177)
+[token/constants.ts:179](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L179)
 
 ___
 
@@ -654,7 +654,7 @@ ___
 
 #### Defined in
 
-[token/constants.ts:184](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L184)
+[token/constants.ts:186](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L186)
 
 ## Functions
 
@@ -674,4 +674,4 @@ ___
 
 #### Defined in
 
-[token/constants.ts:49](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/token/constants.ts#L49)
+[token/constants.ts:51](https://github.com/ieigen/eigen_service/blob/760a065/src/token/constants.ts#L51)

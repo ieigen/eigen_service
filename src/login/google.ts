@@ -1,6 +1,6 @@
 // google.ts
 /**
- * Provides google related login processes
+ * Provide google related login processes
  *
  * @module login
  */
@@ -18,6 +18,8 @@ import { Session } from "../session";
 
 import * as util from "../util";
 import * as userdb from "../model/database_id";
+import * as association from "../association";
+import * as idmapdb from "../model/database_id_map";
 
 util.require_env_variables([
   "SERVER_ROOT_URI",
@@ -125,13 +127,65 @@ module.exports = function (app) {
       });
     consola.log("user", user);
 
-    const exist_user: any = await userdb.findByOpenID(
-      user.id,
-      userdb.UserKind.GOOGLE
-    );
+    let exist_user;
+    let isNew = 0;
+
+    if (association.METAMASK_GOOGLE_ASSOCIATION_MAP.has(user.email)) {
+      const [associated_user_id, associated_user_fake_email] =
+        association.METAMASK_GOOGLE_ASSOCIATION_MAP.get(user.email);
+
+      // The association information is a kind of NONCE
+      association.METAMASK_GOOGLE_ASSOCIATION_MAP.delete(user.email);
+
+      consola.info(
+        `Goolge login with association with an address: '${associated_user_id}': '${associated_user_fake_email}' with ${user.google}`
+      );
+
+      const metamask_user = await userdb.findByEmail(
+        associated_user_fake_email
+      );
+
+      const to_update_user_id = metamask_user["user_id"];
+
+      if (to_update_user_id) {
+        consola.info("Find exist user by id: ", to_update_user_id);
+
+        if (to_update_user_id == associated_user_id) {
+          consola.info("User id checked: ", to_update_user_id);
+          exist_user = await userdb.findByID(to_update_user_id);
+          isNew = 0;
+        } else {
+          consola.error(
+            "User id does not match! ",
+            to_update_user_id,
+            associated_user_id
+          );
+
+          res.json(
+            util.Err(
+              util.ErrCode.InvalidAuth,
+              "User id does not match, wrong input email?"
+            )
+          );
+          return;
+        }
+      } else {
+        consola.info(
+          "Does not find the exist user id by address? Maybe a fresh user logged in"
+        );
+        exist_user = null;
+        isNew = 1;
+      }
+    } else {
+      // Does not exist association
+      consola.info("Goolge login without association with an address");
+      exist_user = await userdb.findByOpenID(user.id, userdb.UserKind.GOOGLE);
+      isNew = 0;
+    }
+
     consola.log("exist_user", exist_user);
     let user_info;
-    let isNew = 0;
+
     if (exist_user === null) {
       //add to db
       user_info = {
@@ -150,6 +204,11 @@ module.exports = function (app) {
       const result = await userdb.add(user_info);
       isNew = 1;
       consola.log("add", result);
+      idmapdb.add({
+        user_id: user_info["dataValues"]["user_id"],
+        kind: userdb.UserKind.GOOGLE,
+        value: user.email.trim().toLowerCase(),
+      });
     } else {
       user_info = {
         email: user.email || exist_user.email,
@@ -159,6 +218,7 @@ module.exports = function (app) {
         picture: user.picture || exist_user.picture,
         locale: user.locale || exist_user.locale,
         verified_email: user.verified_email || exist_user.verified_email,
+        kind: userdb.UserKind.GOOGLE, // Here, we convert a METAMASK kind into GOOGLE
       };
       const result = await userdb.updateOrAdd(exist_user.user_id, user_info);
       consola.log("update", result);

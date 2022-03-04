@@ -40,7 +40,13 @@ const filterFunc = function (req) {
     return true;
   }
   consola.info(req.url);
-  const bypass = ["/auth/google/url", "/stores", "/store", "/txhs"];
+  const bypass = [
+    "/auth/google/url",
+    "/stores",
+    "/store",
+    "/txhs",
+    "/auth/metamask",
+  ];
   consola.info(bypass.indexOf(req.url), req.method);
   if (bypass.indexOf(req.url) >= 0 && req.method == "GET") {
     return true;
@@ -84,7 +90,7 @@ app.get("/recovery", service.getRecovery);
 // get recovery data
 app.delete("/recovery", service.deleteRecovery);
 
-app.post("/recovery", service.postStore);
+app.post("/recovery", service.postRecovery);
 
 app.get("/txhs", service.getTxhs);
 
@@ -114,7 +120,7 @@ app.get("/mtx/sign/:mtxid", service.getSign);
 app.get("/user/:user_id", service.getUser);
 
 // TODO: Just for test
-app.post("/user", service.postUser);
+// app.post("/user", service.postUser);
 
 // Guardian add
 app.post("/user/:user_id/guardian", service.postGuardian);
@@ -146,6 +152,7 @@ app.get("/user/:user_id/addresses", service.getAddresses);
 app.get("/user/:user_id/friends_addresses", service.getFriendsAddresses);
 
 require("./login/google")(app);
+require("./login/metamask")(app);
 require("./relay/relay")(app);
 require("./wallet/wallet")(app);
 require("./message")(app);

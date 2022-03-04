@@ -4,6 +4,8 @@
 
 [database_wallet](../modules/database_wallet.md).SignerStatus
 
+The signer status.
+
 ## Table of contents
 
 ### Enumeration members
@@ -25,7 +27,7 @@
 
 #### Defined in
 
-[model/database_wallet.ts:25](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_wallet.ts#L25)
+[model/database_wallet.ts:34](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_wallet.ts#L34)
 
 ___
 
@@ -35,7 +37,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet.ts:26](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_wallet.ts#L26)
+[model/database_wallet.ts:35](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_wallet.ts#L35)
 
 ___
 
@@ -45,7 +47,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet.ts:27](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_wallet.ts#L27)
+[model/database_wallet.ts:36](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_wallet.ts#L36)
 
 ___
 
@@ -55,7 +57,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet.ts:28](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_wallet.ts#L28)
+[model/database_wallet.ts:37](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_wallet.ts#L37)
 
 ___
 
@@ -65,7 +67,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet.ts:29](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_wallet.ts#L29)
+[model/database_wallet.ts:38](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_wallet.ts#L38)
 
 ___
 
@@ -75,7 +77,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet.ts:30](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_wallet.ts#L30)
+[model/database_wallet.ts:39](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_wallet.ts#L39)
 
 ___
 
@@ -85,7 +87,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet.ts:31](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_wallet.ts#L31)
+[model/database_wallet.ts:40](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_wallet.ts#L40)
 
 ___
 
@@ -95,4 +97,4 @@ ___
 
 #### Defined in
 
-[model/database_wallet.ts:32](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/model/database_wallet.ts#L32)
+[model/database_wallet.ts:41](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_wallet.ts#L41)

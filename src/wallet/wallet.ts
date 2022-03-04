@@ -127,25 +127,29 @@ function addSignerByOwnerSubscriber(txid, data) {
       return false;
     }
 
-    consola.log(`[addSignerByOwnerSubscriber]: ${txid}, ${data}`);
+    consola.log(
+      `[addSignerByOwnerSubscriber]: ${txid}, ${JSON.stringify(signer_data)}`
+    );
 
     if (transaction.status == db_txh.TransactionStatus.Success) {
       return db_wallet.updateOrAddByOwner(
-        data.user_id,
-        data.wallet_address,
-        data.address,
+        signer_data.user_id,
+        signer_data.wallet_address,
+        signer_data.address,
         db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
         {
+          name: signer_data.name,
           status: db_wallet.SignerStatus.Active,
         }
       );
     } else {
       return db_wallet.updateOrAddByOwner(
-        data.user_id,
-        data.wallet_address,
-        data.address,
+        signer_data.user_id,
+        signer_data.wallet_address,
+        signer_data.address,
         db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
         {
+          name: signer_data.name,
           status: db_wallet.SignerStatus.Rejected,
         }
       );
@@ -166,16 +170,28 @@ function addSignerBySignerSubscriber(txid, data) {
       return false;
     }
 
-    consola.log(`[addSignerBySignerSubscriber]: ${txid}, ${data}`);
+    consola.log(
+      `[addSignerBySignerSubscriber]: ${txid}, ${JSON.stringify(signer_data)}`
+    );
 
     if (transaction.status == db_txh.TransactionStatus.Success) {
-      return db_wallet.updateOrAddBySigner(data.wallet_address, data.address, {
-        status: db_wallet.SignerStatus.Active,
-      });
+      return db_wallet.updateOrAddBySigner(
+        signer_data.wallet_address,
+        signer_data.address,
+        {
+          name: signer_data.name,
+          status: db_wallet.SignerStatus.Active,
+        }
+      );
     } else {
-      return db_wallet.updateOrAddBySigner(data.wallet_address, data.address, {
-        status: db_wallet.SignerStatus.Rejected,
-      });
+      return db_wallet.updateOrAddBySigner(
+        signer_data.wallet_address,
+        signer_data.address,
+        {
+          name: signer_data.name,
+          status: db_wallet.SignerStatus.Rejected,
+        }
+      );
     }
   };
 }
@@ -592,6 +608,7 @@ module.exports = function (app) {
         }
 
         const wallet_address = found_wallet["wallet_address"];
+        const wallet_name = found_wallet["name"];
         consola.log("Wallet address found: ", wallet_address);
         consola.log("Req body: ", req.body);
         const status = req.body.status;
@@ -610,6 +627,7 @@ module.exports = function (app) {
             `[[addSignerBySignerSubscriber]]: PubSub.subscribeOnce(Transaction.${txid}, ${{
               wallet_address,
               address,
+              name: wallet_name,
             }})`
           );
           PubSub.subscribeOnce(
@@ -617,13 +635,14 @@ module.exports = function (app) {
             addSignerBySignerSubscriber(txid, {
               wallet_address,
               address,
+              name: wallet_name,
             })
           );
 
           return res.json(util.Succ(false));
         } else {
           // Legacy: sign_message is updated and checked here
-          consola.log("Update signer: ", req.body);
+          consola.info("Update signer by signer: ", req.body);
           await db_wallet.updateOrAddBySigner(
             wallet_address,
             address,
@@ -637,6 +656,7 @@ module.exports = function (app) {
           `It is the owner (user_id: ${user_id}) update the signer (which belongs to wallet_id: ${wallet_id}) status`
         );
         const wallet_address = wallet["wallet_address"];
+        const wallet_name = wallet["name"];
         consola.log("Wallet address found: ", wallet_address);
         consola.log("Req body: ", req.body);
         const status = req.body.status;
@@ -658,6 +678,7 @@ module.exports = function (app) {
               user_id,
               wallet_address,
               address,
+              name: wallet_name,
             }})`
           );
 
@@ -667,13 +688,14 @@ module.exports = function (app) {
               user_id,
               wallet_address,
               address,
+              name: wallet_name,
             })
           );
 
           return res.json(util.Succ(false));
         } else {
           // Legacy: sign_message is updated and checked here
-          consola.log("Update signer: ", req.body);
+          consola.info("Update signer by owner: ", req.body);
           await db_wallet.updateOrAddByOwner(
             user_id,
             wallet_address,
@@ -826,7 +848,7 @@ module.exports = function (app) {
         attributes: [
           "createdAt",
           "updatedAt",
-          "name",
+          ["name", "wallet_name"],
           "address",
           "status",
           "wallet_address",
@@ -838,6 +860,29 @@ module.exports = function (app) {
       consola.log(
         `Find all signers for wallet ${wallet_id}: ${JSON.stringify(signers)}`
       );
+
+      for (const signer of signers) {
+        const address = signer["address"];
+        const user_address = await db_address.findOne({
+          user_address: address,
+        });
+
+        if (!user_address) {
+          consola.error("User address is not existed in database: ", address);
+        } else {
+          consola.info("Found user address record: ", user_address);
+          const user_id = user_address["user_id"];
+
+          consola.log("Searching user_id: ", user_id);
+
+          const user = await db_user.findByID(user_id);
+          if (!user) {
+            consola.error("User id can not be found: ", user_id);
+          } else {
+            signer["name"] = user["name"];
+          }
+        }
+      }
 
       res.json(util.Succ(signers));
       return;

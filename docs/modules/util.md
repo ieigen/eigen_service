@@ -37,7 +37,7 @@ Provide some useful utility functions
 
 #### Defined in
 
-[util.ts:8](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/util.ts#L8)
+[util.ts:10](https://github.com/ieigen/eigen_service/blob/760a065/src/util.ts#L10)
 
 ___
 
@@ -65,7 +65,7 @@ ___
 
 #### Defined in
 
-[util.ts:17](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/util.ts#L17)
+[util.ts:19](https://github.com/ieigen/eigen_service/blob/760a065/src/util.ts#L19)
 
 ___
 
@@ -91,7 +91,7 @@ ___
 
 #### Defined in
 
-[util.ts:20](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/util.ts#L20)
+[util.ts:22](https://github.com/ieigen/eigen_service/blob/760a065/src/util.ts#L22)
 
 ___
 
@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-[util.ts:23](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/util.ts#L23)
+[util.ts:25](https://github.com/ieigen/eigen_service/blob/760a065/src/util.ts#L25)
 
 ___
 
@@ -138,7 +138,7 @@ ___
 
 #### Defined in
 
-[util.ts:35](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/util.ts#L35)
+[util.ts:42](https://github.com/ieigen/eigen_service/blob/760a065/src/util.ts#L42)
 
 ___
 
@@ -159,4 +159,4 @@ ___
 
 #### Defined in
 
-[util.ts:45](https://github.com/ieigen/eigen_service/blob/b4bdd23/src/util.ts#L45)
+[util.ts:52](https://github.com/ieigen/eigen_service/blob/760a065/src/util.ts#L52)
