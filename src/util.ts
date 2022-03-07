@@ -37,6 +37,7 @@ export enum ErrCode {
   InvalidAuth = 1,
   InvalidInput = 2,
   CryptoError = 3,
+  NotTheOnlyPassword = 4,
 }
 
 const has_value = function (variable) {
