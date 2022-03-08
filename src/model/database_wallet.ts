@@ -282,6 +282,8 @@ const updateOrAddByOwner = function (
         actual_update_dict["status"] = update_dict.status;
       }
 
+      consola.log("Update signer by owner: ", update_dict);
+
       return row
         .update(actual_update_dict)
         .then(function (result) {

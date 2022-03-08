@@ -15,6 +15,7 @@ import consola from "consola";
 import { BasicReporter } from "consola";
 import "dotenv/config";
 
+// Use basic reporter instead, disable color printing
 consola.setReporters([new BasicReporter()]);
 
 import * as log4js from "./log";
