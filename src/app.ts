@@ -12,7 +12,10 @@ import express from "express";
 import jwt from "express-jwt";
 import cors from "cors";
 import consola from "consola";
+import { BasicReporter } from "consola";
 import "dotenv/config";
+
+consola.setReporters([new BasicReporter()]);
 
 import * as log4js from "./log";
 import * as util from "./util";
