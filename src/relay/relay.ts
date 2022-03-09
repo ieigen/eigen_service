@@ -63,6 +63,8 @@ module.exports = function (app) {
     // check if password_hash is equal
     const user = await userdb.findByID(user_id);
 
+    consola.info(`User with ${user_id}: ${JSON.stringify(user)}`);
+
     if (
       user["dataValues"]["password_hash"] !== "" &&
       hash !== user["dataValues"]["password_hash"]
