@@ -58,6 +58,8 @@ module.exports = function (app) {
       return;
     }
 
+    consola.info("Hash = ", hash);
+
     // check if password_hash is equal
     const user = await userdb.findByID(user_id);
 
@@ -65,6 +67,11 @@ module.exports = function (app) {
       user["dataValues"]["password_hash"] !== "" &&
       hash !== user["dataValues"]["password_hash"]
     ) {
+      consola.error(
+        "Hash not equal: ",
+        user["dataValues"]["password_hash"],
+        hash
+      );
       res.json(
         util.Err(
           util.ErrCode.NotTheOnlyPassword,
@@ -90,8 +97,9 @@ module.exports = function (app) {
       client.submit_task("relay", encryptMsg, async (c2) => {
         // consola.log(c2)
         res.json(util.Succ(c2));
-        userdb.updateSecret(user_id, hash);
       });
+      consola.success("Update hash with: ", hash);
+      userdb.updateSecret(user_id, hash);
     } catch (e) {
       res.json(util.Err(util.ErrCode.CryptoError, "Invalid encryption"));
     }
