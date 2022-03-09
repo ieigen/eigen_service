@@ -99,7 +99,7 @@ module.exports = function (app) {
         res.json(util.Succ(c2));
       });
       consola.success("Update hash with: ", hash);
-      userdb.updateSecret(user_id, hash);
+      userdb.updatePasswordHash(user_id, hash);
     } catch (e) {
       res.json(util.Err(util.ErrCode.CryptoError, "Invalid encryption"));
     }
