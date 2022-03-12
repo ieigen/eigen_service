@@ -9,6 +9,8 @@ import consola from "consola";
 
 import * as util from "../util";
 
+import * as userdb from "../model/database_id";
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const relay_sdk = require("relay_sdk");
 const relayutil = relay_sdk.util;
@@ -45,8 +47,39 @@ module.exports = function (app) {
 
     const c1 = req.body.c1; //  encrypted private key by relay public key
     const cc1 = req.body.cc1; // encrypted password by relay public key
-    if (c1 == undefined || cc1 == undefined) {
-      res.json(util.Err(util.ErrCode.InvalidInput, "Invalid parameters"));
+    const hash = req.body.hash; // the hash of password, currently SHA256
+    if (c1 == undefined || cc1 == undefined || hash == undefined) {
+      res.json(
+        util.Err(
+          util.ErrCode.InvalidInput,
+          "Invalid parameters: c1, cc1, hash should all be given"
+        )
+      );
+      return;
+    }
+
+    consola.info("Hash = ", hash);
+
+    // check if password_hash is equal
+    const user = await userdb.findByID(user_id);
+
+    consola.info(`User with ${user_id}: ${JSON.stringify(user)}`);
+
+    if (
+      user["dataValues"]["password_hash"] !== "" &&
+      hash !== user["dataValues"]["password_hash"]
+    ) {
+      consola.error(
+        "Hash not equal: ",
+        user["dataValues"]["password_hash"],
+        hash
+      );
+      res.json(
+        util.Err(
+          util.ErrCode.NotTheOnlyPassword,
+          "Only one password can be given for an account"
+        )
+      );
       return;
     }
 
@@ -67,6 +100,8 @@ module.exports = function (app) {
         // consola.log(c2)
         res.json(util.Succ(c2));
       });
+      consola.success("Update hash with: ", hash);
+      userdb.updatePasswordHash(user_id, hash);
     } catch (e) {
       res.json(util.Err(util.ErrCode.CryptoError, "Invalid encryption"));
     }

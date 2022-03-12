@@ -199,6 +199,7 @@ module.exports = function (app) {
         locale: user.locale,
         verified_email: user.verified_email,
         secret: "",
+        password_hash: "",
       };
       consola.log(user_info);
       const result = await userdb.add(user_info);

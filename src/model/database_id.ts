@@ -48,6 +48,10 @@ const userdb = sequelize.define("user_st", {
   verified_email: DataTypes.INTEGER, // 0 no, 1 yes
   picture: DataTypes.STRING,
   secret: DataTypes.STRING,
+  password_hash: {
+    type: DataTypes.STRING,
+    defaultValue: "",
+  },
 });
 
 sequelize
@@ -64,6 +68,7 @@ sequelize
       verified_email: 0,
       picture: "1",
       secret: "1",
+      password_hash: "",
     });
   })
   .then(function (row: any) {
@@ -158,6 +163,27 @@ const updateSecret = function (user_id, secret) {
   });
 };
 
+const updatePasswordHash = function (user_id, password_hash) {
+  return userdb.findOne({ where: { user_id } }).then(function (row: any) {
+    if (row === null) {
+      consola.log("Update error: User does not exist");
+      return false;
+    }
+    return row
+      .update({
+        password_hash: password_hash,
+      })
+      .then(function (result) {
+        consola.log("Update success: " + result);
+        return true;
+      })
+      .catch(function (err) {
+        consola.log("Update error: " + err);
+        return false;
+      });
+  });
+};
+
 const findUsersInformation = function (ids) {
   return userdb.findAll({
     attributes: ["user_id", "email", "name"],
@@ -203,4 +229,5 @@ export {
   findUsersInformation,
   findByEmail,
   updateSecret,
+  updatePasswordHash,
 };

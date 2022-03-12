@@ -146,6 +146,7 @@ export async function postAuthMetamask(req, res) {
         locale: "",
         verified_email: "",
         secret: "",
+        password_hash: "",
       };
       const result = await userdb.add(user_info);
       consola.log("update", result);

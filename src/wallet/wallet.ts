@@ -117,7 +117,7 @@ function addWalletStatusSubscriber(txid, wallet_id) {
 function addSignerByOwnerSubscriber(txid, data) {
   consola.log("Add signer by owner add subscriber: ", txid, data);
   TRANSACTION_ADD_SIGNER_BY_OWNER_MAP[txid] = data;
-  return function (msg, transaction) {
+  return async function (msg, transaction) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, txid] = msg.split(".");
 
@@ -132,7 +132,7 @@ function addSignerByOwnerSubscriber(txid, data) {
     );
 
     if (transaction.status == db_txh.TransactionStatus.Success) {
-      return db_wallet.updateOrAddByOwner(
+      await db_wallet.updateOrAddByOwner(
         signer_data.user_id,
         signer_data.wallet_address,
         signer_data.address,
@@ -143,7 +143,7 @@ function addSignerByOwnerSubscriber(txid, data) {
         }
       );
     } else {
-      return db_wallet.updateOrAddByOwner(
+      await db_wallet.updateOrAddByOwner(
         signer_data.user_id,
         signer_data.wallet_address,
         signer_data.address,
@@ -154,13 +154,14 @@ function addSignerByOwnerSubscriber(txid, data) {
         }
       );
     }
+    return true;
   };
 }
 
 function addSignerBySignerSubscriber(txid, data) {
   consola.log("Add signer by signer add subscriber: ", txid, data);
   TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP[txid] = data;
-  return function (msg, transaction) {
+  return async function (msg, transaction) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, txid] = msg.split(".");
 
@@ -175,7 +176,7 @@ function addSignerBySignerSubscriber(txid, data) {
     );
 
     if (transaction.status == db_txh.TransactionStatus.Success) {
-      return db_wallet.updateOrAddBySigner(
+      await db_wallet.updateOrAddBySigner(
         signer_data.wallet_address,
         signer_data.address,
         {
@@ -184,7 +185,7 @@ function addSignerBySignerSubscriber(txid, data) {
         }
       );
     } else {
-      return db_wallet.updateOrAddBySigner(
+      await db_wallet.updateOrAddBySigner(
         signer_data.wallet_address,
         signer_data.address,
         {
@@ -193,6 +194,8 @@ function addSignerBySignerSubscriber(txid, data) {
         }
       );
     }
+
+    return true;
   };
 }
 
