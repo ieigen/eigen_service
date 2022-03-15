@@ -94,7 +94,7 @@ const walletdb = sequelize.define("wallet_st", {
     autoIncrement: true,
     primaryKey: true,
   }, // Only useful when the role is OWNER
-  user_id: DataTypes.INTEGER, // Only useful when the role is OWNER
+  network_id: DataTypes.STRING(64),
   name: DataTypes.STRING,
   wallet_address: DataTypes.CITEXT,
   address: DataTypes.CITEXT,
@@ -107,7 +107,7 @@ sequelize
   .sync()
   .then(function () {
     return walletdb.create({
-      user_id: 1,
+      network_id: "1",
       name: "name",
       wallet_address: "0x",
       address: "0x", // Owner or signer's address
@@ -118,13 +118,13 @@ sequelize
   .then(function (row: any) {
     consola.log(
       row.get({
-        user_id: 1,
+        network_id: "1",
         wallet_address: "0x",
       })
     );
     walletdb.destroy({
       where: {
-        user_id: row.user_id,
+        network_id: row.network_id,
         wallet_address: row.wallet_address,
       },
     });
@@ -134,7 +134,7 @@ sequelize
   });
 
 const add = function (
-  user_id,
+  network_id,
   name,
   wallet_address,
   address,
@@ -143,23 +143,13 @@ const add = function (
   wallet_status
 ) {
   return walletdb.create({
-    user_id,
+    network_id,
     name,
     wallet_address,
     address,
     role,
     status,
     wallet_status,
-  });
-};
-
-const findAllAddresses = function (user_id) {
-  return walletdb.findAll({
-    attributes: [["address", "address"]],
-    where: {
-      user_id,
-    },
-    raw: true,
   });
 };
 
@@ -177,10 +167,9 @@ const findByWalletId = function (wallet_id) {
   });
 };
 
-const findOwnerWalletById = function (user_id, wallet_id) {
+const findOwnerWalletById = function (wallet_id) {
   return walletdb.findOne({
     where: {
-      user_id: user_id,
       wallet_id: wallet_id,
       role: WALLET_USER_ADDRESS_ROLE_OWNER,
     },
@@ -196,47 +185,29 @@ const search = function (dict) {
   return walletdb.findAll(dict);
 };
 
-const isWalletBelongUser = function (user_id, wallet_id) {
-  return walletdb
-    .findOne({ where: { user_id, wallet_id } })
-    .then(function (row: any) {
-      return row !== null;
-    })
-    .catch(function (err) {
-      consola.error(err);
+const updateOwnerAddress = function (wallet_id, owner_address) {
+  return walletdb.findOne({ where: { wallet_id } }).then(function (row: any) {
+    consola.log(row);
+    if (row === null) {
       return false;
-    });
-};
-
-const updateOwnerAddress = function (user_id, wallet_id, owner_address) {
-  return walletdb
-    .findOne({ where: { wallet_id, user_id } })
-    .then(function (row: any) {
-      consola.log(row);
-      if (row === null) {
+    }
+    return row
+      .update({
+        address: owner_address,
+      })
+      .then(function (result) {
+        consola.log("Update owner address success: ", owner_address, result);
+        return true;
+      })
+      .catch(function (err) {
+        consola.log("Update owner address error (" + err, "): ", owner_address);
         return false;
-      }
-      return row
-        .update({
-          address: owner_address,
-        })
-        .then(function (result) {
-          consola.log("Update owner address success: ", owner_address, result);
-          return true;
-        })
-        .catch(function (err) {
-          consola.log(
-            "Update owner address error (" + err,
-            "): ",
-            owner_address
-          );
-          return false;
-        });
-    });
+      });
+  });
 };
 
 const updateOrAddByOwner = function (
-  user_id,
+  network_id,
   wallet_address,
   signer_address,
   role,
@@ -261,7 +232,7 @@ const updateOrAddByOwner = function (
             : SignerStatus.ToBeConfirmed);
 
         add(
-          user_id,
+          network_id,
           name,
           wallet_address,
           signer_address,
@@ -298,6 +269,7 @@ const updateOrAddByOwner = function (
 };
 
 const updateOrAddBySigner = function (
+  network_id,
   wallet_address,
   signer_address,
   update_dict
@@ -305,6 +277,7 @@ const updateOrAddBySigner = function (
   return walletdb
     .findOne({
       where: {
+        network_id: network_id,
         wallet_address: wallet_address,
         role: WALLET_USER_ADDRESS_ROLE_OWNER,
       },
@@ -319,7 +292,7 @@ const updateOrAddBySigner = function (
         return false;
       }
 
-      const user_id = owner_row["user_id"];
+      const network_id = owner_row["network_id"];
       const wallet_name = owner_row["name"];
       return walletdb
         .findOne({
@@ -336,7 +309,7 @@ const updateOrAddBySigner = function (
             consola.log("Add signer by signer with wallet name: ", name);
             const status = update_dict.status || SignerStatus.ToBeConfirmed;
             add(
-              user_id,
+              network_id,
               name,
               wallet_address,
               signer_address,
@@ -371,20 +344,18 @@ const updateOrAddBySigner = function (
     });
 };
 
-const remove = function (wallet_address, signer_address, role) {
+const remove = function (network_id, wallet_address, signer_address, role) {
   return walletdb.destroy({
-    where: { wallet_address, address: signer_address, role },
+    where: { network_id, wallet_address, address: signer_address, role },
   });
 };
 
 export {
   updateOwnerAddress,
   add,
-  isWalletBelongUser,
   findOne,
   findByWalletId,
   findAll,
-  findAllAddresses,
   remove,
   search,
   updateOrAddByOwner,
