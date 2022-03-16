@@ -121,39 +121,39 @@ app.post("/mtx/sign", service.postSign);
 app.get("/mtx/sign/:mtxid", service.getSign);
 
 // get user, his/her friends, his/her strangers by id
-app.get("/user/:user_id", service.getUser);
+app.get("/user/:user_id(\\d+)", service.getUser);
 
 // TODO: Just for test
 // app.post("/user", service.postUser);
 
 // Guardian add
-app.post("/user/:user_id/guardian", service.postGuardian);
+app.post("/user/:user_id(\\d+)/guardian", service.postGuardian);
 
 // Guardian confirm or reject
-app.put("/user/:user_id/guardian", service.putGuardian);
+app.put("/user/:user_id(\\d+)/guardian", service.putGuardian);
 
 // Guardian add
-app.delete("/user/:user_id/guardian", service.deleteGuardian);
+app.delete("/user/:user_id(\\d+)/guardian", service.deleteGuardian);
 
-app.put("/user/:user_id/otpauth", service.putOtpauth);
+app.put("/user/:user_id(\\d+)/otpauth", service.putOtpauth);
 
 // verify code
-app.post("/user/:user_id/otpauth", service.postOtpauth);
+app.post("/user/:user_id(\\d+)/otpauth", service.postOtpauth);
 
 // Statistics
-app.get("/user/:user_id/statistics", service.getStatistics);
+app.get("/user/:user_id(\\d+)/statistics", service.getStatistics);
 
-app.post("/user/:user_id/allowance", service.postAllowance);
+app.post("/user/:user_id(\\d+)/allowance", service.postAllowance);
 
-app.get("/user/:user_id/allowance", service.getAllowance);
+app.get("/user/:user_id(\\d+)/allowance", service.getAllowance);
 
-app.get("/user/:user_id/allowances", service.getAllowances);
+app.get("/user/:user_id(\\d+)/allowances", service.getAllowances);
 
-app.post("/user/:user_id/address", service.postAddress);
+app.post("/user/:user_id(\\d+)/address", service.postAddress);
 
-app.get("/user/:user_id/addresses", service.getAddresses);
+app.get("/user/:user_id(\\d+)/addresses", service.getAddresses);
 
-app.get("/user/:user_id/friends_addresses", service.getFriendsAddresses);
+app.get("/user/:user_id(\\d+)/friends_addresses", service.getFriendsAddresses);
 
 require("./login/google")(app);
 require("./login/metamask")(app);

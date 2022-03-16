@@ -33,7 +33,7 @@ const SIG = `${AUDITOR_BASE_DIR}/${AUDITOR_NAME}/${AUDITOR_NAME}.sign.sha256`;
 const ROOTCA = `deps/ias_root_ca_cert.pem`;
 
 module.exports = function (app) {
-  app.post("/kms/:user_id/enc", async (req, res) => {
+  app.post("/kms/:user_id(\\d+)/enc", async (req, res) => {
     const user_id = req.params.user_id;
     if (!util.check_user_id(req, user_id)) {
       res.json(
@@ -107,7 +107,7 @@ module.exports = function (app) {
     }
   });
 
-  app.post("/kms/:user_id/dec", async (req, res) => {
+  app.post("/kms/:user_id(\\d+)/dec", async (req, res) => {
     const user_id = req.params.user_id;
     if (!util.check_user_id(req, user_id)) {
       res.json(
