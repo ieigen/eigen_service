@@ -304,7 +304,7 @@ module.exports = function (app) {
     res.json(util.Succ(result));
   });
 
-  app.post("/user/wallet/:wallet_id", async function (req, res) {
+  app.post("/user/wallet/:wallet_id(\\d+)", async function (req, res) {
     const wallet_id = req.params.wallet_id;
 
     const wallet = await db_wallet.findOwnerWalletById(wallet_id);
@@ -539,7 +539,7 @@ module.exports = function (app) {
     return;
   });
 
-  app.post("/user/wallet/:wallet_id/signer", async function (req, res) {
+  app.post("/user/wallet/:wallet_id(\\d+)/signer", async function (req, res) {
     const wallet_id = req.params.wallet_id;
 
     const wallet = await db_wallet.findOwnerWalletById(wallet_id);
@@ -672,79 +672,82 @@ module.exports = function (app) {
     }
   });
 
-  app.get("/user/wallet/:wallet_id/sign_message", async function (req, res) {
-    const wallet_id = req.params.wallet_id;
+  app.get(
+    "/user/wallet/:wallet_id(\\d+)/sign_message",
+    async function (req, res) {
+      const wallet_id = req.params.wallet_id;
 
-    const address = req.query.address;
-    const mtxid = req.query.mtxid;
+      const address = req.query.address;
+      const mtxid = req.query.mtxid;
 
-    if (!util.has_value(address) || !util.has_value(mtxid)) {
-      consola.log("address and mtxid should be given");
-      res.json(
-        util.Err(util.ErrCode.Unknown, "missing fields: address or mtxid")
-      );
-      return;
+      if (!util.has_value(address) || !util.has_value(mtxid)) {
+        consola.log("address and mtxid should be given");
+        res.json(
+          util.Err(util.ErrCode.Unknown, "missing fields: address or mtxid")
+        );
+        return;
+      }
+
+      const wallet = await db_wallet.findOne({
+        wallet_id,
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
+      });
+
+      if (wallet === null) {
+        consola.error("wallet_id does not exist");
+        res.json(util.Err(util.ErrCode.Unknown, "wallet_id does not exist"));
+        return;
+      }
+
+      const wallet_address = wallet["wallet_address"];
+
+      const signer = await db_wallet.findOne({
+        wallet_address,
+        address,
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+      });
+
+      if (signer === null) {
+        consola.log(
+          "The signer couldn't get sign_message, because it doesn't belong to the wallet"
+        );
+        res.json(
+          util.Err(
+            util.ErrCode.Unknown,
+            "the signer couldn't get sign_message, because it doesn't belong to the wallet!"
+          )
+        );
+        return;
+      }
+
+      consola.log("Request sign_mesage for a given wallet");
+
+      const all_recover_signers = await db_wallet.findAll({
+        wallet_address: wallet_address,
+        role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+        status: {
+          [Op.gte]: db_wallet.SignerStatus.StartRecover,
+        },
+      });
+
+      // Check if the signers is greater than 1/2
+      const sign_messages = await db_multisig.getRecoverySignMessages(mtxid);
+
+      consola.log("Sign messages: ", sign_messages);
+
+      const sign_messages_array = sign_messages.map((x) => x["sign_message"]);
+
+      if (sign_messages_array.length >= all_recover_signers.length / 2) {
+        const sigs = db_multisig.getSignatures(sign_messages_array);
+        consola.log("The recover sign_message could be return: ", sigs);
+        return res.json(util.Succ(sigs));
+      } else {
+        return res.json(util.Succ(""));
+      }
     }
+  );
 
-    const wallet = await db_wallet.findOne({
-      wallet_id,
-      role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
-    });
-
-    if (wallet === null) {
-      consola.error("wallet_id does not exist");
-      res.json(util.Err(util.ErrCode.Unknown, "wallet_id does not exist"));
-      return;
-    }
-
-    const wallet_address = wallet["wallet_address"];
-
-    const signer = await db_wallet.findOne({
-      wallet_address,
-      address,
-      role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-    });
-
-    if (signer === null) {
-      consola.log(
-        "The signer couldn't get sign_message, because it doesn't belong to the wallet"
-      );
-      res.json(
-        util.Err(
-          util.ErrCode.Unknown,
-          "the signer couldn't get sign_message, because it doesn't belong to the wallet!"
-        )
-      );
-      return;
-    }
-
-    consola.log("Request sign_mesage for a given wallet");
-
-    const all_recover_signers = await db_wallet.findAll({
-      wallet_address: wallet_address,
-      role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
-      status: {
-        [Op.gte]: db_wallet.SignerStatus.StartRecover,
-      },
-    });
-
-    // Check if the signers is greater than 1/2
-    const sign_messages = await db_multisig.getRecoverySignMessages(mtxid);
-
-    consola.log("Sign messages: ", sign_messages);
-
-    const sign_messages_array = sign_messages.map((x) => x["sign_message"]);
-
-    if (sign_messages_array.length >= all_recover_signers.length / 2) {
-      const sigs = db_multisig.getSignatures(sign_messages_array);
-      consola.log("The recover sign_message could be return: ", sigs);
-      return res.json(util.Succ(sigs));
-    } else {
-      return res.json(util.Succ(""));
-    }
-  });
-
-  app.get("/user/wallet/:wallet_id/signers", async function (req, res) {
+  app.get("/user/wallet/:wallet_id(\\d+)/signers", async function (req, res) {
     const wallet_id = req.params.wallet_id;
 
     consola.log("Request signers for a given wallet:", req.query);
@@ -814,7 +817,7 @@ module.exports = function (app) {
     return;
   });
 
-  app.delete("/user/wallet/:wallet_id/signer", async function (req, res) {
+  app.delete("/user/wallet/:wallet_id(\\d+)/signer", async function (req, res) {
     const wallet_id = req.params.wallet_id;
 
     const wallet = await db_wallet.findOwnerWalletById(wallet_id);
