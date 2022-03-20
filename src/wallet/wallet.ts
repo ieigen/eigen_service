@@ -809,6 +809,7 @@ module.exports = function (app) {
           consola.error("User id can not be found: ", user_id);
         } else {
           signer["name"] = user["name"];
+          signer["picture"] = user["picture"];
         }
       }
     }
