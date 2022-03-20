@@ -453,11 +453,15 @@ module.exports = function (app) {
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       };
     } else {
-      const addresses_array = await db_address.findAll({ user_id: user_id });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const addresses_array: any = await db_address.findAll({
+        user_id: user_id,
+      });
+      const addresses = addresses_array.map((a) => a.user_address);
 
       filter = {
         address: {
-          [Op.in]: addresses_array,
+          [Op.in]: addresses,
         },
         network_id: network_id,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
