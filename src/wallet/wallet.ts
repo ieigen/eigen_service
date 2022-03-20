@@ -418,11 +418,30 @@ module.exports = function (app) {
 
     const address = req.query.address;
     const network_id = req.query.network_id;
+    const user_id = req.query.user_id;
 
     if (!util.has_value(network_id)) {
       consola.error("missing network_id");
       res.json(util.Err(util.ErrCode.Unknown, "missing network_id"));
       return;
+    }
+
+    const filter_paramter_count = [user_id, address]
+      .map(util.has_value)
+      .map((x) => (x ? 1 : 0))
+      .reduce((partial_sum, a) => partial_sum + a, 0);
+
+    if (filter_paramter_count != 1) {
+      consola.error(
+        "if and only if one of user_id, address should be given ",
+        filter_paramter_count
+      );
+      return res.json(
+        util.Err(
+          util.ErrCode.Unknown,
+          "if and only if one of user_id, address should be given "
+        )
+      );
     }
 
     let filter;
@@ -434,7 +453,12 @@ module.exports = function (app) {
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       };
     } else {
+      const addresses_array = await db_address.findAll({ user_id: user_id });
+
       filter = {
+        address: {
+          [Op.in]: addresses_array,
+        },
         network_id: network_id,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       };
