@@ -81,7 +81,7 @@ export const WALLET_STATUS_MACHINE_STATE_TRANSACTION_NEXT = [
   [undefined,           undefined          ] /* None */,
   [WalletStatus.Active, WalletStatus.Fail  ] /* Creating */,
   [undefined,           undefined          ] /* Active */,
-  [WalletStatus.Active, WalletStatus.Fail  ] /* Recovering */,
+  [WalletStatus.Active, WalletStatus.Active] /* Recovering */,
   [undefined,           undefined          ] /* Fail */,
   [WalletStatus.Frozen, WalletStatus.Active] /* Freezing */,
   [undefined,           undefined          ] /* Frozen */,
