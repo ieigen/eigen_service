@@ -419,6 +419,7 @@ module.exports = function (app) {
     const address = req.query.address;
     const network_id = req.query.network_id;
     const user_id = req.query.user_id;
+    const wallet_status = req.query.wallet_status;
 
     if (!util.has_value(network_id)) {
       consola.error("missing network_id");
@@ -459,13 +460,24 @@ module.exports = function (app) {
       });
       const addresses = addresses_array.map((a) => a.user_address);
 
-      filter = {
-        address: {
-          [Op.in]: addresses,
-        },
-        network_id: network_id,
-        role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
-      };
+      if (wallet_status === undefined) {
+        filter = {
+          address: {
+            [Op.in]: addresses,
+          },
+          network_id: network_id,
+          role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
+        };
+      } else {
+        filter = {
+          address: {
+            [Op.in]: addresses,
+          },
+          wallet_status: wallet_status,
+          network_id: network_id,
+          role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
+        };
+      }
     }
 
     const wallets = await db_wallet.findAll(filter);
