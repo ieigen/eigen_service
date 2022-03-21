@@ -344,10 +344,20 @@ module.exports = function (app) {
       res.json(util.Succ(result));
       return;
     } else {
-      if (!util.has_value(txid) || !util.has_value(status)) {
-        consola.log("missing txid or status");
-        res.json(util.Err(util.ErrCode.Unknown, "mising txid or status"));
-        return;
+      if (status !== db_wallet.WalletStatus.Recovering) {
+        // txid is required
+        if (!util.has_value(txid)) {
+          consola.log("missing txid");
+          res.json(util.Err(util.ErrCode.Unknown, "mising txid"));
+          return;
+        }
+      } else {
+        // status and txid are required
+        if (!util.has_value(txid) || !util.has_value(status)) {
+          consola.log("missing txid or status");
+          res.json(util.Err(util.ErrCode.Unknown, "mising txid or status"));
+          return;
+        }
       }
 
       const wallet = await db_wallet.findByWalletId(wallet_id);
@@ -376,7 +386,6 @@ module.exports = function (app) {
       // Update wallet_status -> status
       if (
         status == db_wallet.WalletStatus.Freezing ||
-        status == db_wallet.WalletStatus.Recovering ||
         status == db_wallet.WalletStatus.Unlocking
       ) {
         res.json(
@@ -395,18 +404,22 @@ module.exports = function (app) {
         //   db_wh.StatusTransitionCause.Freeze (and so on)
         // );
       }
+
       wallet.update({
         wallet_status: status,
       });
 
-      consola.log(
-        `[[addWalletStatusSubscriber]]: PubSub.subscribeOnce(Transaction.${txid}, ${wallet}): ${db_wallet.WalletStatus[wallet_status]} -> ${db_wallet.WalletStatus[status]}`
-      );
+      // NOTE: When recovering, txid can be undefined
+      if (util.has_value(txid)) {
+        consola.log(
+          `[[addWalletStatusSubscriber]]: PubSub.subscribeOnce(Transaction.${txid}, ${wallet}): ${db_wallet.WalletStatus[wallet_status]} -> ${db_wallet.WalletStatus[status]}`
+        );
 
-      PubSub.subscribeOnce(
-        `Transaction.${txid}`,
-        addWalletStatusSubscriber(txid, wallet)
-      );
+        PubSub.subscribeOnce(
+          `Transaction.${txid}`,
+          addWalletStatusSubscriber(txid, wallet)
+        );
+      }
 
       res.json(util.Succ(true));
       return;
