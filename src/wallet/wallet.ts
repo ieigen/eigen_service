@@ -558,6 +558,17 @@ module.exports = function (app) {
     for (const wallet of wallets) {
       const wallet_address = wallet["wallet_address"];
 
+      const recovering = db_wh.findLatestRecoveringByWalletId(
+        wallet["wallet_id"]
+      );
+
+      if (recovering !== null) {
+        const new_owner_address = recovering["dataValues"]["data"];
+        if (new_owner_address) {
+          wallet["new_address"] = new_owner_address;
+        }
+      }
+
       const singer_filter = {
         wallet_address: wallet_address,
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
