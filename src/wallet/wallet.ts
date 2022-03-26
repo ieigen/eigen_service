@@ -628,8 +628,26 @@ module.exports = function (app) {
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       });
       const owner_address = owner["address"];
-      signers[i]["owner_address"] = owner_address;
       signers[i]["wallet_id"] = owner["wallet_id"];
+
+      const recovering = db_wh.findLatestRecoveringByWalletId(
+        owner["wallet_id"]
+      );
+
+      // If recovering exist, return it
+      if (recovering !== null) {
+        const new_owner_address = recovering["dataValues"]["data"];
+        if (new_owner_address) {
+          signers[i]["old_owner_address"] = owner_address;
+          consola.info("Reovering record existed: ", new_owner_address);
+          signers[i]["new_owner_address"] = new_owner_address;
+        } else {
+          signers[i]["owner_address"] = owner_address;
+        }
+      } else {
+        signers[i]["owner_address"] = owner_address;
+      }
+
       signers[i]["wallet_status"] = owner["wallet_status"];
       signers[i]["network_id"] = owner["network_id"];
 
