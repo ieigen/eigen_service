@@ -66,20 +66,42 @@ function addWalletStatusSubscriber(txid, wallet_id) {
             next_status_success,
             db_wh.StatusTransitionCause.TransactionSuccess
           );
-          return wallet
-            .update({
-              wallet_status: next_status_success,
-            })
-            .then(function (result) {
-              consola.log(
-                "Update wallet status success: " + JSON.stringify(result)
-              );
-              return true;
-            })
-            .catch(function (err) {
-              consola.log("Update wallet status error: " + err);
-              return false;
-            });
+          // Recovering -> Active success, now we should update the owner_address
+          if (wallet_status == db_wallet.WalletStatus.Recovering) {
+            const recovering_record =
+              db_wh.findLatestRecoveringByWalletId(wallet_id);
+            const new_owner_address = recovering_record["dataValues"]["data"];
+            return wallet
+              .update({
+                wallet_status: next_status_success,
+                owner_address: new_owner_address,
+              })
+              .then(function (result) {
+                consola.log(
+                  "Update wallet status success: " + JSON.stringify(result)
+                );
+                return true;
+              })
+              .catch(function (err) {
+                consola.log("Update wallet status error: " + err);
+                return false;
+              });
+          } else {
+            return wallet
+              .update({
+                wallet_status: next_status_success,
+              })
+              .then(function (result) {
+                consola.log(
+                  "Update wallet status success: " + JSON.stringify(result)
+                );
+                return true;
+              })
+              .catch(function (err) {
+                consola.log("Update wallet status error: " + err);
+                return false;
+              });
+          }
         } else if (transaction_status == db_txh.TransactionStatus.Failed) {
           db_wh.add(
             wallet_id,
@@ -336,12 +358,38 @@ module.exports = function (app) {
         return;
       }
 
-      const result = await db_wallet.updateOwnerAddress(
+      // NOTE: Waiting for the recover success, do we can not update directly:
+
+      // const result = await db_wallet.updateOwnerAddress(
+      //   wallet_id,
+      //   owner_address
+      // );
+
+      // NOTE: We should add wallet history:
+      const wallet = await db_wallet.findByWalletId(wallet_id);
+
+      if (wallet === null) {
+        consola.log("wallet does not exist: ", wallet_id);
+        res.json(util.Err(util.ErrCode.Unknown, "wallet does not exist"));
+        return;
+      }
+
+      const wallet_status = wallet["dataValues"]["wallet_status"];
+
+      consola.info(
+        `Record recovering new owner_address (${wallet_id}): ${wallet_status} -> ${db_wallet.WalletStatus.Recovering}: ${owner_address}`
+      );
+      // Recovering
+      db_wh.add(
         wallet_id,
+        "",
+        wallet_status,
+        db_wallet.WalletStatus.Recovering,
+        db_wh.StatusTransitionCause.Recover,
         owner_address
       );
 
-      res.json(util.Succ(result));
+      res.json(util.Succ(true));
       return;
     } else {
       if (status !== db_wallet.WalletStatus.Recovering) {
@@ -395,19 +443,29 @@ module.exports = function (app) {
           )
         );
         return;
-        // TODO:
-        // db_wh.add(
-        //   wallet_id,
-        //   txid,
-        //   wallet_status,
-        //   status,
-        //   db_wh.StatusTransitionCause.Freeze (and so on)
-        // );
+        0998;
       }
 
       wallet.update({
         wallet_status: status,
       });
+
+      let cause;
+
+      switch (status) {
+        case db_wallet.WalletStatus.Creating:
+          cause = db_wh.StatusTransitionCause.Create;
+          break;
+        case db_wallet.WalletStatus.Recovering:
+          cause = db_wh.StatusTransitionCause.Recover;
+          break;
+
+        default:
+          consola.error("Missing cause with status: ", status);
+          break;
+      }
+
+      db_wh.add(wallet_id, txid, wallet_status, status, cause);
 
       // NOTE: When recovering, txid can be undefined
       if (util.has_value(txid)) {
