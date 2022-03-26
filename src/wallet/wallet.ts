@@ -347,7 +347,7 @@ module.exports = function (app) {
     const status = req.body.status;
 
     if (util.has_value(owner_address)) {
-      if (util.has_value(txid) || util.has_value(status)) {
+      if (util.has_value(txid) && util.has_value(status)) {
         consola.log("owner_address cannot co-exists with txid or status");
         res.json(
           util.Err(
@@ -384,7 +384,7 @@ module.exports = function (app) {
         wallet_id,
         wallet_status,
         db_wallet.WalletStatus.Recovering,
-        "",
+        txid,
         db_wh.StatusTransitionCause.Recover,
         owner_address
       );
