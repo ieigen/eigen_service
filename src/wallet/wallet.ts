@@ -443,7 +443,6 @@ module.exports = function (app) {
           )
         );
         return;
-        0998;
       }
 
       wallet.update({
