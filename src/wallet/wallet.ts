@@ -30,11 +30,11 @@ function addWalletStatusSubscriber(txid, wallet_id) {
   consola.log("Add wallet status subscriber: ", txid, wallet_id);
   // TRANSACTION_WALLET_MAP[txid] = wallet;
 
-  return function (msg, transaction) {
+  return async function (msg, transaction) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, txid] = msg.split(".");
 
-    db_wallet.findByWalletId(wallet_id).then((wallet) => {
+    db_wallet.findByWalletId(wallet_id).then(async (wallet) => {
       if (wallet === null) {
         consola.log(`Transaction ${txid} is not related to wallet`);
         return false;
@@ -69,7 +69,7 @@ function addWalletStatusSubscriber(txid, wallet_id) {
           // Recovering -> Active success, now we should update the owner_address
           if (wallet_status == db_wallet.WalletStatus.Recovering) {
             const recovering_record =
-              db_wh.findLatestRecoveringByWalletId(wallet_id);
+              await db_wh.findLatestRecoveringByWalletId(wallet_id);
             const new_owner_address = recovering_record["dataValues"]["data"];
             return wallet
               .update({
@@ -557,11 +557,12 @@ module.exports = function (app) {
     for (const wallet of wallets) {
       const wallet_address = wallet["wallet_address"];
 
-      const recovering = db_wh.findLatestRecoveringByWalletId(
+      const recovering = await db_wh.findLatestRecoveringByWalletId(
         wallet["wallet_id"]
       );
 
       if (recovering !== null) {
+        console.log("Reovering: ", recovering);
         const new_owner_address = recovering["dataValues"]["data"];
         if (new_owner_address) {
           wallet["new_address"] = new_owner_address;
@@ -640,7 +641,7 @@ module.exports = function (app) {
       const owner_address = owner["address"];
       signers[i]["wallet_id"] = owner["wallet_id"];
 
-      const recovering = db_wh.findLatestRecoveringByWalletId(
+      const recovering = await db_wh.findLatestRecoveringByWalletId(
         owner["wallet_id"]
       );
 
