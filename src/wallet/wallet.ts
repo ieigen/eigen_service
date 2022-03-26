@@ -382,9 +382,9 @@ module.exports = function (app) {
       // Recovering
       db_wh.add(
         wallet_id,
-        "",
         wallet_status,
         db_wallet.WalletStatus.Recovering,
+        "",
         db_wh.StatusTransitionCause.Recover,
         owner_address
       );
