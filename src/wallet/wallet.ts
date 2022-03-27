@@ -71,10 +71,14 @@ function addWalletStatusSubscriber(txid, wallet_id) {
             const recovering_record =
               await db_wh.findLatestRecoveringByWalletId(wallet_id);
             const new_owner_address = recovering_record["dataValues"]["data"];
+            consola.info(
+              "Recovering -> Active, and the owner address is going to update into: ",
+              new_owner_address
+            );
             return wallet
               .update({
                 wallet_status: next_status_success,
-                owner_address: new_owner_address,
+                address: new_owner_address,
               })
               .then(function (result) {
                 consola.log(
@@ -650,7 +654,7 @@ module.exports = function (app) {
         const new_owner_address = recovering["dataValues"]["data"];
         if (new_owner_address) {
           signers[i]["old_owner_address"] = owner_address;
-          consola.info("Reovering record existed: ", new_owner_address);
+          consola.info("Recovering record existed: ", new_owner_address);
           signers[i]["new_owner_address"] = new_owner_address;
         } else {
           signers[i]["owner_address"] = owner_address;
