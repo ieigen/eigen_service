@@ -397,14 +397,8 @@ module.exports = function (app) {
       return;
     } else {
       if (status !== db_wallet.WalletStatus.Recovering) {
-        // txid is required
-        if (!util.has_value(txid)) {
-          consola.log("missing txid");
-          res.json(util.Err(util.ErrCode.Unknown, "mising txid"));
-          return;
-        }
-      } else {
         // status and txid are required
+        // NOTE: for status is Recovering, txid is not needed
         if (!util.has_value(txid) || !util.has_value(status)) {
           consola.log("missing txid or status");
           res.json(util.Err(util.ErrCode.Unknown, "mising txid or status"));
