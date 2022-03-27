@@ -351,7 +351,7 @@ module.exports = function (app) {
     const status = req.body.status;
 
     if (util.has_value(owner_address)) {
-      if (util.has_value(txid) && util.has_value(status)) {
+      if (util.has_value(txid) || util.has_value(status)) {
         consola.log("owner_address cannot co-exists with txid or status");
         res.json(
           util.Err(
@@ -381,15 +381,15 @@ module.exports = function (app) {
       const wallet_status = wallet["dataValues"]["wallet_status"];
 
       consola.info(
-        `Record recovering new owner_address (${wallet_id}): ${wallet_status} -> ${db_wallet.WalletStatus.Recovering}: ${owner_address}`
+        `Record recovering new owner_address (${wallet_id}):  ${db_wallet.WalletStatus[wallet_status]}: ${owner_address}`
       );
-      // Recovering
+      // Going to recover, just record the owner_address, now there isn't txid
       db_wh.add(
         wallet_id,
         wallet_status,
-        db_wallet.WalletStatus.Recovering,
-        txid,
-        db_wh.StatusTransitionCause.Recover,
+        wallet_status, // the status does not change (Active)
+        "", // txid not existed, because here we just want to record owner_address
+        db_wh.StatusTransitionCause.GoingToRecover,
         owner_address
       );
 
@@ -449,6 +449,10 @@ module.exports = function (app) {
         return;
       }
 
+      consola.info(
+        `Direct update wallet status ${db_wallet.WalletStatus[wallet_status]} -> ${db_wallet.WalletStatus[status]}`
+      );
+
       wallet.update({
         wallet_status: status,
       });
@@ -460,13 +464,19 @@ module.exports = function (app) {
           cause = db_wh.StatusTransitionCause.Create;
           break;
         case db_wallet.WalletStatus.Recovering:
-          cause = db_wh.StatusTransitionCause.Recover;
+          cause = db_wh.StatusTransitionCause.GoingToRecover;
           break;
-
+        case db_wallet.WalletStatus.Active:
+          cause = db_wh.StatusTransitionCause.ExecuteRecover;
+          break;
         default:
           consola.error("Missing cause with status: ", status);
           break;
       }
+
+      consola.info(
+        `Add wallet history: id (${wallet_id}), txid (${txid}), wallet_status (${db_wallet.WalletStatus[wallet_status]}), status (${db_wallet.WalletStatus[status]}), cause (${db_wh.StatusTransitionCause[cause]})`
+      );
 
       db_wh.add(wallet_id, txid, wallet_status, status, cause);
 

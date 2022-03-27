@@ -35,7 +35,8 @@ export enum StatusTransitionCause {
   AddSigner = 2,
   Freeze = 3,
   Unlock = 4,
-  Recover = 5,
+  GoingToRecover = 5,
+  ExecuteRecover = 6,
   TransactionSuccess = 11,
   TransactionFail = 12,
 }
@@ -88,7 +89,7 @@ sequelize
     consola.log("Unable to connect to the database:", err);
   });
 
-const add = function (wallet_id, from, to, txid, cause, data="") {
+const add = function (wallet_id, from, to, txid, cause, data = "") {
   return whdb.create({
     wallet_id,
     from,
@@ -133,9 +134,9 @@ const findLatestRecoveringByWalletId = function (wallet_id) {
   return whdb.findOne({
     where: {
       wallet_id,
-      cause: StatusTransitionCause.Recover,
+      cause: StatusTransitionCause.GoingToRecover,
       from: WalletStatus.Active,
-      to: WalletStatus.Recovering,
+      to: WalletStatus.Active,
     },
     order: [["updatedAt", "DESC"]],
   });
