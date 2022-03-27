@@ -34,90 +34,68 @@ function addWalletStatusSubscriber(txid, wallet_id) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, txid] = msg.split(".");
 
-    db_wallet.findByWalletId(wallet_id).then(async (wallet) => {
-      if (wallet === null) {
-        consola.log(`Transaction ${txid} is not related to wallet`);
-        return false;
-      }
+    const wallet = await db_wallet.findByWalletId(wallet_id);
+    if (wallet === null) {
+      consola.log(`Transaction ${txid} is not related to wallet ${wallet_id}`);
+      return false;
+    }
 
-      const wallet_status = wallet["dataValues"]["wallet_status"];
-      const transaction_status = transaction["status"];
+    const wallet_status = wallet["dataValues"]["wallet_status"];
+    const transaction_status = transaction["status"];
 
-      consola.log(
-        `[addWalletStatusSubscriber]: ${txid}, ${JSON.stringify(wallet)}`
-      );
+    consola.log(
+      `[addWalletStatusSubscriber]: ${txid}, ${JSON.stringify(wallet)}`
+    );
 
-      const next_status_success =
-        WALLET_STATUS_MACHINE_STATE_TRANSACTION_NEXT[wallet_status][
-          WalletStatusTransactionResult.Success
-        ];
+    const next_status_success =
+      WALLET_STATUS_MACHINE_STATE_TRANSACTION_NEXT[wallet_status][
+        WalletStatusTransactionResult.Success
+      ];
 
-      const next_status_fail =
-        WALLET_STATUS_MACHINE_STATE_TRANSACTION_NEXT[wallet_status][
-          WalletStatusTransactionResult.Fail
-        ];
+    const next_status_fail =
+      WALLET_STATUS_MACHINE_STATE_TRANSACTION_NEXT[wallet_status][
+        WalletStatusTransactionResult.Fail
+      ];
 
-      if (next_status_success) {
-        if (transaction_status == db_txh.TransactionStatus.Success) {
-          db_wh.add(
-            wallet_id,
-            txid,
-            wallet_status,
-            next_status_success,
-            db_wh.StatusTransitionCause.TransactionSuccess
+    if (next_status_success) {
+      if (transaction_status == db_txh.TransactionStatus.Success) {
+        db_wh.add(
+          wallet_id,
+          txid,
+          wallet_status,
+          next_status_success,
+          db_wh.StatusTransitionCause.TransactionSuccess
+        );
+        // Active -> Active success, now we should update the owner_address
+        // NOTE: Active status is updated before the Subsciber detecting the result of tx
+        if (wallet_status == db_wallet.WalletStatus.Active) {
+          const recovering_record = await db_wh.findLatestRecoveringByWalletId(
+            wallet_id
           );
-          // Recovering -> Active success, now we should update the owner_address
-          // NOTE: Active status is updated before the Subsciber detecting the result of tx
-          if (wallet_status == db_wallet.WalletStatus.Active) {
-            const recovering_record =
-              await db_wh.findLatestRecoveringByWalletId(wallet_id);
-            const new_owner_address = recovering_record["dataValues"]["data"];
-            consola.info(
-              "Recovering -> Active, and the owner address is going to update into: ",
-              new_owner_address
-            );
-            return wallet
-              .update({
-                wallet_status: next_status_success,
-                address: new_owner_address,
-              })
-              .then(function (result) {
-                consola.log(
-                  "Update wallet status success: " + JSON.stringify(result)
-                );
-                return true;
-              })
-              .catch(function (err) {
-                consola.log("Update wallet status error: " + err);
-                return false;
-              });
-          } else {
-            return wallet
-              .update({
-                wallet_status: next_status_success,
-              })
-              .then(function (result) {
-                consola.log(
-                  "Update wallet status success: " + JSON.stringify(result)
-                );
-                return true;
-              })
-              .catch(function (err) {
-                consola.log("Update wallet status error: " + err);
-                return false;
-              });
-          }
-        } else if (transaction_status == db_txh.TransactionStatus.Failed) {
-          db_wh.add(
-            wallet_id,
-            txid,
-            wallet_status,
-            next_status_success,
-            db_wh.StatusTransitionCause.TransactionFail
+          const new_owner_address = recovering_record["dataValues"]["data"];
+          consola.info(
+            "Recovering success, and the owner address is going to update into: ",
+            new_owner_address
           );
           return wallet
             .update({
-              wallet_status: next_status_fail,
+              wallet_status: next_status_success,
+              address: new_owner_address,
+            })
+            .then(function (result) {
+              consola.log(
+                "Update wallet status success: " + JSON.stringify(result)
+              );
+              return true;
+            })
+            .catch(function (err) {
+              consola.log("Update wallet status error: " + err);
+              return false;
+            });
+        } else {
+          return wallet
+            .update({
+              wallet_status: next_status_success,
             })
             .then(function (result) {
               consola.log(
@@ -130,14 +108,36 @@ function addWalletStatusSubscriber(txid, wallet_id) {
               return false;
             });
         }
+      } else if (transaction_status == db_txh.TransactionStatus.Failed) {
+        db_wh.add(
+          wallet_id,
+          txid,
+          wallet_status,
+          next_status_success,
+          db_wh.StatusTransitionCause.TransactionFail
+        );
+        return wallet
+          .update({
+            wallet_status: next_status_fail,
+          })
+          .then(function (result) {
+            consola.log(
+              "Update wallet status success: " + JSON.stringify(result)
+            );
+            return true;
+          })
+          .catch(function (err) {
+            consola.log("Update wallet status error: " + err);
+            return false;
+          });
       }
+    }
 
-      consola.log(
-        `Do not handle Transaction (${txid}) and Wallet (${wallet["dataValues"]["wallet_id"]})`
-      );
+    consola.log(
+      `Do not handle Transaction (${txid}) and Wallet (${wallet["dataValues"]["wallet_id"]})`
+    );
 
-      return false;
-    });
+    return false;
   };
 }
 
