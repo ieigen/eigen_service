@@ -67,7 +67,8 @@ function addWalletStatusSubscriber(txid, wallet_id) {
             db_wh.StatusTransitionCause.TransactionSuccess
           );
           // Recovering -> Active success, now we should update the owner_address
-          if (wallet_status == db_wallet.WalletStatus.Recovering) {
+          // NOTE: Active status is updated before the Subsciber detecting the result of tx
+          if (wallet_status == db_wallet.WalletStatus.Active) {
             const recovering_record =
               await db_wh.findLatestRecoveringByWalletId(wallet_id);
             const new_owner_address = recovering_record["dataValues"]["data"];

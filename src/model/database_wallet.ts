@@ -62,7 +62,7 @@ export const WALLET_STATUS_MACHINE_STATE_CHECK = [
   /* Non, Cre,   Act,   Rec,   Fai,   Fre,   Froz   Unl */
   [false, true,  false, false, false, false, false, false] /* None */,
   [false, false, true,  false, true,  false, false, false] /* Creating */,
-  [false, false, false, true,  false, true,  false, false] /* Active */,
+  [false, false, true,  true,  false, true,  false, false] /* Active */,
   [false, false, true,  false, false, false, false, false] /* Recovering */,
   [false, false, false, false, false, false, false, false] /* Fail */,
   [false, false, true,  false, false, false, false, false] /* Freezing */,
@@ -80,7 +80,7 @@ export const WALLET_STATUS_MACHINE_STATE_TRANSACTION_NEXT = [
   /* Succ,              Fail */
   [undefined,           undefined          ] /* None */,
   [WalletStatus.Active, WalletStatus.Fail  ] /* Creating */,
-  [undefined,           undefined          ] /* Active */,
+  [WalletStatus.Active, WalletStatus.Active] /* Active */,
   [WalletStatus.Active, WalletStatus.Active] /* Recovering */,
   [undefined,           undefined          ] /* Fail */,
   [WalletStatus.Frozen, WalletStatus.Active] /* Freezing */,
