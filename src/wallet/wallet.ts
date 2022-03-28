@@ -429,7 +429,8 @@ module.exports = function (app) {
         return;
       }
 
-      // Update wallet_status -> status
+      // TODO: Now we do not record Freezing or Unlocking status on the backend.
+      //       In the furtue, it may be changed
       if (
         status == db_wallet.WalletStatus.Freezing ||
         status == db_wallet.WalletStatus.Unlocking
