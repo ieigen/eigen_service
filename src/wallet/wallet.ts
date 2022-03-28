@@ -486,7 +486,7 @@ module.exports = function (app) {
 
         PubSub.subscribeOnce(
           `Transaction.${txid}`,
-          addWalletStatusSubscriber(txid, wallet)
+          addWalletStatusSubscriber(txid, wallet_id)
         );
       }
 
