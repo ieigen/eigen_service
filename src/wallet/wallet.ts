@@ -397,7 +397,10 @@ module.exports = function (app) {
       res.json(util.Succ(true));
       return;
     } else {
-      if (status !== db_wallet.WalletStatus.Recovering) {
+      if (
+        status !== db_wallet.WalletStatus.Recovering &&
+        status !== db_wallet.WalletStatus.Active
+      ) {
         // status and txid are required
         // NOTE: for status is Recovering, txid is not needed
         if (!util.has_value(txid) || !util.has_value(status)) {
