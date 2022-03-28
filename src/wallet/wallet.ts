@@ -352,6 +352,8 @@ module.exports = function (app) {
     const status = req.body.status;
 
     if (util.has_value(owner_address)) {
+      // If owner_address is given, it means the user is going to recover the wallet
+      // It does not need txid or status
       if (util.has_value(txid) || util.has_value(status)) {
         consola.log("owner_address cannot co-exists with txid or status");
         res.json(
@@ -363,7 +365,7 @@ module.exports = function (app) {
         return;
       }
 
-      // NOTE: Waiting for the recover success, do we can not update directly:
+      // NOTE: Waiting for the recover success, so we can not update directly:
 
       // const result = await db_wallet.updateOwnerAddress(
       //   wallet_id,
@@ -397,17 +399,11 @@ module.exports = function (app) {
       res.json(util.Succ(true));
       return;
     } else {
-      if (
-        status !== db_wallet.WalletStatus.Recovering &&
-        status !== db_wallet.WalletStatus.Active
-      ) {
-        // status and txid are required
-        // NOTE: for status is Recovering, txid is not needed
-        if (!util.has_value(txid) || !util.has_value(status)) {
-          consola.log("missing txid or status");
-          res.json(util.Err(util.ErrCode.Unknown, "mising txid or status"));
-          return;
-        }
+      // NOTE: status is required, txid can be not given
+      if (!util.has_value(status)) {
+        consola.log("missing status");
+        res.json(util.Err(util.ErrCode.Unknown, "mising status"));
+        return;
       }
 
       const wallet = await db_wallet.findByWalletId(wallet_id);
@@ -451,6 +447,8 @@ module.exports = function (app) {
         `Direct update wallet status ${db_wallet.WalletStatus[wallet_status]} -> ${db_wallet.WalletStatus[status]}`
       );
 
+      // NOTE: Whether txid is given, the status is updated directly
+
       wallet.update({
         wallet_status: status,
       });
@@ -468,6 +466,7 @@ module.exports = function (app) {
           cause = db_wh.StatusTransitionCause.ExecuteRecover;
           break;
         default:
+          cause = db_wh.StatusTransitionCause.None;
           consola.error("Missing cause with status: ", status);
           break;
       }
@@ -478,7 +477,8 @@ module.exports = function (app) {
 
       db_wh.add(wallet_id, txid, wallet_status, status, cause);
 
-      // NOTE: When recovering, txid can be undefined
+      // NOTE: If txid is given, then we should subscribe the transaction,
+      //       then the status is updated when the transation is success or fail
       if (util.has_value(txid)) {
         consola.log(
           `[[addWalletStatusSubscriber]]: PubSub.subscribeOnce(Transaction.${txid}, ${wallet}): ${db_wallet.WalletStatus[wallet_status]} -> ${db_wallet.WalletStatus[status]}`
