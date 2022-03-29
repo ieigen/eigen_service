@@ -350,9 +350,9 @@ module.exports = function (app) {
   app.post("/user/wallet/:wallet_id(\\d+)", async function (req, res) {
     const wallet_id = req.params.wallet_id;
 
-    const wallet = await db_wallet.findOwnerWalletById(wallet_id);
+    const wallet_check = await db_wallet.findOwnerWalletById(wallet_id);
 
-    if (wallet === null) {
+    if (wallet_check === null) {
       consola.error(`The wallet (${wallet_id}) does not exist`);
       res.json(
         util.Err(
@@ -362,6 +362,9 @@ module.exports = function (app) {
       );
       return;
     }
+
+    const wallet = await db_wallet.findByWalletId(wallet_id);
+    const wallet_status = wallet["dataValues"]["wallet_status"];
 
     const action = req.body.action;
     const txid = req.body.txid;
@@ -393,16 +396,6 @@ module.exports = function (app) {
           // );
 
           // NOTE: We should add wallet history:
-          const wallet = await db_wallet.findByWalletId(wallet_id);
-
-          if (wallet === null) {
-            consola.log("wallet does not exist: ", wallet_id);
-            res.json(util.Err(util.ErrCode.Unknown, "wallet does not exist"));
-            return;
-          }
-
-          const wallet_status = wallet["dataValues"]["wallet_status"];
-
           consola.info(
             `Record recovering new owner_address (${wallet_id}):  ${db_wallet.WalletStatus[wallet_status]}: ${owner_address}`
           );
@@ -433,15 +426,6 @@ module.exports = function (app) {
           }
 
           // We should add wallet history:
-          const wallet = await db_wallet.findByWalletId(wallet_id);
-
-          if (wallet === null) {
-            consola.log("wallet does not exist: ", wallet_id);
-            res.json(util.Err(util.ErrCode.Unknown, "wallet does not exist"));
-            return;
-          }
-
-          const wallet_status = wallet["dataValues"]["wallet_status"];
 
           consola.info(
             `Record recovering new owner_address (${wallet_id}):  ${db_wallet.WalletStatus[wallet_status]}: ${owner_address}`
@@ -467,8 +451,6 @@ module.exports = function (app) {
           break;
       }
     }
-
-    const wallet_status = wallet["dataValues"]["wallet_status"];
 
     // NOTE: If status is given
     if (util.has_value(status)) {
