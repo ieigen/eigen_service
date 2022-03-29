@@ -235,5 +235,5 @@ module.exports = function (app) {
 
   app.post("/auth/metamask", postAuthMetamask);
 
-  app.post("/user/:user_id/association", postUserAssociation);
+  app.post("/user/:user_id(\\d+)/association", postUserAssociation);
 };
