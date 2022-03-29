@@ -69,15 +69,16 @@ function addWalletStatusSubscriber(txid, wallet_id) {
         // Active -> Active success, now we should update the owner_address
         // NOTE: Active status is updated before the Subsciber detecting the result of tx
         if (wallet_status == db_wallet.WalletStatus.Active) {
-          const recovering_record = await db_wh.findLatestRecoveringByWalletId(
-            wallet_id
-          );
+          const recovering_record =
+            await db_wh.findLatestRecoverActionByWalletId(wallet_id);
           const new_owner_address = recovering_record["dataValues"]["data"];
+          const cause = recovering_record["dataValues"]["cause"];
           consola.info(
-            "Recovering success, and the owner address is going to update into: ",
-            new_owner_address
+            `${db_wh.StatusTransitionCause[cause]} success, and the owner address is going to update into: ${new_owner_address}`
           );
-          return wallet
+
+          // Update owner address and status of owner record
+          wallet
             .update({
               wallet_status: next_status_success,
               address: new_owner_address,
@@ -92,6 +93,21 @@ function addWalletStatusSubscriber(txid, wallet_id) {
               consola.log("Update wallet status error: " + err);
               return false;
             });
+
+          // Update all owner address of other recoreds
+          db_wallet.updateAllOwnerAddresses(
+            wallet["dataValues"]["wallet_address"],
+            new_owner_address
+          );
+
+          // Cancel recover should reset the status of all signer with SignerStatus.Active
+          if (cause == db_wh.StatusTransitionCause.GoingToCancelRecover) {
+            db_wallet.updateAllSignersStatus(
+              wallet["dataValues"]["wallet_address"],
+              db_wallet.SignerStatus.Active
+            );
+          }
+          return true;
         } else {
           return wallet
             .update({
@@ -347,11 +363,13 @@ module.exports = function (app) {
       return;
     }
 
-    const owner_address = req.body.owner_address;
+    const action = req.body.action;
     const txid = req.body.txid;
     const status = req.body.status;
 
-    if (util.has_value(owner_address)) {
+    // If action is given, it means that some action is going to be launched,
+    // Some pre-updated data should be recorded
+    if (util.has_value(action)) {
       // If owner_address is given, it means the user is going to recover the wallet
       // It does not need txid or status
       if (util.has_value(txid) || util.has_value(status)) {
@@ -365,39 +383,108 @@ module.exports = function (app) {
         return;
       }
 
-      // NOTE: Waiting for the recover success, so we can not update directly:
+      switch (action) {
+        case "to_recover": {
+          const owner_address = req.body.owner_address;
+          if (!util.has_value(owner_address)) {
+            consola.error(
+              "to recover a wallet, a new owner_address should be given"
+            );
+            res.json(
+              util.Err(
+                util.ErrCode.Unknown,
+                "to recover a wallet, a new owner_address should be given"
+              )
+            );
+            return;
+          }
+          // NOTE: Waiting for the recover success, so we can not update directly:
 
-      // const result = await db_wallet.updateOwnerAddress(
-      //   wallet_id,
-      //   owner_address
-      // );
+          // const result = await db_wallet.updateOwnerAddress(
+          //   wallet_id,
+          //   owner_address
+          // );
 
-      // NOTE: We should add wallet history:
-      const wallet = await db_wallet.findByWalletId(wallet_id);
+          // NOTE: We should add wallet history:
+          const wallet = await db_wallet.findByWalletId(wallet_id);
 
-      if (wallet === null) {
-        consola.log("wallet does not exist: ", wallet_id);
-        res.json(util.Err(util.ErrCode.Unknown, "wallet does not exist"));
-        return;
+          if (wallet === null) {
+            consola.log("wallet does not exist: ", wallet_id);
+            res.json(util.Err(util.ErrCode.Unknown, "wallet does not exist"));
+            return;
+          }
+
+          const wallet_status = wallet["dataValues"]["wallet_status"];
+
+          consola.info(
+            `Record recovering new owner_address (${wallet_id}):  ${db_wallet.WalletStatus[wallet_status]}: ${owner_address}`
+          );
+          // Going to recover, just record the owner_address, now there isn't txid
+          db_wh.add(
+            wallet_id,
+            wallet_status,
+            wallet_status, // the status does not change (Active)
+            "", // txid not existed, because here we just want to record owner_address
+            db_wh.StatusTransitionCause.GoingToRecover,
+            owner_address
+          );
+
+          res.json(util.Succ(true));
+          return;
+          break;
+        }
+        case "to_cancel_recover": {
+          const owner_address = req.body.owner_address;
+          if (!util.has_value(owner_address)) {
+            consola.error(
+              "to recover a wallet, a new owner_address should be given"
+            );
+            res.json(
+              util.Err(
+                util.ErrCode.Unknown,
+                "to recover a wallet, a new owner_address should be given"
+              )
+            );
+            return;
+          }
+
+          // We should add wallet history:
+          const wallet = await db_wallet.findByWalletId(wallet_id);
+
+          if (wallet === null) {
+            consola.log("wallet does not exist: ", wallet_id);
+            res.json(util.Err(util.ErrCode.Unknown, "wallet does not exist"));
+            return;
+          }
+
+          const wallet_status = wallet["dataValues"]["wallet_status"];
+
+          consola.info(
+            `Record recovering new owner_address (${wallet_id}):  ${db_wallet.WalletStatus[wallet_status]}: ${owner_address}`
+          );
+          // Going to cancel recover, just record the owner_address, now there isn't txid
+          db_wh.add(
+            wallet_id,
+            wallet_status,
+            wallet_status, // the status does not change (Active)
+            "", // txid not existed, because here we just want to record owner_address
+            db_wh.StatusTransitionCause.GoingToCancelRecover,
+            owner_address
+          );
+
+          res.json(util.Succ(true));
+          return;
+          break;
+        }
+
+        default:
+          consola.error("unsupport action: ", action);
+          res.json(
+            util.Err(util.ErrCode.Unknown, `unsupported action: ${action}`)
+          );
+          return;
+          break;
       }
-
-      const wallet_status = wallet["dataValues"]["wallet_status"];
-
-      consola.info(
-        `Record recovering new owner_address (${wallet_id}):  ${db_wallet.WalletStatus[wallet_status]}: ${owner_address}`
-      );
-      // Going to recover, just record the owner_address, now there isn't txid
-      db_wh.add(
-        wallet_id,
-        wallet_status,
-        wallet_status, // the status does not change (Active)
-        "", // txid not existed, because here we just want to record owner_address
-        db_wh.StatusTransitionCause.GoingToRecover,
-        owner_address
-      );
-
-      res.json(util.Succ(true));
-      return;
     } else {
       // NOTE: status is required, txid can be not given
       if (!util.has_value(status)) {
