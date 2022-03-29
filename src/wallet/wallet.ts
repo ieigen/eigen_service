@@ -370,19 +370,6 @@ module.exports = function (app) {
     // If action is given, it means that some action is going to be launched,
     // Some pre-updated data should be recorded
     if (util.has_value(action)) {
-      // If owner_address is given, it means the user is going to recover the wallet
-      // It does not need txid or status
-      if (util.has_value(txid) || util.has_value(status)) {
-        consola.log("owner_address cannot co-exists with txid or status");
-        res.json(
-          util.Err(
-            util.ErrCode.Unknown,
-            "owner_address cannot co-exists with txid or status"
-          )
-        );
-        return;
-      }
-
       switch (action) {
         case "to_recover": {
           const owner_address = req.body.owner_address;
@@ -428,9 +415,6 @@ module.exports = function (app) {
             db_wh.StatusTransitionCause.GoingToRecover,
             owner_address
           );
-
-          res.json(util.Succ(true));
-          return;
           break;
         }
         case "to_cancel_recover": {
@@ -471,9 +455,6 @@ module.exports = function (app) {
             db_wh.StatusTransitionCause.GoingToCancelRecover,
             owner_address
           );
-
-          res.json(util.Succ(true));
-          return;
           break;
         }
 
@@ -485,24 +466,12 @@ module.exports = function (app) {
           return;
           break;
       }
-    } else {
-      // NOTE: status is required, txid can be not given
-      if (!util.has_value(status)) {
-        consola.log("missing status");
-        res.json(util.Err(util.ErrCode.Unknown, "mising status"));
-        return;
-      }
+    }
 
-      const wallet = await db_wallet.findByWalletId(wallet_id);
+    const wallet_status = wallet["dataValues"]["wallet_status"];
 
-      if (wallet === null) {
-        consola.log("wallet does not exist: ", wallet_id);
-        res.json(util.Err(util.ErrCode.Unknown, "wallet does not exist"));
-        return;
-      }
-
-      const wallet_status = wallet["dataValues"]["wallet_status"];
-
+    // NOTE: If status is given
+    if (util.has_value(status)) {
       if (!db_wallet.WALLET_STATUS_MACHINE_STATE_CHECK[wallet_status][status]) {
         consola.log(
           `wallet status transition invalid: ${db_wallet.WalletStatus[wallet_status]} -> ${db_wallet.WalletStatus[status]}`
@@ -564,23 +533,23 @@ module.exports = function (app) {
       );
 
       db_wh.add(wallet_id, txid, wallet_status, status, cause);
-
-      // NOTE: If txid is given, then we should subscribe the transaction,
-      //       then the status is updated when the transation is success or fail
-      if (util.has_value(txid)) {
-        consola.log(
-          `[[addWalletStatusSubscriber]]: PubSub.subscribeOnce(Transaction.${txid}, ${wallet}): ${db_wallet.WalletStatus[wallet_status]} -> ${db_wallet.WalletStatus[status]}`
-        );
-
-        PubSub.subscribeOnce(
-          `Transaction.${txid}`,
-          addWalletStatusSubscriber(txid, wallet_id)
-        );
-      }
-
-      res.json(util.Succ(true));
-      return;
     }
+
+    // NOTE: If txid is given, then we should subscribe the transaction,
+    //       then the status is updated when the transation is success or fail
+    if (util.has_value(txid)) {
+      consola.log(
+        `[[addWalletStatusSubscriber]]: PubSub.subscribeOnce(Transaction.${txid}, ${wallet}): ${db_wallet.WalletStatus[wallet_status]} -> ${db_wallet.WalletStatus[status]}`
+      );
+
+      PubSub.subscribeOnce(
+        `Transaction.${txid}`,
+        addWalletStatusSubscriber(txid, wallet_id)
+      );
+    }
+
+    res.json(util.Succ(true));
+    return;
   });
 
   app.get("/user/wallets", async function (req, res) {
