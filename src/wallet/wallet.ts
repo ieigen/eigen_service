@@ -657,15 +657,18 @@ module.exports = function (app) {
     for (const wallet of wallets) {
       const wallet_address = wallet["wallet_address"];
 
-      const recovering = await db_wh.findLatestRecoveringByWalletId(
-        wallet["wallet_id"]
-      );
+      // Only Recovering wallet should return this field
+      if (wallet["wallet_status"] == db_wallet.WalletStatus.Recovering) {
+        const recovering = await db_wh.findLatestRecoveringByWalletId(
+          wallet["wallet_id"]
+        );
 
-      if (recovering !== null) {
-        console.log("Reovering: ", recovering);
-        const new_owner_address = recovering["dataValues"]["data"];
-        if (new_owner_address) {
-          wallet["new_address"] = new_owner_address;
+        if (recovering !== null) {
+          console.log("Reovering: ", recovering);
+          const new_owner_address = recovering["dataValues"]["data"];
+          if (new_owner_address) {
+            wallet["new_address"] = new_owner_address;
+          }
         }
       }
 
@@ -740,20 +743,22 @@ module.exports = function (app) {
       });
       const owner_address = owner["address"];
       signers[i]["wallet_id"] = owner["wallet_id"];
+      // Only Recovering wallet should return this field
+      if (owner["wallet_status"] == db_wallet.WalletStatus.Recovering) {
+        const recovering = await db_wh.findLatestRecoveringByWalletId(
+          owner["wallet_id"]
+        );
 
-      const recovering = await db_wh.findLatestRecoveringByWalletId(
-        owner["wallet_id"]
-      );
-
-      // If recovering exist, return it
-      if (recovering !== null) {
-        const new_owner_address = recovering["dataValues"]["data"];
-        if (new_owner_address) {
-          signers[i]["old_owner_address"] = owner_address;
-          consola.info("Recovering record existed: ", new_owner_address);
-          signers[i]["new_owner_address"] = new_owner_address;
-        } else {
-          signers[i]["owner_address"] = owner_address;
+        // If recovering exist, return it
+        if (recovering !== null) {
+          const new_owner_address = recovering["dataValues"]["data"];
+          if (new_owner_address) {
+            signers[i]["old_owner_address"] = owner_address;
+            consola.info("Recovering record existed: ", new_owner_address);
+            signers[i]["new_owner_address"] = new_owner_address;
+          } else {
+            signers[i]["owner_address"] = owner_address;
+          }
         }
       } else {
         signers[i]["owner_address"] = owner_address;
