@@ -100,8 +100,11 @@ function addWalletStatusSubscriber(txid, wallet_id) {
             new_owner_address
           );
 
-          // Cancel recover should reset the status of all signer with SignerStatus.Active
-          if (cause == db_wh.StatusTransitionCause.GoingToCancelRecover) {
+          // Cancel recover or ExecuteRecover should reset the status of all signer with SignerStatus.Active
+          if (
+            cause == db_wh.StatusTransitionCause.GoingToCancelRecover &&
+            cause == db_wh.StatusTransitionCause.ExecuteRecover
+          ) {
             db_wallet.updateAllSignersStatus(
               wallet["dataValues"]["wallet_address"],
               db_wallet.SignerStatus.Active
