@@ -61,9 +61,9 @@ function addWalletStatusSubscriber(txid, wallet_id) {
       if (transaction_status == db_txh.TransactionStatus.Success) {
         db_wh.add(
           wallet_id,
-          txid,
           wallet_status,
           next_status_success,
+          txid,
           db_wh.StatusTransitionCause.TransactionSuccess
         );
         // Active -> Active success, now we should update the owner_address
@@ -127,9 +127,9 @@ function addWalletStatusSubscriber(txid, wallet_id) {
       } else if (transaction_status == db_txh.TransactionStatus.Failed) {
         db_wh.add(
           wallet_id,
-          txid,
           wallet_status,
           next_status_success,
+          txid,
           db_wh.StatusTransitionCause.TransactionFail
         );
         return wallet
@@ -397,7 +397,7 @@ module.exports = function (app) {
 
           // NOTE: We should add wallet history:
           consola.info(
-            `Record recovering new owner_address (${wallet_id}):  ${db_wallet.WalletStatus[wallet_status]}: ${owner_address}`
+            `Record to recover new owner_address (${wallet_id}):  ${db_wallet.WalletStatus[wallet_status]}: ${owner_address}`
           );
           // Going to recover, just record the owner_address, now there isn't txid
           db_wh.add(
@@ -414,12 +414,12 @@ module.exports = function (app) {
           const owner_address = req.body.owner_address;
           if (!util.has_value(owner_address)) {
             consola.error(
-              "to recover a wallet, a new owner_address should be given"
+              "to cancel recover a wallet, a new owner_address should be given"
             );
             res.json(
               util.Err(
                 util.ErrCode.Unknown,
-                "to recover a wallet, a new owner_address should be given"
+                "to cancel recover a wallet, a new owner_address should be given"
               )
             );
             return;
@@ -428,7 +428,7 @@ module.exports = function (app) {
           // We should add wallet history:
 
           consola.info(
-            `Record recovering new owner_address (${wallet_id}):  ${db_wallet.WalletStatus[wallet_status]}: ${owner_address}`
+            `Record to cancel recover new owner_address (${wallet_id}):  ${db_wallet.WalletStatus[wallet_status]}: ${owner_address}`
           );
           // Going to cancel recover, just record the owner_address, now there isn't txid
           db_wh.add(
@@ -492,29 +492,32 @@ module.exports = function (app) {
         wallet_status: status,
       });
 
-      let cause;
+      // If actions is given, wallet history is added before, do not need to add history here
+      if (!util.has_value(action)) {
+        let cause;
 
-      switch (status) {
-        case db_wallet.WalletStatus.Creating:
-          cause = db_wh.StatusTransitionCause.Create;
-          break;
-        case db_wallet.WalletStatus.Recovering:
-          cause = db_wh.StatusTransitionCause.GoingToRecover;
-          break;
-        case db_wallet.WalletStatus.Active:
-          cause = db_wh.StatusTransitionCause.ExecuteRecover;
-          break;
-        default:
-          cause = db_wh.StatusTransitionCause.None;
-          consola.error("Missing cause with status: ", status);
-          break;
+        switch (status) {
+          case db_wallet.WalletStatus.Creating:
+            cause = db_wh.StatusTransitionCause.Create;
+            break;
+          case db_wallet.WalletStatus.Recovering:
+            cause = db_wh.StatusTransitionCause.GoingToRecover;
+            break;
+          case db_wallet.WalletStatus.Active:
+            cause = db_wh.StatusTransitionCause.ExecuteRecover;
+            break;
+          default:
+            cause = db_wh.StatusTransitionCause.None;
+            consola.error("Missing cause with status: ", status);
+            break;
+        }
+
+        consola.info(
+          `Add wallet history: id (${wallet_id}), txid (${txid}), wallet_status (${db_wallet.WalletStatus[wallet_status]}), status (${db_wallet.WalletStatus[status]}), cause (${db_wh.StatusTransitionCause[cause]})`
+        );
+
+        db_wh.add(wallet_id, txid, wallet_status, status, cause);
       }
-
-      consola.info(
-        `Add wallet history: id (${wallet_id}), txid (${txid}), wallet_status (${db_wallet.WalletStatus[wallet_status]}), status (${db_wallet.WalletStatus[status]}), cause (${db_wh.StatusTransitionCause[cause]})`
-      );
-
-      db_wh.add(wallet_id, txid, wallet_status, status, cause);
     }
 
     // NOTE: If txid is given, then we should subscribe the transaction,
@@ -615,7 +618,7 @@ module.exports = function (app) {
         );
 
         if (recovering !== null) {
-          console.log("Reovering: ", recovering);
+          console.log("Recovering: ", recovering);
           const new_owner_address = recovering["dataValues"]["data"];
           if (new_owner_address) {
             wallet["new_address"] = new_owner_address;
