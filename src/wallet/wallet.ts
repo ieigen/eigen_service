@@ -102,7 +102,7 @@ function addWalletStatusSubscriber(txid, wallet_id) {
 
           // Cancel recover or ExecuteRecover should reset the status of all signer with SignerStatus.Active
           if (
-            cause == db_wh.StatusTransitionCause.GoingToCancelRecover &&
+            cause == db_wh.StatusTransitionCause.GoingToCancelRecover ||
             cause == db_wh.StatusTransitionCause.ExecuteRecover
           ) {
             db_wallet.updateAllSignersStatus(
