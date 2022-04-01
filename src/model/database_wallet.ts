@@ -63,7 +63,7 @@ export const WALLET_STATUS_MACHINE_STATE_CHECK = [
   [false, true,  false, false, false, false, false, false] /* None */,
   [false, false, true,  false, true,  false, false, false] /* Creating */,
   [false, false, true,  true,  false, true,  false, false] /* Active */,
-  [false, false, true,  false, false, false, false, false] /* Recovering */,
+  [false, false, true,  true,  false, false, false, false] /* Recovering */,
   [false, false, false, false, false, false, false, false] /* Fail */,
   [false, false, true,  false, false, false, false, false] /* Freezing */,
   [false, false, false, false, false, false, false, true ] /* Frozen */,
@@ -78,14 +78,14 @@ export enum WalletStatusTransactionResult {
 // prettier-ignore
 export const WALLET_STATUS_MACHINE_STATE_TRANSACTION_NEXT = [
   /* Succ,              Fail */
-  [undefined,           undefined          ] /* None */,
-  [WalletStatus.Active, WalletStatus.Fail  ] /* Creating */,
-  [WalletStatus.Active, WalletStatus.Active] /* Active */,
-  [WalletStatus.Active, WalletStatus.Active] /* Recovering */,
-  [undefined,           undefined          ] /* Fail */,
-  [WalletStatus.Frozen, WalletStatus.Active] /* Freezing */,
-  [undefined,           undefined          ] /* Frozen */,
-  [WalletStatus.Active, WalletStatus.Frozen] /* Unlocking */,
+  [undefined,           undefined              ] /* None */,
+  [WalletStatus.Active, WalletStatus.Fail      ] /* Creating */,
+  [WalletStatus.Active, WalletStatus.Active    ] /* Active */,
+  [WalletStatus.Active, WalletStatus.Recovering] /* Recovering */,
+  [undefined,           undefined              ] /* Fail */,
+  [WalletStatus.Frozen, WalletStatus.Active    ] /* Freezing */,
+  [undefined,           undefined              ] /* Frozen */,
+  [WalletStatus.Active, WalletStatus.Frozen    ] /* Unlocking */,
 ];
 
 const walletdb = sequelize.define("wallet_st", {
