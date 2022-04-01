@@ -90,7 +90,14 @@ sequelize
     consola.log("Unable to connect to the database:", err);
   });
 
-const add = function (wallet_id, from, to, txid, cause, data = "") {
+const add = function (
+  wallet_id: number,
+  from: WalletStatus,
+  to: WalletStatus,
+  txid: string,
+  cause: StatusTransitionCause,
+  data = ""
+) {
   return whdb.create({
     wallet_id,
     from,

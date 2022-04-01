@@ -320,9 +320,9 @@ module.exports = function (app) {
 
     db_wh.add(
       wallet_id,
-      txid,
       db_wallet.WalletStatus.None,
       db_wallet.WalletStatus.Creating,
+      txid,
       db_wh.StatusTransitionCause.Create
     );
 
@@ -547,7 +547,7 @@ module.exports = function (app) {
           `Add wallet history: id (${wallet_id}), txid (${txid}), wallet_status (${db_wallet.WalletStatus[wallet_status]}), status (${db_wallet.WalletStatus[status]}), cause (${db_wh.StatusTransitionCause[cause]})`
         );
 
-        db_wh.add(wallet_id, txid, wallet_status, status, cause);
+        db_wh.add(wallet_id, wallet_status, txid, status, cause);
       }
     }
 
