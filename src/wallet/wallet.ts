@@ -444,6 +444,20 @@ module.exports = function (app) {
           );
           break;
         }
+        case "to_execute_recover": {
+          consola.info(
+            `Record to execute recover (${wallet_id}):  ${db_wallet.WalletStatus[wallet_status]}`
+          );
+          // Going to execute recover
+          db_wh.add(
+            wallet_id,
+            wallet_status,
+            wallet_status, // the status does not change (Recovering)
+            txid,
+            db_wh.StatusTransitionCause.ExecuteRecover
+          );
+          break;
+        }
 
         default:
           consola.error("unsupport action: ", action);
