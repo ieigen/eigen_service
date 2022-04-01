@@ -448,7 +448,21 @@ module.exports = function (app) {
           consola.info(
             `Record to execute recover (${wallet_id}):  ${db_wallet.WalletStatus[wallet_status]}`
           );
+
+          if (wallet_status != db_wallet.WalletStatus.Recovering) {
+            consola.error(
+              `to execute recover a wallet, the current status of the wallet should be Recovering instead of ${db_wallet.WalletStatus[wallet_status]}`
+            );
+            res.json(
+              util.Err(
+                util.ErrCode.Unknown,
+                `to execute recover a wallet, the current status of the wallet should be Recovering instead of ${db_wallet.WalletStatus[wallet_status]}`
+              )
+            );
+            return;
+          }
           // Going to execute recover
+
           db_wh.add(
             wallet_id,
             wallet_status,
