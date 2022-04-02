@@ -672,6 +672,11 @@ module.exports = function (app) {
           raw: true,
         });
 
+        consola.log(
+          "Searching result about signers: ",
+          JSON.stringify(signers)
+        );
+
         if (signers.length > 0) {
           consola.info(
             `wallet (${wallet["wallet_id"]}) should not return due to ${recoverable_address} is its signer`
