@@ -575,6 +575,7 @@ module.exports = function (app) {
     const network_id = req.query.network_id;
     const user_id = req.query.user_id;
     const wallet_status = req.query.wallet_status;
+    const valid_address = req.query.valid_address;
 
     if (!util.has_value(network_id)) {
       consola.error("missing network_id");
@@ -635,9 +636,51 @@ module.exports = function (app) {
       }
     }
 
-    const wallets = await db_wallet.findAll(filter);
+    let wallets = await db_wallet.findAll(filter);
 
     consola.log("Find wallets: ", wallets);
+
+    if (util.has_value(valid_address)) {
+      consola.info("Enable valid address filter");
+      const valid_wallets = [];
+      for (const wallet of wallets) {
+        if (wallet["status"] != db_wallet.WalletStatus.Active) {
+          consola.info(
+            `${wallet["wallet_id"]} should not return due to its status is not Active`
+          );
+          continue;
+        }
+
+        if (wallet["address"] == address) {
+          consola.info(
+            `${wallet["wallet_id"]} should not return due to ${address} is its owner`
+          );
+          continue;
+        }
+
+        const signers = await db_wallet.search({
+          where: {
+            address: address,
+            network_id: network_id,
+            role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
+          },
+          raw: true,
+        });
+
+        if (signers.length > 0) {
+          consola.info(
+            `${wallet["wallet_id"]} should not return due to ${address} is its signer`
+          );
+          continue;
+        }
+
+        // OK, it is valid now, should be returned
+
+        valid_wallets.push(wallet);
+      }
+
+      wallets = valid_wallets;
+    }
 
     for (const wallet of wallets) {
       const wallet_address = wallet["wallet_address"];
