@@ -575,7 +575,7 @@ module.exports = function (app) {
     const network_id = req.query.network_id;
     const user_id = req.query.user_id;
     const wallet_status = req.query.wallet_status;
-    const valid_address = req.query.valid_address;
+    const recoverable_address = req.query.recoverable_address;
 
     if (!util.has_value(network_id)) {
       consola.error("missing network_id");
@@ -640,8 +640,8 @@ module.exports = function (app) {
 
     consola.log("Find wallets: ", wallets);
 
-    if (util.has_value(valid_address)) {
-      consola.info("Enable valid address filter");
+    if (util.has_value(recoverable_address)) {
+      consola.info("Enable recoverable address filter");
       const valid_wallets = [];
       for (const wallet of wallets) {
         if (wallet["wallet_status"] != db_wallet.WalletStatus.Active) {
