@@ -644,7 +644,7 @@ module.exports = function (app) {
       consola.info("Enable valid address filter");
       const valid_wallets = [];
       for (const wallet of wallets) {
-        if (wallet["status"] != db_wallet.WalletStatus.Active) {
+        if (wallet["wallet_status"] != db_wallet.WalletStatus.Active) {
           consola.info(
             `${wallet["wallet_id"]} should not return due to its status is not Active`
           );
