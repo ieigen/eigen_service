@@ -665,6 +665,7 @@ module.exports = function (app) {
 
         const signers = await db_wallet.search({
           where: {
+            wallet_address: wallet["wallet_address"],
             address: recoverable_address,
             network_id: network_id,
             role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
