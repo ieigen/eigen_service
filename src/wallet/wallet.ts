@@ -647,14 +647,18 @@ module.exports = function (app) {
       for (const wallet of wallets) {
         if (wallet["wallet_status"] != db_wallet.WalletStatus.Active) {
           consola.info(
-            `${wallet["wallet_id"]} should not return due to its status (${wallet["wallet_status"]}) is not Active`
+            `wallet (${
+              wallet["wallet_id"]
+            }) should not return due to its status (${
+              db_wallet.WalletStatus[wallet["wallet_status"]]
+            }) is not Active`
           );
           continue;
         }
 
         if (wallet["address"] == recoverable_address) {
           consola.info(
-            `${wallet["wallet_id"]} should not return due to ${recoverable_address} is its owner`
+            `wallet (${wallet["wallet_id"]}) should not return due to ${recoverable_address} is its owner`
           );
           continue;
         }
@@ -670,7 +674,7 @@ module.exports = function (app) {
 
         if (signers.length > 0) {
           consola.info(
-            `${wallet["wallet_id"]} should not return due to ${recoverable_address} is its signer`
+            `wallet (${wallet["wallet_id"]}) should not return due to ${recoverable_address} is its signer`
           );
           continue;
         }
@@ -679,6 +683,11 @@ module.exports = function (app) {
 
         valid_wallets.push(wallet);
       }
+
+      consola.info(
+        "Recovable wallet should be: ",
+        JSON.stringify(valid_wallets)
+      );
 
       wallets = valid_wallets;
     }
