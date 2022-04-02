@@ -641,6 +641,7 @@ module.exports = function (app) {
     consola.log("Find wallets: ", wallets);
 
     if (util.has_value(recoverable_address)) {
+      // XXX: This part can be written as a filter
       consola.info("Enable recoverable address filter");
       const valid_wallets = [];
       for (const wallet of wallets) {
@@ -651,16 +652,16 @@ module.exports = function (app) {
           continue;
         }
 
-        if (wallet["address"] == address) {
+        if (wallet["address"] == recoverable_address) {
           consola.info(
-            `${wallet["wallet_id"]} should not return due to ${address} is its owner`
+            `${wallet["wallet_id"]} should not return due to ${recoverable_address} is its owner`
           );
           continue;
         }
 
         const signers = await db_wallet.search({
           where: {
-            address: address,
+            address: recoverable_address,
             network_id: network_id,
             role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
           },
@@ -669,7 +670,7 @@ module.exports = function (app) {
 
         if (signers.length > 0) {
           consola.info(
-            `${wallet["wallet_id"]} should not return due to ${address} is its signer`
+            `${wallet["wallet_id"]} should not return due to ${recoverable_address} is its signer`
           );
           continue;
         }
