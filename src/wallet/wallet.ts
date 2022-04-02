@@ -94,12 +94,6 @@ function addWalletStatusSubscriber(txid, wallet_id) {
               return false;
             });
 
-          // Update all owner address of other recoreds
-          // db_wallet.updateAllOwnerAddresses(
-          //   wallet["dataValues"]["wallet_address"],
-          //   new_owner_address
-          // );
-
           // Cancel recover or ExecuteRecover should reset the status of all signer with SignerStatus.Active
           if (
             cause == db_wh.StatusTransitionCause.GoingToCancelRecover ||

@@ -206,39 +206,6 @@ const updateOwnerAddress = function (wallet_id, owner_address) {
   });
 };
 
-const updateAllOwnerAddresses = function (wallet_address, owner_address) {
-  return walletdb
-    .findAll({ where: { wallet_address } })
-    .then(function (rows: any) {
-      consola.log(rows);
-      if (rows === null) {
-        return false;
-      }
-      return rows.forEach(function (row: any) {
-        row
-          .update({
-            address: owner_address,
-          })
-          .then(function (result) {
-            consola.log(
-              "Update owner address success: ",
-              owner_address,
-              result
-            );
-            return true;
-          })
-          .catch(function (err) {
-            consola.log(
-              "Update owner address error (" + err,
-              "): ",
-              owner_address
-            );
-            return false;
-          });
-      });
-    });
-};
-
 const updateAllSignersStatus = function (wallet_address, status) {
   return walletdb
     .findAll({
@@ -421,6 +388,5 @@ export {
   updateOrAddByOwner,
   findOwnerWalletById,
   updateOrAddBySigner,
-  updateAllOwnerAddresses,
   updateAllSignersStatus,
 };
