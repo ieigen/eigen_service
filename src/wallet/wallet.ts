@@ -99,6 +99,7 @@ function addWalletStatusSubscriber(txid, wallet_id) {
             cause == db_wh.StatusTransitionCause.GoingToCancelRecover ||
             cause == db_wh.StatusTransitionCause.ExecuteRecover
           ) {
+            consola.info("Reset all signers status to Active");
             db_wallet.updateAllSignersStatus(
               wallet["dataValues"]["wallet_address"],
               db_wallet.SignerStatus.Active

@@ -208,28 +208,15 @@ const updateOwnerAddress = function (wallet_id, owner_address) {
 
 const updateAllSignersStatus = function (wallet_address, status) {
   return walletdb
-    .findAll({
-      where: { wallet_address, role: WALLET_USER_ADDRESS_ROLE_SIGNER },
-    })
-    .then(function (rows: any) {
-      consola.log(rows);
-      if (rows === null) {
-        return false;
+    .update(
+      { status },
+      {
+        where: { wallet_address, role: WALLET_USER_ADDRESS_ROLE_SIGNER },
       }
-      return rows.forEach(function (row: any) {
-        row
-          .update({
-            status,
-          })
-          .then(function (result) {
-            consola.log("Update signer status success: ", status, result);
-            return true;
-          })
-          .catch(function (err) {
-            consola.log("Updatesigner statuss error (" + err, "): ", status);
-            return false;
-          });
-      });
+    )
+    .then(function (result: any) {
+      consola.log("Update all signers status result: ", result);
+      return true;
     });
 };
 
