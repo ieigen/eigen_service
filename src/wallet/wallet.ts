@@ -647,7 +647,7 @@ module.exports = function (app) {
       for (const wallet of wallets) {
         if (wallet["wallet_status"] != db_wallet.WalletStatus.Active) {
           consola.info(
-            `${wallet["wallet_id"]} should not return due to its status is not Active`
+            `${wallet["wallet_id"]} should not return due to its status (${wallet["wallet_status"]}) is not Active`
           );
           continue;
         }
