@@ -7,7 +7,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Sequelize, DataTypes } from "sequelize";
+import { Sequelize, DataTypes, Op } from "sequelize";
 import consola from "consola";
 
 import { WalletStatus } from "./database_wallet";
@@ -37,6 +37,7 @@ export enum StatusTransitionCause {
   Unlock = 4,
   GoingToRecover = 5,
   ExecuteRecover = 6,
+  GoingToCancelRecover = 7,
   TransactionSuccess = 11,
   TransactionFail = 12,
 }
@@ -89,7 +90,14 @@ sequelize
     consola.log("Unable to connect to the database:", err);
   });
 
-const add = function (wallet_id, from, to, txid, cause, data = "") {
+const add = function (
+  wallet_id: number,
+  from: WalletStatus,
+  to: WalletStatus,
+  txid: string,
+  cause: StatusTransitionCause,
+  data = ""
+) {
   return whdb.create({
     wallet_id,
     from,
@@ -130,6 +138,23 @@ const findLatestByTxid = function (txid) {
   });
 };
 
+const findLatestRecoverActionByWalletId = function (wallet_id) {
+  return whdb.findOne({
+    where: {
+      wallet_id,
+      cause: {
+        [Op.or]: [
+          StatusTransitionCause.GoingToRecover,
+          StatusTransitionCause.GoingToCancelRecover,
+        ],
+      },
+      from: WalletStatus.Active,
+      to: WalletStatus.Active,
+    },
+    order: [["updatedAt", "DESC"]],
+  });
+};
+
 const findLatestRecoveringByWalletId = function (wallet_id) {
   return whdb.findOne({
     where: {
@@ -149,4 +174,5 @@ export {
   findLatestByWalletId,
   findLatestByTxid,
   findLatestRecoveringByWalletId,
+  findLatestRecoverActionByWalletId,
 };
