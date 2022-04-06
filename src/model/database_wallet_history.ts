@@ -129,6 +129,23 @@ const findLatestByWalletId = function (wallet_id) {
   });
 };
 
+const findLatestTxByWalletId = function (wallet_id) {
+  return whdb.findOne({
+    where: {
+      wallet_id,
+      [Op.and]: [
+        {
+          txid: { [Op.not]: null },
+        },
+        {
+          txid: { [Op.ne]: "" },
+        },
+      ],
+    },
+    order: [["updatedAt", "DESC"]],
+  });
+};
+
 const findLatestByTxid = function (txid) {
   return whdb.findAll({
     where: {
@@ -175,4 +192,5 @@ export {
   findLatestByTxid,
   findLatestRecoveringByWalletId,
   findLatestRecoverActionByWalletId,
+  findLatestTxByWalletId,
 };

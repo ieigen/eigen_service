@@ -313,7 +313,7 @@ module.exports = function (app) {
 
     const wallet_id = result["dataValues"]["wallet_id"];
 
-    db_wh.add(
+    await db_wh.add(
       wallet_id,
       db_wallet.WalletStatus.None,
       db_wallet.WalletStatus.Creating,
@@ -398,7 +398,7 @@ module.exports = function (app) {
             `Record to recover new owner_address (${wallet_id}):  ${db_wallet.WalletStatus[wallet_status]}: ${owner_address}`
           );
           // Going to recover, just record the owner_address, now there isn't txid
-          db_wh.add(
+          await db_wh.add(
             wallet_id,
             wallet_status,
             wallet_status, // the status does not change (Active)
@@ -429,7 +429,7 @@ module.exports = function (app) {
             `Record to cancel recover new owner_address (${wallet_id}):  ${db_wallet.WalletStatus[wallet_status]}: ${owner_address}`
           );
           // Going to cancel recover, just record the owner_address, now there isn't txid
-          db_wh.add(
+          await db_wh.add(
             wallet_id,
             wallet_status,
             wallet_status, // the status does not change (Active)
@@ -458,7 +458,7 @@ module.exports = function (app) {
           }
           // Going to execute recover
 
-          db_wh.add(
+          await db_wh.add(
             wallet_id,
             wallet_status,
             wallet_status, // the status does not change (Recovering)
@@ -542,7 +542,13 @@ module.exports = function (app) {
           `Add wallet history: id (${wallet_id}), txid (${txid}), wallet_status (${db_wallet.WalletStatus[wallet_status]}), status (${db_wallet.WalletStatus[status]}), cause (${db_wh.StatusTransitionCause[cause]})`
         );
 
-        db_wh.add(wallet_id, wallet_status, txid, status, cause);
+        await db_wh.add(
+          wallet_id,
+          wallet_status,
+          txid != undefined ? txid : "", // txid may be undefined
+          status,
+          cause
+        );
       }
     }
 
@@ -730,6 +736,34 @@ module.exports = function (app) {
         raw: true,
       });
       wallet["signer_count"] = signers.length;
+
+      // Check if the wallet has a on going tx
+      const latest = await db_wh.findLatestByWalletId(wallet["wallet_id"]);
+      if (
+        latest !== null &&
+        latest["dataValues"]["txid"] !== null &&
+        latest["dataValues"]["txid"] !== ""
+      ) {
+        consola.info(
+          `There is a tx in Wallet (${wallet["wallet_id"]}): ${
+            latest["dataValues"]["txid"]
+          }, the cause is ${
+            db_wh.StatusTransitionCause[latest["dataValues"]["cause"]]
+          }`
+        );
+
+        if (
+          latest["dataValues"]["cause"] !==
+            db_wh.StatusTransitionCause.TransactionSuccess ||
+          latest["dataValues"]["cause"] !==
+            db_wh.StatusTransitionCause.TransactionFail
+        ) {
+          consola.info(
+            `Only TransactionSuccess or TransactionFail will return txid: ${latest["dataValues"]["txid"]}`
+          );
+          wallet["txid"] = latest["dataValues"]["txid"];
+        }
+      }
     }
 
     res.json(util.Succ(wallets));
