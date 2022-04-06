@@ -121,11 +121,11 @@ const findAllByWalletId = function (wallet_id) {
 };
 
 const findLatestByWalletId = function (wallet_id) {
-  return whdb.findAll({
+  return whdb.findOne({
     where: {
       wallet_id,
     },
-    order: [["updatedAt", "DESC"]],
+    order: [["createdAt", "DESC"]],
   });
 };
 

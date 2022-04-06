@@ -739,6 +739,7 @@ module.exports = function (app) {
 
       // Check if the wallet has a on going tx
       const latest = await db_wh.findLatestByWalletId(wallet["wallet_id"]);
+      consola.log("Latest: ", latest);
       if (
         latest !== null &&
         latest["dataValues"]["txid"] !== null &&
@@ -754,7 +755,7 @@ module.exports = function (app) {
 
         if (
           latest["dataValues"]["cause"] !==
-            db_wh.StatusTransitionCause.TransactionSuccess ||
+            db_wh.StatusTransitionCause.TransactionSuccess &&
           latest["dataValues"]["cause"] !==
             db_wh.StatusTransitionCause.TransactionFail
         ) {
