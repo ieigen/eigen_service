@@ -1271,12 +1271,11 @@ export async function getFriendsAddresses(req, res) {
   }
 
   const address_records: any = await db_address.findAll(filter);
-
   const result = [];
   const address_set = new Set();
   for (const address_record of address_records) {
-    if (!address_set.has(address_record.address)) {
-      address_set.add(address_record.address);
+    if (!address_set.has(address_record.user_address)) {
+      address_set.add(address_record.user_address);
       const user_id = address_record.user_id;
       const user = await db_user.findByID(user_id);
       result.push({
@@ -1287,7 +1286,7 @@ export async function getFriendsAddresses(req, res) {
     }
   }
 
-  consola.log("Return all records:", result);
+  consola.info("Return all records:", result);
 
   res.json(util.Succ(result));
   return;
