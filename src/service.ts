@@ -1270,14 +1270,25 @@ export async function getFriendsAddresses(req, res) {
     };
   }
 
-  const addresses_array: any = await db_address.findAll(filter);
-  const addresses = addresses_array.map((a) => a.user_address);
+  const address_records: any = await db_address.findAll(filter);
 
-  // should remove duplicate addresses
-  const unique_addresses = [...new Set(addresses)];
+  const result = [];
+  const address_set = new Set();
+  for (const address_record of address_records) {
+    if (!address_set.has(address_record.address)) {
+      address_set.add(address_record.address);
+      const user_id = address_record.user_id;
+      const user = await db_user.findByID(user_id);
+      result.push({
+        address: address_record.user_address,
+        picture: user["picture"],
+        name: user["name"],
+      });
+    }
+  }
 
-  consola.log("Return all addresses:", unique_addresses);
+  consola.log("Return all records:", result);
 
-  res.json(util.Succ(unique_addresses));
+  res.json(util.Succ(result));
   return;
 }
