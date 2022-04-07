@@ -401,7 +401,7 @@ module.exports = function (app) {
           await db_wh.add(
             wallet_id,
             wallet_status,
-            wallet_status, // the status does not change (Active)
+            wallet_status, // the status does not change
             "", // txid not existed, because here we just want to record owner_address
             db_wh.StatusTransitionCause.GoingToRecover,
             owner_address
@@ -545,8 +545,8 @@ module.exports = function (app) {
         await db_wh.add(
           wallet_id,
           wallet_status,
-          txid != undefined ? txid : "", // txid may be undefined
           status,
+          txid != undefined ? txid : "", // txid may be undefined
           cause
         );
       }
@@ -704,6 +704,7 @@ module.exports = function (app) {
 
       // Only Recovering wallet should return this field
       if (wallet["wallet_status"] == db_wallet.WalletStatus.Recovering) {
+        consola.info(`Wallet (${wallet["wallet_id"]}) is Recovering`);
         const recovering = await db_wh.findLatestRecoveringByWalletId(
           wallet["wallet_id"]
         );
@@ -819,6 +820,7 @@ module.exports = function (app) {
       signers[i]["wallet_id"] = owner["wallet_id"];
       // Only Recovering wallet should return this field
       if (owner["wallet_status"] == db_wallet.WalletStatus.Recovering) {
+        consola.info(`Wallet (${owner["wallet_id"]}) is Recovering`);
         const recovering = await db_wh.findLatestRecoveringByWalletId(
           owner["wallet_id"]
         );

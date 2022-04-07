@@ -177,8 +177,8 @@ const findLatestRecoveringByWalletId = function (wallet_id) {
     where: {
       wallet_id,
       cause: StatusTransitionCause.GoingToRecover,
-      from: WalletStatus.Active,
-      to: WalletStatus.Active,
+      // from: WalletStatus.Active,
+      // to: WalletStatus.Active,
     },
     order: [["updatedAt", "DESC"]],
   });
