@@ -715,6 +715,10 @@ module.exports = function (app) {
           if (new_owner_address) {
             wallet["new_address"] = new_owner_address;
           }
+        } else {
+          consola.error(
+            `Wallet (${wallet["wallet_id"]}) Recovering status without record?!`
+          );
         }
       }
 
@@ -835,6 +839,10 @@ module.exports = function (app) {
           } else {
             signers[i]["owner_address"] = owner_address;
           }
+        } else {
+          consola.error(
+            `Wallet (${owner["wallet_id"]}) Recovering status without record?!`
+          );
         }
       } else {
         signers[i]["owner_address"] = owner_address;
