@@ -526,15 +526,15 @@ module.exports = function (app) {
           case db_wallet.WalletStatus.Creating:
             cause = db_wh.StatusTransitionCause.Create;
             break;
-          case db_wallet.WalletStatus.Recovering:
-            cause = db_wh.StatusTransitionCause.GoingToRecover;
-            break;
           case db_wallet.WalletStatus.Active:
             cause = db_wh.StatusTransitionCause.ExecuteRecover;
             break;
           default:
             cause = db_wh.StatusTransitionCause.None;
-            consola.error("Missing cause with status: ", status);
+            consola.info(
+              "Does not record cause: ",
+              db_wh.StatusTransitionCause[status]
+            );
             break;
         }
 
@@ -542,13 +542,15 @@ module.exports = function (app) {
           `Add wallet history: id (${wallet_id}), txid (${txid}), wallet_status (${db_wallet.WalletStatus[wallet_status]}), status (${db_wallet.WalletStatus[status]}), cause (${db_wh.StatusTransitionCause[cause]})`
         );
 
-        await db_wh.add(
-          wallet_id,
-          wallet_status,
-          status,
-          txid != undefined ? txid : "", // txid may be undefined
-          cause
-        );
+        if (cause != db_wh.StatusTransitionCause.None) {
+          await db_wh.add(
+            wallet_id,
+            wallet_status,
+            status,
+            txid != undefined ? txid : "", // txid may be undefined
+            cause
+          );
+        }
       }
     }
 
@@ -828,10 +830,12 @@ module.exports = function (app) {
         const recovering = await db_wh.findLatestRecoveringByWalletId(
           owner["wallet_id"]
         );
+        consola.log("Recovering: ", recovering);
 
         // If recovering exist, return it
         if (recovering !== null) {
           const new_owner_address = recovering["dataValues"]["data"];
+          consola.log("New owner address", new_owner_address);
           if (new_owner_address) {
             signers[i]["old_owner_address"] = owner_address;
             consola.info("Recovering record existed: ", new_owner_address);
