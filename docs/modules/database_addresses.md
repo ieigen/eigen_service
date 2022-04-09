@@ -17,7 +17,7 @@ Addresses model definition
 
 ### add
 
-▸ `Const` **add**(`user_id`, `network_id`, `user_address`, `cipher_key`): `Promise`<`Model`<`any`, `any`\>\>
+▸ **add**(`user_id`, `network_id`, `user_address`, `cipher_key`): `Promise`<`Model`<`any`, `any`\>\>
 
 #### Parameters
 
@@ -34,13 +34,13 @@ Addresses model definition
 
 #### Defined in
 
-[model/database_address.ts:80](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_address.ts#L80)
+[model/database_address.ts:80](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_address.ts#L80)
 
 ___
 
 ### findOne
 
-▸ `Const` **findOne**(`filter_dict`): `Promise`<`Model`<`any`, `any`\>\>
+▸ **findOne**(`filter_dict`): `Promise`<`Model`<`any`, `any`\>\>
 
 #### Parameters
 
@@ -54,13 +54,13 @@ ___
 
 #### Defined in
 
-[model/database_address.ts:89](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_address.ts#L89)
+[model/database_address.ts:89](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_address.ts#L89)
 
 ___
 
 ### findAll
 
-▸ `Const` **findAll**(`dict`): `Promise`<`Model`<`any`, `any`\>[]\>
+▸ **findAll**(`dict`): `Promise`<`Model`<`any`, `any`\>[]\>
 
 #### Parameters
 
@@ -74,13 +74,13 @@ ___
 
 #### Defined in
 
-[model/database_address.ts:92](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_address.ts#L92)
+[model/database_address.ts:92](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_address.ts#L92)
 
 ___
 
 ### updateOrAdd
 
-▸ `Const` **updateOrAdd**(`user_id`, `network_id`, `user_address`, `cipher_key`): `void`
+▸ **updateOrAdd**(`user_id`, `network_id`, `user_address`, `cipher_key`): `void`
 
 #### Parameters
 
@@ -97,4 +97,4 @@ ___
 
 #### Defined in
 
-[model/database_address.ts:96](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_address.ts#L96)
+[model/database_address.ts:96](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_address.ts#L96)

@@ -18,7 +18,7 @@ Allowance management model definition
 
 ### add
 
-▸ `Const` **add**(`network_id`, `token_address`, `user_address`, `swap_address`, `allowance`): `Promise`<`Model`<`any`, `any`\>\>
+▸ **add**(`network_id`, `token_address`, `user_address`, `swap_address`, `allowance`): `Promise`<`Model`<`any`, `any`\>\>
 
 #### Parameters
 
@@ -36,13 +36,13 @@ Allowance management model definition
 
 #### Defined in
 
-[token/allowance.ts:83](https://github.com/ieigen/eigen_service/blob/760a065/src/token/allowance.ts#L83)
+[token/allowance.ts:83](https://github.com/ieigen/eigen_service/blob/b52d034/src/token/allowance.ts#L83)
 
 ___
 
 ### updateOrAdd
 
-▸ `Const` **updateOrAdd**(`network_id`, `token_address`, `user_address`, `swap_address`, `allowance`): `void`
+▸ **updateOrAdd**(`network_id`, `token_address`, `user_address`, `swap_address`, `allowance`): `void`
 
 #### Parameters
 
@@ -60,13 +60,13 @@ ___
 
 #### Defined in
 
-[token/allowance.ts:99](https://github.com/ieigen/eigen_service/blob/760a065/src/token/allowance.ts#L99)
+[token/allowance.ts:99](https://github.com/ieigen/eigen_service/blob/b52d034/src/token/allowance.ts#L99)
 
 ___
 
 ### get
 
-▸ `Const` **get**(`network_id`, `token_address`, `user_address`, `swap_address`): `Promise`<`Model`<`any`, `any`\>\>
+▸ **get**(`network_id`, `token_address`, `user_address`, `swap_address`): `Promise`<`Model`<`any`, `any`\>\>
 
 #### Parameters
 
@@ -83,13 +83,13 @@ ___
 
 #### Defined in
 
-[token/allowance.ts:140](https://github.com/ieigen/eigen_service/blob/760a065/src/token/allowance.ts#L140)
+[token/allowance.ts:140](https://github.com/ieigen/eigen_service/blob/b52d034/src/token/allowance.ts#L140)
 
 ___
 
 ### findAllAllowancesGreaterThanZero
 
-▸ `Const` **findAllAllowancesGreaterThanZero**(`network_id`, `user_address`): `Promise`<`Model`<`any`, `any`\>[]\>
+▸ **findAllAllowancesGreaterThanZero**(`network_id`, `user_address`): `Promise`<`Model`<`any`, `any`\>[]\>
 
 #### Parameters
 
@@ -104,13 +104,13 @@ ___
 
 #### Defined in
 
-[token/allowance.ts:146](https://github.com/ieigen/eigen_service/blob/760a065/src/token/allowance.ts#L146)
+[token/allowance.ts:146](https://github.com/ieigen/eigen_service/blob/b52d034/src/token/allowance.ts#L146)
 
 ___
 
 ### get\_allowance
 
-▸ `Const` **get_allowance**(`network`, `user_address`, `token_address`, `swap_address`): `void`
+▸ **get_allowance**(`network`, `user_address`, `token_address`, `swap_address`): `void`
 
 #### Parameters
 
@@ -127,4 +127,4 @@ ___
 
 #### Defined in
 
-[token/allowance.ts:170](https://github.com/ieigen/eigen_service/blob/760a065/src/token/allowance.ts#L170)
+[token/allowance.ts:170](https://github.com/ieigen/eigen_service/blob/b52d034/src/token/allowance.ts#L170)

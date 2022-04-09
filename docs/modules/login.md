@@ -10,6 +10,7 @@ Provide metamask related login processes
 
 - [getAuthMetamask](login.md#getauthmetamask)
 - [postAuthMetamask](login.md#postauthmetamask)
+- [postUserAssociation](login.md#postuserassociation)
 
 ## Functions
 
@@ -32,13 +33,13 @@ Get a nonce in order to login with metamask
 
 #### Defined in
 
-[login/metamask.ts:38](https://github.com/ieigen/eigen_service/blob/760a065/src/login/metamask.ts#L38)
+[login/metamask.ts:39](https://github.com/ieigen/eigen_service/blob/b52d034/src/login/metamask.ts#L39)
 
 ___
 
 ### postAuthMetamask
 
-▸ **postAuthMetamask**(`req`, `res`): `Promise`<`void`\>
+▸ **postAuthMetamask**(`req`, `res`): `Promise`<`any`\>
 
 Verify the signature with the previous nonce, if success, response with
 a UID and JWT
@@ -52,8 +53,31 @@ a UID and JWT
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`<`any`\>
 
 #### Defined in
 
-[login/metamask.ts:69](https://github.com/ieigen/eigen_service/blob/760a065/src/login/metamask.ts#L69)
+[login/metamask.ts:70](https://github.com/ieigen/eigen_service/blob/b52d034/src/login/metamask.ts#L70)
+
+___
+
+### postUserAssociation
+
+▸ **postUserAssociation**(`req`, `res`): `Promise`<`any`\>
+
+Association between fake_email and Google email
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `req` | `any` | the request information, including these fields:            1. fake_email            2. email |
+| `res` | `any` | the response, return true if success |
+
+#### Returns
+
+`Promise`<`any`\>
+
+#### Defined in
+
+[login/metamask.ts:202](https://github.com/ieigen/eigen_service/blob/b52d034/src/login/metamask.ts#L202)

@@ -29,17 +29,17 @@ Multi signature model definition
 
 ### signHistoryDB
 
-• **signHistoryDB**: `ModelCtor`<`Model`<`any`, `any`\>\>
+• `Const` **signHistoryDB**: `ModelCtor`<`Model`<`any`, `any`\>\>
 
 #### Defined in
 
-[model/database_multisig.ts:74](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L74)
+[model/database_multisig.ts:74](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_multisig.ts#L74)
 
 ## Functions
 
 ### addMultisigMeta
 
-▸ `Const` **addMultisigMeta**(`network_id`, `user_id`, `wallet_address`, `to`, `value`, `data`, `operation`): `Promise`<`Model`<`any`, `any`\>\>
+▸ **addMultisigMeta**(`network_id`, `user_id`, `wallet_address`, `to`, `value`, `data`, `operation`): `Promise`<`Model`<`any`, `any`\>\>
 
 #### Parameters
 
@@ -59,13 +59,13 @@ Multi signature model definition
 
 #### Defined in
 
-[model/database_multisig.ts:140](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L140)
+[model/database_multisig.ts:140](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_multisig.ts#L140)
 
 ___
 
 ### findMultisigMetaByConds
 
-▸ `Const` **findMultisigMetaByConds**(`conds`): `Promise`<`Model`<`any`, `any`\>\>
+▸ **findMultisigMetaByConds**(`conds`): `Promise`<`Model`<`any`, `any`\>\>
 
 #### Parameters
 
@@ -79,13 +79,13 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:174](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L174)
+[model/database_multisig.ts:174](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_multisig.ts#L174)
 
 ___
 
 ### updateMultisigMeta
 
-▸ `Const` **updateMultisigMeta**(`id`, `txid`): `Promise`<`any`\>
+▸ **updateMultisigMeta**(`id`, `txid`): `Promise`<`any`\>
 
 #### Parameters
 
@@ -100,13 +100,13 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:178](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L178)
+[model/database_multisig.ts:178](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_multisig.ts#L178)
 
 ___
 
 ### addSignMessage
 
-▸ `Const` **addSignMessage**(`mtxid`, `signer_address`, `sign_message`, `status`, `operation`): `Promise`<`Model`<`any`, `any`\>\>
+▸ **addSignMessage**(`mtxid`, `signer_address`, `sign_message`, `status`, `operation`): `Promise`<`Model`<`any`, `any`\>\>
 
 #### Parameters
 
@@ -124,13 +124,13 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:207](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L207)
+[model/database_multisig.ts:207](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_multisig.ts#L207)
 
 ___
 
 ### findSignHistoryByMtxid
 
-▸ `Const` **findSignHistoryByMtxid**(`mtxid`): `Promise`<`Model`<`any`, `any`\>[]\>
+▸ **findSignHistoryByMtxid**(`mtxid`): `Promise`<`Model`<`any`, `any`\>[]\>
 
 #### Parameters
 
@@ -144,13 +144,13 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:223](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L223)
+[model/database_multisig.ts:223](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_multisig.ts#L223)
 
 ___
 
 ### findLatestRecoveryMtxidByWalletAddress
 
-▸ `Const` **findLatestRecoveryMtxidByWalletAddress**(`wallet_address`): `Promise`<`Model`<`any`, `any`\>\>
+▸ **findLatestRecoveryMtxidByWalletAddress**(`wallet_address`): `Promise`<`Model`<`any`, `any`\>\>
 
 #### Parameters
 
@@ -164,13 +164,13 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:227](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L227)
+[model/database_multisig.ts:227](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_multisig.ts#L227)
 
 ___
 
 ### getRecoverySignMessages
 
-▸ `Const` **getRecoverySignMessages**(`mtxid`): `Promise`<`Model`<`any`, `any`\>[]\>
+▸ **getRecoverySignMessages**(`mtxid`): `Promise`<`Model`<`any`, `any`\>[]\>
 
 #### Parameters
 
@@ -184,7 +184,7 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:235](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L235)
+[model/database_multisig.ts:235](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_multisig.ts#L235)
 
 ___
 
@@ -205,4 +205,4 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:244](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_multisig.ts#L244)
+[model/database_multisig.ts:244](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_multisig.ts#L244)

@@ -35,7 +35,7 @@
 
 #### Defined in
 
-[session.ts:17](https://github.com/ieigen/eigen_service/blob/760a065/src/session.ts#L17)
+[session.ts:17](https://github.com/ieigen/eigen_service/blob/b52d034/src/session.ts#L17)
 
 ## Properties
 
@@ -45,7 +45,7 @@
 
 #### Defined in
 
-[session.ts:14](https://github.com/ieigen/eigen_service/blob/760a065/src/session.ts#L14)
+[session.ts:14](https://github.com/ieigen/eigen_service/blob/b52d034/src/session.ts#L14)
 
 ___
 
@@ -55,7 +55,7 @@ ___
 
 #### Defined in
 
-[session.ts:15](https://github.com/ieigen/eigen_service/blob/760a065/src/session.ts#L15)
+[session.ts:15](https://github.com/ieigen/eigen_service/blob/b52d034/src/session.ts#L15)
 
 ___
 
@@ -65,7 +65,7 @@ ___
 
 #### Defined in
 
-[session.ts:16](https://github.com/ieigen/eigen_service/blob/760a065/src/session.ts#L16)
+[session.ts:16](https://github.com/ieigen/eigen_service/blob/b52d034/src/session.ts#L16)
 
 ## Methods
 
@@ -79,4 +79,4 @@ ___
 
 #### Defined in
 
-[session.ts:23](https://github.com/ieigen/eigen_service/blob/760a065/src/session.ts#L23)
+[session.ts:23](https://github.com/ieigen/eigen_service/blob/b52d034/src/session.ts#L23)

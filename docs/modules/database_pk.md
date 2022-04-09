@@ -17,7 +17,7 @@ Public key model definition
 
 ### add
 
-▸ `Const` **add**(`digest`, `pk`): `Promise`<`Model`<`any`, `any`\>\>
+▸ **add**(`digest`, `pk`): `Promise`<`Model`<`any`, `any`\>\>
 
 #### Parameters
 
@@ -32,13 +32,13 @@ Public key model definition
 
 #### Defined in
 
-[model/database_pk.ts:50](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_pk.ts#L50)
+[model/database_pk.ts:50](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_pk.ts#L50)
 
 ___
 
 ### findByDigest
 
-▸ `Const` **findByDigest**(`dig`): `Promise`<`Model`<`any`, `any`\>\>
+▸ **findByDigest**(`dig`): `Promise`<`Model`<`any`, `any`\>\>
 
 #### Parameters
 
@@ -52,13 +52,13 @@ ___
 
 #### Defined in
 
-[model/database_pk.ts:57](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_pk.ts#L57)
+[model/database_pk.ts:57](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_pk.ts#L57)
 
 ___
 
 ### findAll
 
-▸ `Const` **findAll**(): `Promise`<`Model`<`any`, `any`\>[]\>
+▸ **findAll**(): `Promise`<`Model`<`any`, `any`\>[]\>
 
 #### Returns
 
@@ -66,13 +66,13 @@ ___
 
 #### Defined in
 
-[model/database_pk.ts:61](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_pk.ts#L61)
+[model/database_pk.ts:61](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_pk.ts#L61)
 
 ___
 
 ### updateOrAdd
 
-▸ `Const` **updateOrAdd**(`old_dig`, `new_dig`, `new_pk`): `void`
+▸ **updateOrAdd**(`old_dig`, `new_dig`, `new_pk`): `void`
 
 #### Parameters
 
@@ -88,4 +88,4 @@ ___
 
 #### Defined in
 
-[model/database_pk.ts:65](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_pk.ts#L65)
+[model/database_pk.ts:65](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_pk.ts#L65)

@@ -17,7 +17,7 @@ Recovery model definition
 
 ### add
 
-▸ `Const` **add**(`user_id`, `name`, `desc`, `total_shared_num`, `threshold`, `friends`): `Promise`<`Model`<`any`, `any`\>\>
+▸ **add**(`user_id`, `name`, `desc`, `total_shared_num`, `threshold`, `friends`): `Promise`<`Model`<`any`, `any`\>\>
 
 #### Parameters
 
@@ -36,13 +36,13 @@ Recovery model definition
 
 #### Defined in
 
-[model/database_recovery.ts:58](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_recovery.ts#L58)
+[model/database_recovery.ts:58](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_recovery.ts#L58)
 
 ___
 
 ### findByUserID
 
-▸ `Const` **findByUserID**(`user_id`): `Promise`<`Model`<`any`, `any`\>[]\>
+▸ **findByUserID**(`user_id`): `Promise`<`Model`<`any`, `any`\>[]\>
 
 #### Parameters
 
@@ -56,13 +56,13 @@ ___
 
 #### Defined in
 
-[model/database_recovery.ts:76](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_recovery.ts#L76)
+[model/database_recovery.ts:76](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_recovery.ts#L76)
 
 ___
 
 ### remove
 
-▸ `Const` **remove**(`id`): `Promise`<`number`\>
+▸ **remove**(`id`): `Promise`<`number`\>
 
 #### Parameters
 
@@ -76,13 +76,13 @@ ___
 
 #### Defined in
 
-[model/database_recovery.ts:80](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_recovery.ts#L80)
+[model/database_recovery.ts:80](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_recovery.ts#L80)
 
 ___
 
 ### updateOrAdd
 
-▸ `Const` **updateOrAdd**(`user_id`, `name`, `desc`, `total_shared_num`, `threshold`, `friends`): `void`
+▸ **updateOrAdd**(`user_id`, `name`, `desc`, `total_shared_num`, `threshold`, `friends`): `void`
 
 #### Parameters
 
@@ -101,4 +101,4 @@ ___
 
 #### Defined in
 
-[model/database_recovery.ts:84](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_recovery.ts#L84)
+[model/database_recovery.ts:84](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_recovery.ts#L84)

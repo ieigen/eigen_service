@@ -60,7 +60,7 @@ Stores public key
 
 #### Defined in
 
-[service.ts:40](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L40)
+[service.ts:40](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L40)
 
 ___
 
@@ -81,7 +81,7 @@ ___
 
 #### Defined in
 
-[service.ts:44](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L44)
+[service.ts:44](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L44)
 
 ___
 
@@ -102,7 +102,7 @@ ___
 
 #### Defined in
 
-[service.ts:59](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L59)
+[service.ts:59](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L59)
 
 ___
 
@@ -123,7 +123,7 @@ ___
 
 #### Defined in
 
-[service.ts:72](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L72)
+[service.ts:72](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L72)
 
 ___
 
@@ -144,7 +144,7 @@ ___
 
 #### Defined in
 
-[service.ts:89](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L89)
+[service.ts:89](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L89)
 
 ___
 
@@ -165,7 +165,7 @@ ___
 
 #### Defined in
 
-[service.ts:109](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L109)
+[service.ts:109](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L109)
 
 ___
 
@@ -186,7 +186,7 @@ ___
 
 #### Defined in
 
-[service.ts:128](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L128)
+[service.ts:128](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L128)
 
 ___
 
@@ -207,7 +207,7 @@ ___
 
 #### Defined in
 
-[service.ts:163](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L163)
+[service.ts:163](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L163)
 
 ___
 
@@ -228,7 +228,7 @@ ___
 
 #### Defined in
 
-[service.ts:277](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L277)
+[service.ts:277](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L277)
 
 ___
 
@@ -249,7 +249,7 @@ ___
 
 #### Defined in
 
-[service.ts:307](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L307)
+[service.ts:307](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L307)
 
 ___
 
@@ -270,7 +270,7 @@ ___
 
 #### Defined in
 
-[service.ts:363](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L363)
+[service.ts:363](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L363)
 
 ___
 
@@ -291,7 +291,7 @@ ___
 
 #### Defined in
 
-[service.ts:376](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L376)
+[service.ts:376](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L376)
 
 ___
 
@@ -312,7 +312,7 @@ ___
 
 #### Defined in
 
-[service.ts:390](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L390)
+[service.ts:390](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L390)
 
 ___
 
@@ -333,7 +333,7 @@ ___
 
 #### Defined in
 
-[service.ts:398](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L398)
+[service.ts:398](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L398)
 
 ___
 
@@ -354,7 +354,7 @@ ___
 
 #### Defined in
 
-[service.ts:419](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L419)
+[service.ts:419](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L419)
 
 ___
 
@@ -375,7 +375,7 @@ ___
 
 #### Defined in
 
-[service.ts:434](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L434)
+[service.ts:434](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L434)
 
 ___
 
@@ -396,7 +396,7 @@ ___
 
 #### Defined in
 
-[service.ts:511](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L511)
+[service.ts:511](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L511)
 
 ___
 
@@ -417,7 +417,7 @@ ___
 
 #### Defined in
 
-[service.ts:604](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L604)
+[service.ts:604](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L604)
 
 ___
 
@@ -438,7 +438,7 @@ ___
 
 #### Defined in
 
-[service.ts:630](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L630)
+[service.ts:630](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L630)
 
 ___
 
@@ -459,7 +459,7 @@ ___
 
 #### Defined in
 
-[service.ts:704](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L704)
+[service.ts:704](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L704)
 
 ___
 
@@ -480,7 +480,7 @@ ___
 
 #### Defined in
 
-[service.ts:811](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L811)
+[service.ts:811](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L811)
 
 ___
 
@@ -501,7 +501,7 @@ ___
 
 #### Defined in
 
-[service.ts:888](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L888)
+[service.ts:888](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L888)
 
 ___
 
@@ -522,7 +522,7 @@ ___
 
 #### Defined in
 
-[service.ts:920](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L920)
+[service.ts:920](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L920)
 
 ___
 
@@ -543,7 +543,7 @@ ___
 
 #### Defined in
 
-[service.ts:957](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L957)
+[service.ts:957](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L957)
 
 ___
 
@@ -564,7 +564,7 @@ ___
 
 #### Defined in
 
-[service.ts:982](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L982)
+[service.ts:982](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L982)
 
 ___
 
@@ -585,7 +585,7 @@ ___
 
 #### Defined in
 
-[service.ts:1021](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L1021)
+[service.ts:1021](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L1021)
 
 ___
 
@@ -606,7 +606,7 @@ ___
 
 #### Defined in
 
-[service.ts:1068](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L1068)
+[service.ts:1068](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L1068)
 
 ___
 
@@ -627,7 +627,7 @@ ___
 
 #### Defined in
 
-[service.ts:1153](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L1153)
+[service.ts:1153](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L1153)
 
 ___
 
@@ -648,7 +648,7 @@ ___
 
 #### Defined in
 
-[service.ts:1183](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L1183)
+[service.ts:1183](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L1183)
 
 ___
 
@@ -669,4 +669,4 @@ ___
 
 #### Defined in
 
-[service.ts:1230](https://github.com/ieigen/eigen_service/blob/760a065/src/service.ts#L1230)
+[service.ts:1230](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L1230)

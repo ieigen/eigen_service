@@ -16,7 +16,7 @@ The log utils
 
 ### configure
 
-▸ `Const` **configure**(): `void`
+▸ **configure**(): `void`
 
 #### Returns
 
@@ -24,13 +24,13 @@ The log utils
 
 #### Defined in
 
-[log.ts:11](https://github.com/ieigen/eigen_service/blob/760a065/src/log.ts#L11)
+[log.ts:11](https://github.com/ieigen/eigen_service/blob/b52d034/src/log.ts#L11)
 
 ___
 
 ### logger
 
-▸ `Const` **logger**(`name`): `Logger`
+▸ **logger**(`name`): `Logger`
 
 #### Parameters
 
@@ -44,13 +44,13 @@ ___
 
 #### Defined in
 
-[log.ts:15](https://github.com/ieigen/eigen_service/blob/760a065/src/log.ts#L15)
+[log.ts:15](https://github.com/ieigen/eigen_service/blob/b52d034/src/log.ts#L15)
 
 ___
 
 ### useLog
 
-▸ `Const` **useLog**(): `any`
+▸ **useLog**(): `any`
 
 #### Returns
 
@@ -58,4 +58,4 @@ ___
 
 #### Defined in
 
-[log.ts:21](https://github.com/ieigen/eigen_service/blob/760a065/src/log.ts#L21)
+[log.ts:21](https://github.com/ieigen/eigen_service/blob/b52d034/src/log.ts#L21)
