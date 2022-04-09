@@ -26,6 +26,9 @@ const TRANSACTION_ADD_SIGNER_BY_OWNER_MAP = new Map();
 const TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP = new Map();
 const TRANSACTION_DELETE_SIGNER_MAP = new Map();
 
+// Records a temporay wallet address
+const WALLET_ADDRESS_MAP = new Map();
+
 function addWalletStatusSubscriber(txid, wallet_id) {
   consola.log("Add wallet status subscriber: ", txid, wallet_id);
   // TRANSACTION_WALLET_MAP[txid] = wallet;
@@ -107,6 +110,14 @@ function addWalletStatusSubscriber(txid, wallet_id) {
           }
           return true;
         } else {
+          if (wallet_status == db_wallet.WalletStatus.Creating) {
+            // Remove tempory records about wallet_address
+            consola.info(
+              "Remove tempory wallt records (key): ",
+              wallet["dataValues"]["address"]
+            );
+            WALLET_ADDRESS_MAP.delete(wallet["dataValues"]["address"]);
+          }
           return wallet
             .update({
               wallet_status: next_status_success,
@@ -1286,5 +1297,38 @@ module.exports = function (app) {
       res.json(util.Succ([addresses]));
       return;
     }
+  });
+
+  app.get("/user/wallet_address", async function (req, res) {
+    const user_address = req.query.user_address;
+    if (!util.has_value(user_address)) {
+      consola.error("user_address is empty");
+      return res.json(util.Err(1, "user_address missing"));
+    }
+
+    const result = WALLET_ADDRESS_MAP.get(user_address);
+
+    res.json(util.Succ(result));
+  });
+
+  app.post("/user/wallet_address", async function (req, res) {
+    const user_address = req.body.user_address;
+    const wallet_address = req.body.wallet_address;
+    if (!util.has_value(user_address) || !util.has_value(wallet_address)) {
+      consola.error("user_address or wallet_address missing");
+      return res.json(util.Err(1, "user_address or wallet_address missing"));
+    }
+
+    const name = req.body.name;
+    const txid = req.body.txid;
+    const result = {
+      wallet_address,
+      name,
+      txid,
+    };
+
+    WALLET_ADDRESS_MAP.set(user_address, result);
+
+    res.json(util.Succ(result));
   });
 };
