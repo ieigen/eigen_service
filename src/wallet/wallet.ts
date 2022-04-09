@@ -772,13 +772,19 @@ module.exports = function (app) {
         );
 
         if (
-          latest["dataValues"]["cause"] !==
-            db_wh.StatusTransitionCause.TransactionSuccess &&
-          latest["dataValues"]["cause"] !==
+          latest["dataValues"]["cause"] ==
+            db_wh.StatusTransitionCause.TransactionSuccess ||
+          latest["dataValues"]["cause"] ==
             db_wh.StatusTransitionCause.TransactionFail
         ) {
           consola.info(
-            `Only TransactionSuccess or TransactionFail will return txid: ${latest["dataValues"]["txid"]}`
+            `TransactionSuccess and TransactionFail will not return txid: ${latest["dataValues"]["txid"]}`
+          );
+        } else {
+          consola.info(
+            `${
+              db_wh.StatusTransitionCause[latest["dataValues"]["cause"]]
+            } will return txid: ${latest["dataValues"]["txid"]}`
           );
           wallet["txid"] = latest["dataValues"]["txid"];
         }
