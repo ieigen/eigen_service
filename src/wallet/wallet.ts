@@ -1160,6 +1160,7 @@ module.exports = function (app) {
         } else {
           signer["name"] = user["name"];
           signer["picture"] = user["picture"];
+          signer["email"] = user["email"];
         }
       }
     }
