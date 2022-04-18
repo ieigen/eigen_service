@@ -32,3 +32,5 @@ jobs:
         - run: yarn install --frozen-lockfile
         - name: Lint Check
           run: yarn lint
+        - name: Lint commit
+          run: yarn run commitlint --from HEAD~${{ github.event.pull_request.commits }} --to HEAD
