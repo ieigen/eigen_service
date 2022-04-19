@@ -118,3 +118,6 @@ yarn.lock
 package-lock.json
 
 docker-compose.yml
+
+# husky directory should be ignored
+.husky
