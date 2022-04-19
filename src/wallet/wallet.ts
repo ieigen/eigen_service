@@ -883,6 +883,30 @@ module.exports = function (app) {
       consola.log("Latest recovery mtxid: ", latest_mtxid);
 
       signers[i]["mtxid"] = latest_mtxid ? latest_mtxid["id"] : null;
+
+      // Return owner's name, picture and email
+
+      const user_address = await db_address.findOne({
+        user_address: owner_address,
+      });
+
+      if (!user_address) {
+        consola.error("User address is not existed in database: ", address);
+      } else {
+        consola.info("Found user address record: ", user_address);
+        const user_id = user_address["user_id"];
+
+        consola.log("Searching user_id: ", user_id);
+
+        const user = await db_user.findByID(user_id);
+        if (!user) {
+          consola.error("User id can not be found: ", user_id);
+        } else {
+          signers[i]["owner_name"] = user["name"];
+          signers[i]["owner_picture"] = user["picture"];
+          signers[i]["owner_email"] = user["email"];
+        }
+      }
     }
 
     res.json(util.Succ(signers));
