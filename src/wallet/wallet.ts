@@ -789,6 +789,29 @@ module.exports = function (app) {
           wallet["txid"] = latest["dataValues"]["txid"];
         }
       }
+
+      // Return owner's name, picture and email
+      const user_address = await db_address.findOne({
+        user_address: wallet["address"],
+      });
+
+      if (!user_address) {
+        consola.error("User address is not existed in database: ", address);
+      } else {
+        consola.info("Found user address record: ", user_address);
+        const user_id = user_address["user_id"];
+
+        consola.log("Searching user_id: ", user_id);
+
+        const user = await db_user.findByID(user_id);
+        if (!user) {
+          consola.error("User id can not be found: ", user_id);
+        } else {
+          wallet["owner_name"] = user["name"];
+          wallet["owner_picture"] = user["picture"];
+          wallet["owner_email"] = user["email"];
+        }
+      }
     }
 
     res.json(util.Succ(wallets));
