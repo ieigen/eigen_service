@@ -34,7 +34,7 @@ Provides ecies related utility functions
 
 #### Defined in
 
-[crypto/ecies.ts:23](https://github.com/ieigen/eigen_service/blob/760a065/src/crypto/ecies.ts#L23)
+[crypto/ecies.ts:23](https://github.com/ieigen/eigen_service/blob/b52d034/src/crypto/ecies.ts#L23)
 
 ___
 
@@ -56,13 +56,13 @@ ___
 
 #### Defined in
 
-[crypto/ecies.ts:31](https://github.com/ieigen/eigen_service/blob/760a065/src/crypto/ecies.ts#L31)
+[crypto/ecies.ts:31](https://github.com/ieigen/eigen_service/blob/b52d034/src/crypto/ecies.ts#L31)
 
 ___
 
 ### encrypt
 
-▸ `Const` **encrypt**(`publicKey`, `message`, `options`): `any`
+▸ **encrypt**(`publicKey`, `message`, `options`): `any`
 
 #### Parameters
 
@@ -78,13 +78,13 @@ ___
 
 #### Defined in
 
-[crypto/ecies.ts:97](https://github.com/ieigen/eigen_service/blob/760a065/src/crypto/ecies.ts#L97)
+[crypto/ecies.ts:97](https://github.com/ieigen/eigen_service/blob/b52d034/src/crypto/ecies.ts#L97)
 
 ___
 
 ### decrypt
 
-▸ `Const` **decrypt**(`keyPair`, `message`, `options`): `string`
+▸ **decrypt**(`keyPair`, `message`, `options`): `string`
 
 #### Parameters
 
@@ -100,4 +100,4 @@ ___
 
 #### Defined in
 
-[crypto/ecies.ts:145](https://github.com/ieigen/eigen_service/blob/760a065/src/crypto/ecies.ts#L145)
+[crypto/ecies.ts:145](https://github.com/ieigen/eigen_service/blob/b52d034/src/crypto/ecies.ts#L145)

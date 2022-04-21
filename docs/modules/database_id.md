@@ -19,6 +19,7 @@ User information model definition
 - [findByEmail](database_id.md#findbyemail)
 - [updateOrAdd](database_id.md#updateoradd)
 - [updateSecret](database_id.md#updatesecret)
+- [updatePasswordHash](database_id.md#updatepasswordhash)
 - [findUsersInformation](database_id.md#findusersinformation)
 - [findAllUserIDs](database_id.md#findalluserids)
 
@@ -26,7 +27,7 @@ User information model definition
 
 ### add
 
-▸ `Const` **add**(`user_info`): `Promise`<`Model`<`any`, `any`\>\>
+▸ **add**(`user_info`): `Promise`<`Model`<`any`, `any`\>\>
 
 #### Parameters
 
@@ -40,13 +41,13 @@ User information model definition
 
 #### Defined in
 
-[model/database_id.ts:81](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_id.ts#L81)
+[model/database_id.ts:86](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_id.ts#L86)
 
 ___
 
 ### findAll
 
-▸ `Const` **findAll**(): `Promise`<`Model`<`any`, `any`\>[]\>
+▸ **findAll**(): `Promise`<`Model`<`any`, `any`\>[]\>
 
 #### Returns
 
@@ -54,13 +55,13 @@ ___
 
 #### Defined in
 
-[model/database_id.ts:85](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_id.ts#L85)
+[model/database_id.ts:90](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_id.ts#L90)
 
 ___
 
 ### findByID
 
-▸ `Const` **findByID**(`user_id`): `Promise`<`any`\>
+▸ **findByID**(`user_id`): `Promise`<`any`\>
 
 #### Parameters
 
@@ -74,13 +75,13 @@ ___
 
 #### Defined in
 
-[model/database_id.ts:89](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_id.ts#L89)
+[model/database_id.ts:94](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_id.ts#L94)
 
 ___
 
 ### findByOpenID
 
-▸ `Const` **findByOpenID**(`id`, `kind`): `Promise`<`any`\>
+▸ **findByOpenID**(`id`, `kind`): `Promise`<`any`\>
 
 #### Parameters
 
@@ -95,13 +96,13 @@ ___
 
 #### Defined in
 
-[model/database_id.ts:98](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_id.ts#L98)
+[model/database_id.ts:103](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_id.ts#L103)
 
 ___
 
 ### findByEmail
 
-▸ `Const` **findByEmail**(`email`): `Promise`<`any`\>
+▸ **findByEmail**(`email`): `Promise`<`any`\>
 
 #### Parameters
 
@@ -115,13 +116,13 @@ ___
 
 #### Defined in
 
-[model/database_id.ts:107](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_id.ts#L107)
+[model/database_id.ts:112](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_id.ts#L112)
 
 ___
 
 ### updateOrAdd
 
-▸ `Const` **updateOrAdd**(`user_id`, `new_info`): `Promise`<`any`\>
+▸ **updateOrAdd**(`user_id`, `new_info`): `Promise`<`any`\>
 
 #### Parameters
 
@@ -136,13 +137,13 @@ ___
 
 #### Defined in
 
-[model/database_id.ts:116](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_id.ts#L116)
+[model/database_id.ts:121](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_id.ts#L121)
 
 ___
 
 ### updateSecret
 
-▸ `Const` **updateSecret**(`user_id`, `secret`): `Promise`<`any`\>
+▸ **updateSecret**(`user_id`, `secret`): `Promise`<`any`\>
 
 #### Parameters
 
@@ -157,13 +158,34 @@ ___
 
 #### Defined in
 
-[model/database_id.ts:140](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_id.ts#L140)
+[model/database_id.ts:145](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_id.ts#L145)
+
+___
+
+### updatePasswordHash
+
+▸ **updatePasswordHash**(`user_id`, `password_hash`): `Promise`<`any`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `user_id` | `any` |
+| `password_hash` | `any` |
+
+#### Returns
+
+`Promise`<`any`\>
+
+#### Defined in
+
+[model/database_id.ts:166](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_id.ts#L166)
 
 ___
 
 ### findUsersInformation
 
-▸ `Const` **findUsersInformation**(`ids`): `Promise`<`Model`<`any`, `any`\>[]\>
+▸ **findUsersInformation**(`ids`): `Promise`<`Model`<`any`, `any`\>[]\>
 
 #### Parameters
 
@@ -177,13 +199,13 @@ ___
 
 #### Defined in
 
-[model/database_id.ts:161](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_id.ts#L161)
+[model/database_id.ts:187](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_id.ts#L187)
 
 ___
 
 ### findAllUserIDs
 
-▸ `Const` **findAllUserIDs**(): `Promise`<`Set`<`unknown`\>\>
+▸ **findAllUserIDs**(): `Promise`<`Set`<`unknown`\>\>
 
 #### Returns
 
@@ -191,4 +213,4 @@ ___
 
 #### Defined in
 
-[model/database_id.ts:173](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_id.ts#L173)
+[model/database_id.ts:199](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_id.ts#L199)

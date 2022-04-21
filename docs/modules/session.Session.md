@@ -33,7 +33,7 @@
 
 #### Defined in
 
-[session.ts:37](https://github.com/ieigen/eigen_service/blob/760a065/src/session.ts#L37)
+[session.ts:37](https://github.com/ieigen/eigen_service/blob/b52d034/src/session.ts#L37)
 
 ___
 
@@ -54,4 +54,4 @@ ___
 
 #### Defined in
 
-[session.ts:47](https://github.com/ieigen/eigen_service/blob/760a065/src/session.ts#L47)
+[session.ts:47](https://github.com/ieigen/eigen_service/blob/b52d034/src/session.ts#L47)

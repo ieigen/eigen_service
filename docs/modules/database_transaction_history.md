@@ -36,67 +36,67 @@ Transaction history model definition
 
 ### TX\_TYPE\_L1ToL1
 
-• **TX\_TYPE\_L1ToL1**: ``0``
+• `Const` **TX\_TYPE\_L1ToL1**: ``0``
 
 #### Defined in
 
-[model/database_transaction_history.ts:62](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_transaction_history.ts#L62)
+[model/database_transaction_history.ts:62](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L62)
 
 ___
 
 ### TX\_TYPE\_L1ToL2
 
-• **TX\_TYPE\_L1ToL2**: ``1``
+• `Const` **TX\_TYPE\_L1ToL2**: ``1``
 
 #### Defined in
 
-[model/database_transaction_history.ts:63](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_transaction_history.ts#L63)
+[model/database_transaction_history.ts:63](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L63)
 
 ___
 
 ### TX\_TYPE\_L2ToL1
 
-• **TX\_TYPE\_L2ToL1**: ``2``
+• `Const` **TX\_TYPE\_L2ToL1**: ``2``
 
 #### Defined in
 
-[model/database_transaction_history.ts:64](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_transaction_history.ts#L64)
+[model/database_transaction_history.ts:64](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L64)
 
 ___
 
 ### TX\_TYPE\_L2ToL2
 
-• **TX\_TYPE\_L2ToL2**: ``3``
+• `Const` **TX\_TYPE\_L2ToL2**: ``3``
 
 #### Defined in
 
-[model/database_transaction_history.ts:65](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_transaction_history.ts#L65)
+[model/database_transaction_history.ts:65](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L65)
 
 ___
 
 ### FROM\_TYPE\_ACCOUNT
 
-• **FROM\_TYPE\_ACCOUNT**: ``0``
+• `Const` **FROM\_TYPE\_ACCOUNT**: ``0``
 
 #### Defined in
 
-[model/database_transaction_history.ts:67](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_transaction_history.ts#L67)
+[model/database_transaction_history.ts:67](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L67)
 
 ___
 
 ### FROM\_TYPE\_WALLET
 
-• **FROM\_TYPE\_WALLET**: ``1``
+• `Const` **FROM\_TYPE\_WALLET**: ``1``
 
 #### Defined in
 
-[model/database_transaction_history.ts:68](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_transaction_history.ts#L68)
+[model/database_transaction_history.ts:68](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L68)
 
 ## Functions
 
 ### add
 
-▸ `Const` **add**(`dict`): `Promise`<`Model`<`any`, `any`\>\>
+▸ **add**(`dict`): `Promise`<`Model`<`any`, `any`\>\>
 
 #### Parameters
 
@@ -110,13 +110,13 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:101](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_transaction_history.ts#L101)
+[model/database_transaction_history.ts:101](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L101)
 
 ___
 
 ### getByTxid
 
-▸ `Const` **getByTxid**(`txid`): `Promise`<`Model`<`any`, `any`\>\>
+▸ **getByTxid**(`txid`): `Promise`<`Model`<`any`, `any`\>\>
 
 #### Parameters
 
@@ -130,13 +130,13 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:119](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_transaction_history.ts#L119)
+[model/database_transaction_history.ts:119](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L119)
 
 ___
 
 ### delByTxid
 
-▸ `Const` **delByTxid**(`txid`): `Promise`<`number`\>
+▸ **delByTxid**(`txid`): `Promise`<`number`\>
 
 #### Parameters
 
@@ -150,13 +150,13 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:123](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_transaction_history.ts#L123)
+[model/database_transaction_history.ts:123](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L123)
 
 ___
 
 ### search
 
-▸ `Const` **search**(`filter_dict`, `page`, `page_size`, `order`): `Promise`<{ `transactions`: `Model`<`any`, `any`\>[] = rows; `total_page`: `number`  }\>
+▸ **search**(`filter_dict`, `page`, `page_size`, `order`): `Promise`<{ `transactions`: `Model`<`any`, `any`\>[] = rows; `total_page`: `number`  }\>
 
 #### Parameters
 
@@ -173,13 +173,13 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:127](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_transaction_history.ts#L127)
+[model/database_transaction_history.ts:127](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L127)
 
 ___
 
 ### search\_with\_multisig
 
-▸ `Const` **search_with_multisig**(`as_owners`, `as_signers`, `other_filters`, `page`, `page_size`, `order`): `Promise`<{ `transactions`: `Model`<`any`, `any`\>[] = rows; `total_page`: `number`  }\>
+▸ **search_with_multisig**(`as_owners`, `as_signers`, `other_filters`, `page`, `page_size`, `order`): `Promise`<{ `transactions`: `Model`<`any`, `any`\>[] = rows; `total_page`: `number`  }\>
 
 #### Parameters
 
@@ -198,13 +198,13 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:163](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_transaction_history.ts#L163)
+[model/database_transaction_history.ts:163](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L163)
 
 ___
 
 ### search\_both\_sizes
 
-▸ `Const` **search_both_sizes**(`filter_dict`, `page`, `page_size`, `order`): `Promise`<`Model`<`any`, `any`\>[] \| { `transactions`: `Model`<`any`, `any`\>[] = rows; `total_page`: `number`  }\>
+▸ **search_both_sizes**(`filter_dict`, `page`, `page_size`, `order`): `Promise`<`Model`<`any`, `any`\>[] \| { `transactions`: `Model`<`any`, `any`\>[] = rows; `total_page`: `number`  }\>
 
 #### Parameters
 
@@ -221,13 +221,13 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:198](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_transaction_history.ts#L198)
+[model/database_transaction_history.ts:198](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L198)
 
 ___
 
 ### findAll
 
-▸ `Const` **findAll**(): `Promise`<`Model`<`any`, `any`\>[]\>
+▸ **findAll**(): `Promise`<`Model`<`any`, `any`\>[]\>
 
 #### Returns
 
@@ -235,13 +235,13 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:248](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_transaction_history.ts#L248)
+[model/database_transaction_history.ts:248](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L248)
 
 ___
 
 ### updateOrAdd
 
-▸ `Const` **updateOrAdd**(`txid`, `update_dict`): `void`
+▸ **updateOrAdd**(`txid`, `update_dict`): `void`
 
 #### Parameters
 
@@ -256,13 +256,13 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:252](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_transaction_history.ts#L252)
+[model/database_transaction_history.ts:252](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L252)
 
 ___
 
 ### account\_count\_l2
 
-▸ `Const` **account_count_l2**(): `Promise`<`number`\>
+▸ **account_count_l2**(): `Promise`<`number`\>
 
 #### Returns
 
@@ -270,13 +270,13 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:275](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_transaction_history.ts#L275)
+[model/database_transaction_history.ts:275](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L275)
 
 ___
 
 ### transaction\_count\_l2
 
-▸ `Const` **transaction_count_l2**(): `Promise`<`number`\>
+▸ **transaction_count_l2**(): `Promise`<`number`\>
 
 #### Returns
 
@@ -284,4 +284,4 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:310](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_transaction_history.ts#L310)
+[model/database_transaction_history.ts:310](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L310)

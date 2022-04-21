@@ -15,6 +15,9 @@ The cause of a status transaction change.
 - [AddSigner](database_wallet_history.StatusTransitionCause.md#addsigner)
 - [Freeze](database_wallet_history.StatusTransitionCause.md#freeze)
 - [Unlock](database_wallet_history.StatusTransitionCause.md#unlock)
+- [GoingToRecover](database_wallet_history.StatusTransitionCause.md#goingtorecover)
+- [ExecuteRecover](database_wallet_history.StatusTransitionCause.md#executerecover)
+- [GoingToCancelRecover](database_wallet_history.StatusTransitionCause.md#goingtocancelrecover)
 - [TransactionSuccess](database_wallet_history.StatusTransitionCause.md#transactionsuccess)
 - [TransactionFail](database_wallet_history.StatusTransitionCause.md#transactionfail)
 
@@ -26,7 +29,7 @@ The cause of a status transaction change.
 
 #### Defined in
 
-[model/database_wallet_history.ts:33](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_wallet_history.ts#L33)
+[model/database_wallet_history.ts:33](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L33)
 
 ___
 
@@ -36,7 +39,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:34](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_wallet_history.ts#L34)
+[model/database_wallet_history.ts:34](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L34)
 
 ___
 
@@ -46,7 +49,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:35](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_wallet_history.ts#L35)
+[model/database_wallet_history.ts:35](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L35)
 
 ___
 
@@ -56,7 +59,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:36](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_wallet_history.ts#L36)
+[model/database_wallet_history.ts:36](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L36)
 
 ___
 
@@ -66,7 +69,37 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:37](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_wallet_history.ts#L37)
+[model/database_wallet_history.ts:37](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L37)
+
+___
+
+### GoingToRecover
+
+• **GoingToRecover** = `5`
+
+#### Defined in
+
+[model/database_wallet_history.ts:38](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L38)
+
+___
+
+### ExecuteRecover
+
+• **ExecuteRecover** = `6`
+
+#### Defined in
+
+[model/database_wallet_history.ts:39](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L39)
+
+___
+
+### GoingToCancelRecover
+
+• **GoingToCancelRecover** = `7`
+
+#### Defined in
+
+[model/database_wallet_history.ts:40](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L40)
 
 ___
 
@@ -76,7 +109,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:38](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_wallet_history.ts#L38)
+[model/database_wallet_history.ts:41](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L41)
 
 ___
 
@@ -86,4 +119,4 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:39](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_wallet_history.ts#L39)
+[model/database_wallet_history.ts:42](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L42)

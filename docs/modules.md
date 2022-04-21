@@ -6,6 +6,7 @@
 
 ### Modules
 
+- [association](modules/association.md)
 - [crypto](modules/crypto.md)
 - [login](modules/login.md)
 - [log](modules/log.md)
@@ -13,6 +14,7 @@
 - [database\_addresses](modules/database_addresses.md)
 - [database\_friend\_relationship](modules/database_friend_relationship.md)
 - [database\_id](modules/database_id.md)
+- [database\_id\_map](modules/database_id_map.md)
 - [database\_multisig](modules/database_multisig.md)
 - [database\_pk](modules/database_pk.md)
 - [database\_recovery](modules/database_recovery.md)

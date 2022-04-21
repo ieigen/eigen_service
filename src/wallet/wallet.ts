@@ -26,6 +26,9 @@ const TRANSACTION_ADD_SIGNER_BY_OWNER_MAP = new Map();
 const TRANSACTION_ADD_SIGNER_BY_SIGNER_MAP = new Map();
 const TRANSACTION_DELETE_SIGNER_MAP = new Map();
 
+// Records a temporay wallet address
+const WALLET_ADDRESS_MAP = new Map();
+
 function addWalletStatusSubscriber(txid, wallet_id) {
   consola.log("Add wallet status subscriber: ", txid, wallet_id);
   // TRANSACTION_WALLET_MAP[txid] = wallet;
@@ -107,6 +110,14 @@ function addWalletStatusSubscriber(txid, wallet_id) {
           }
           return true;
         } else {
+          if (wallet_status == db_wallet.WalletStatus.Creating) {
+            // Remove tempory records about wallet_address
+            consola.info(
+              "Remove tempory wallt records (key): ",
+              wallet["dataValues"]["address"]
+            );
+            WALLET_ADDRESS_MAP.delete(wallet["dataValues"]["address"]);
+          }
           return wallet
             .update({
               wallet_status: next_status_success,
@@ -313,7 +324,7 @@ module.exports = function (app) {
 
     const wallet_id = result["dataValues"]["wallet_id"];
 
-    db_wh.add(
+    await db_wh.add(
       wallet_id,
       db_wallet.WalletStatus.None,
       db_wallet.WalletStatus.Creating,
@@ -398,10 +409,10 @@ module.exports = function (app) {
             `Record to recover new owner_address (${wallet_id}):  ${db_wallet.WalletStatus[wallet_status]}: ${owner_address}`
           );
           // Going to recover, just record the owner_address, now there isn't txid
-          db_wh.add(
+          await db_wh.add(
             wallet_id,
             wallet_status,
-            wallet_status, // the status does not change (Active)
+            wallet_status, // the status does not change
             "", // txid not existed, because here we just want to record owner_address
             db_wh.StatusTransitionCause.GoingToRecover,
             owner_address
@@ -429,7 +440,7 @@ module.exports = function (app) {
             `Record to cancel recover new owner_address (${wallet_id}):  ${db_wallet.WalletStatus[wallet_status]}: ${owner_address}`
           );
           // Going to cancel recover, just record the owner_address, now there isn't txid
-          db_wh.add(
+          await db_wh.add(
             wallet_id,
             wallet_status,
             wallet_status, // the status does not change (Active)
@@ -458,7 +469,7 @@ module.exports = function (app) {
           }
           // Going to execute recover
 
-          db_wh.add(
+          await db_wh.add(
             wallet_id,
             wallet_status,
             wallet_status, // the status does not change (Recovering)
@@ -526,15 +537,15 @@ module.exports = function (app) {
           case db_wallet.WalletStatus.Creating:
             cause = db_wh.StatusTransitionCause.Create;
             break;
-          case db_wallet.WalletStatus.Recovering:
-            cause = db_wh.StatusTransitionCause.GoingToRecover;
-            break;
           case db_wallet.WalletStatus.Active:
             cause = db_wh.StatusTransitionCause.ExecuteRecover;
             break;
           default:
             cause = db_wh.StatusTransitionCause.None;
-            consola.error("Missing cause with status: ", status);
+            consola.info(
+              "Does not record cause: ",
+              db_wh.StatusTransitionCause[status]
+            );
             break;
         }
 
@@ -542,7 +553,15 @@ module.exports = function (app) {
           `Add wallet history: id (${wallet_id}), txid (${txid}), wallet_status (${db_wallet.WalletStatus[wallet_status]}), status (${db_wallet.WalletStatus[status]}), cause (${db_wh.StatusTransitionCause[cause]})`
         );
 
-        db_wh.add(wallet_id, wallet_status, txid, status, cause);
+        if (cause != db_wh.StatusTransitionCause.None) {
+          await db_wh.add(
+            wallet_id,
+            wallet_status,
+            status,
+            txid != undefined ? txid : "", // txid may be undefined
+            cause
+          );
+        }
       }
     }
 
@@ -698,6 +717,7 @@ module.exports = function (app) {
 
       // Only Recovering wallet should return this field
       if (wallet["wallet_status"] == db_wallet.WalletStatus.Recovering) {
+        consola.info(`Wallet (${wallet["wallet_id"]}) is Recovering`);
         const recovering = await db_wh.findLatestRecoveringByWalletId(
           wallet["wallet_id"]
         );
@@ -708,6 +728,10 @@ module.exports = function (app) {
           if (new_owner_address) {
             wallet["new_address"] = new_owner_address;
           }
+        } else {
+          consola.error(
+            `Wallet (${wallet["wallet_id"]}) Recovering status without record?!`
+          );
         }
       }
 
@@ -730,6 +754,64 @@ module.exports = function (app) {
         raw: true,
       });
       wallet["signer_count"] = signers.length;
+
+      // Check if the wallet has a on going tx
+      const latest = await db_wh.findLatestByWalletId(wallet["wallet_id"]);
+      consola.log("Latest: ", latest);
+      if (
+        latest !== null &&
+        latest["dataValues"]["txid"] !== null &&
+        latest["dataValues"]["txid"] !== ""
+      ) {
+        consola.info(
+          `There is a tx in Wallet (${wallet["wallet_id"]}): ${
+            latest["dataValues"]["txid"]
+          }, the cause is ${
+            db_wh.StatusTransitionCause[latest["dataValues"]["cause"]]
+          }`
+        );
+
+        if (
+          latest["dataValues"]["cause"] ==
+            db_wh.StatusTransitionCause.TransactionSuccess ||
+          latest["dataValues"]["cause"] ==
+            db_wh.StatusTransitionCause.TransactionFail
+        ) {
+          consola.info(
+            `TransactionSuccess and TransactionFail will not return txid: ${latest["dataValues"]["txid"]}`
+          );
+        } else {
+          consola.info(
+            `${
+              db_wh.StatusTransitionCause[latest["dataValues"]["cause"]]
+            } will return txid: ${latest["dataValues"]["txid"]}`
+          );
+          wallet["txid"] = latest["dataValues"]["txid"];
+        }
+      }
+
+      // Return owner's name, picture and email
+      const user_address = await db_address.findOne({
+        user_address: wallet["address"],
+      });
+
+      if (!user_address) {
+        consola.error("User address is not existed in database: ", address);
+      } else {
+        consola.info("Found user address record: ", user_address);
+        const user_id = user_address["user_id"];
+
+        consola.log("Searching user_id: ", user_id);
+
+        const user = await db_user.findByID(user_id);
+        if (!user) {
+          consola.error("User id can not be found: ", user_id);
+        } else {
+          wallet["owner_name"] = user["name"];
+          wallet["owner_picture"] = user["picture"];
+          wallet["owner_email"] = user["email"];
+        }
+      }
     }
 
     res.json(util.Succ(wallets));
@@ -784,13 +866,16 @@ module.exports = function (app) {
       signers[i]["wallet_id"] = owner["wallet_id"];
       // Only Recovering wallet should return this field
       if (owner["wallet_status"] == db_wallet.WalletStatus.Recovering) {
+        consola.info(`Wallet (${owner["wallet_id"]}) is Recovering`);
         const recovering = await db_wh.findLatestRecoveringByWalletId(
           owner["wallet_id"]
         );
+        consola.log("Recovering: ", recovering);
 
         // If recovering exist, return it
         if (recovering !== null) {
           const new_owner_address = recovering["dataValues"]["data"];
+          consola.log("New owner address", new_owner_address);
           if (new_owner_address) {
             signers[i]["old_owner_address"] = owner_address;
             consola.info("Recovering record existed: ", new_owner_address);
@@ -798,6 +883,10 @@ module.exports = function (app) {
           } else {
             signers[i]["owner_address"] = owner_address;
           }
+        } else {
+          consola.error(
+            `Wallet (${owner["wallet_id"]}) Recovering status without record?!`
+          );
         }
       } else {
         signers[i]["owner_address"] = owner_address;
@@ -817,6 +906,30 @@ module.exports = function (app) {
       consola.log("Latest recovery mtxid: ", latest_mtxid);
 
       signers[i]["mtxid"] = latest_mtxid ? latest_mtxid["id"] : null;
+
+      // Return owner's name, picture and email
+
+      const user_address = await db_address.findOne({
+        user_address: owner_address,
+      });
+
+      if (!user_address) {
+        consola.error("User address is not existed in database: ", address);
+      } else {
+        consola.info("Found user address record: ", user_address);
+        const user_id = user_address["user_id"];
+
+        consola.log("Searching user_id: ", user_id);
+
+        const user = await db_user.findByID(user_id);
+        if (!user) {
+          consola.error("User id can not be found: ", user_id);
+        } else {
+          signers[i]["owner_name"] = user["name"];
+          signers[i]["owner_picture"] = user["picture"];
+          signers[i]["owner_email"] = user["email"];
+        }
+      }
     }
 
     res.json(util.Succ(signers));
@@ -1094,6 +1207,7 @@ module.exports = function (app) {
         } else {
           signer["name"] = user["name"];
           signer["picture"] = user["picture"];
+          signer["email"] = user["email"];
         }
       }
     }
@@ -1237,5 +1351,38 @@ module.exports = function (app) {
       res.json(util.Succ([addresses]));
       return;
     }
+  });
+
+  app.get("/user/wallet_address", async function (req, res) {
+    const user_address = req.query.user_address;
+    if (!util.has_value(user_address)) {
+      consola.error("user_address is empty");
+      return res.json(util.Err(1, "user_address missing"));
+    }
+
+    const result = WALLET_ADDRESS_MAP.get(user_address);
+
+    res.json(util.Succ(result));
+  });
+
+  app.post("/user/wallet_address", async function (req, res) {
+    const user_address = req.body.user_address;
+    const wallet_address = req.body.wallet_address;
+    if (!util.has_value(user_address) || !util.has_value(wallet_address)) {
+      consola.error("user_address or wallet_address missing");
+      return res.json(util.Err(1, "user_address or wallet_address missing"));
+    }
+
+    const name = req.body.name;
+    const txid = req.body.txid;
+    const result = {
+      wallet_address,
+      name,
+      txid,
+    };
+
+    WALLET_ADDRESS_MAP.set(user_address, result);
+
+    res.json(util.Succ(result));
   });
 };

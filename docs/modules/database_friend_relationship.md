@@ -21,7 +21,7 @@ Friend relationship model definition
 
 ### findAll
 
-▸ `Const` **findAll**(): `Promise`<`Model`<`any`, `any`\>[]\>
+▸ **findAll**(): `Promise`<`Model`<`any`, `any`\>[]\>
 
 #### Returns
 
@@ -29,13 +29,13 @@ Friend relationship model definition
 
 #### Defined in
 
-[model/database_friend_relationship.ts:90](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_friend_relationship.ts#L90)
+[model/database_friend_relationship.ts:90](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_friend_relationship.ts#L90)
 
 ___
 
 ### request
 
-▸ `Const` **request**(`requester_id`, `responder_id`): `Promise`<`any`\>
+▸ **request**(`requester_id`, `responder_id`): `Promise`<`any`\>
 
 #### Parameters
 
@@ -50,13 +50,13 @@ ___
 
 #### Defined in
 
-[model/database_friend_relationship.ts:94](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_friend_relationship.ts#L94)
+[model/database_friend_relationship.ts:94](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_friend_relationship.ts#L94)
 
 ___
 
 ### confirm
 
-▸ `Const` **confirm**(`requester_id`, `responder_id`): ``false`` \| `Promise`<`any`\>
+▸ **confirm**(`requester_id`, `responder_id`): ``false`` \| `Promise`<`any`\>
 
 #### Parameters
 
@@ -71,13 +71,13 @@ ___
 
 #### Defined in
 
-[model/database_friend_relationship.ts:261](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_friend_relationship.ts#L261)
+[model/database_friend_relationship.ts:261](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_friend_relationship.ts#L261)
 
 ___
 
 ### reject
 
-▸ `Const` **reject**(`requester_id`, `responder_id`): ``false`` \| `Promise`<`any`\>
+▸ **reject**(`requester_id`, `responder_id`): ``false`` \| `Promise`<`any`\>
 
 #### Parameters
 
@@ -92,13 +92,13 @@ ___
 
 #### Defined in
 
-[model/database_friend_relationship.ts:265](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_friend_relationship.ts#L265)
+[model/database_friend_relationship.ts:265](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_friend_relationship.ts#L265)
 
 ___
 
 ### remove
 
-▸ `Const` **remove**(`requester_id`, `responder_id`): ``false`` \| `Promise`<`any`\>
+▸ **remove**(`requester_id`, `responder_id`): ``false`` \| `Promise`<`any`\>
 
 #### Parameters
 
@@ -113,13 +113,13 @@ ___
 
 #### Defined in
 
-[model/database_friend_relationship.ts:269](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_friend_relationship.ts#L269)
+[model/database_friend_relationship.ts:269](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_friend_relationship.ts#L269)
 
 ___
 
 ### getFriendListByUserId
 
-▸ `Const` **getFriendListByUserId**(`user_id`): `Promise`<`unknown`[]\>
+▸ **getFriendListByUserId**(`user_id`): `Promise`<`unknown`[]\>
 
 #### Parameters
 
@@ -133,13 +133,13 @@ ___
 
 #### Defined in
 
-[model/database_friend_relationship.ts:360](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_friend_relationship.ts#L360)
+[model/database_friend_relationship.ts:360](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_friend_relationship.ts#L360)
 
 ___
 
 ### getKnownByUserId
 
-▸ `Const` **getKnownByUserId**(`user_id`): `Promise`<`Set`<`unknown`\>\>
+▸ **getKnownByUserId**(`user_id`): `Promise`<`Set`<`unknown`\>\>
 
 #### Parameters
 
@@ -153,13 +153,13 @@ ___
 
 #### Defined in
 
-[model/database_friend_relationship.ts:393](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_friend_relationship.ts#L393)
+[model/database_friend_relationship.ts:393](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_friend_relationship.ts#L393)
 
 ___
 
 ### getStatusByUserId
 
-▸ `Const` **getStatusByUserId**(`user_id`): `Promise`<`any`[]\>
+▸ **getStatusByUserId**(`user_id`): `Promise`<`any`[]\>
 
 #### Parameters
 
@@ -173,4 +173,4 @@ ___
 
 #### Defined in
 
-[model/database_friend_relationship.ts:430](https://github.com/ieigen/eigen_service/blob/760a065/src/model/database_friend_relationship.ts#L430)
+[model/database_friend_relationship.ts:430](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_friend_relationship.ts#L430)

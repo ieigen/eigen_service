@@ -23,7 +23,7 @@ Provide some useful utility functions
 
 ### require\_env\_variables
 
-▸ `Const` **require_env_variables**(`envVars`): `void`
+▸ **require_env_variables**(`envVars`): `void`
 
 #### Parameters
 
@@ -37,13 +37,13 @@ Provide some useful utility functions
 
 #### Defined in
 
-[util.ts:10](https://github.com/ieigen/eigen_service/blob/760a065/src/util.ts#L10)
+[util.ts:10](https://github.com/ieigen/eigen_service/blob/b52d034/src/util.ts#L10)
 
 ___
 
 ### BaseResp
 
-▸ `Const` **BaseResp**(`errno`, `message`, `data`): `Object`
+▸ **BaseResp**(`errno`, `message`, `data`): `Object`
 
 #### Parameters
 
@@ -65,13 +65,13 @@ ___
 
 #### Defined in
 
-[util.ts:19](https://github.com/ieigen/eigen_service/blob/760a065/src/util.ts#L19)
+[util.ts:19](https://github.com/ieigen/eigen_service/blob/b52d034/src/util.ts#L19)
 
 ___
 
 ### Succ
 
-▸ `Const` **Succ**(`data`): `Object`
+▸ **Succ**(`data`): `Object`
 
 #### Parameters
 
@@ -91,13 +91,13 @@ ___
 
 #### Defined in
 
-[util.ts:22](https://github.com/ieigen/eigen_service/blob/760a065/src/util.ts#L22)
+[util.ts:22](https://github.com/ieigen/eigen_service/blob/b52d034/src/util.ts#L22)
 
 ___
 
 ### Err
 
-▸ `Const` **Err**(`errno`, `message`): `Object`
+▸ **Err**(`errno`, `message`): `Object`
 
 #### Parameters
 
@@ -118,13 +118,13 @@ ___
 
 #### Defined in
 
-[util.ts:25](https://github.com/ieigen/eigen_service/blob/760a065/src/util.ts#L25)
+[util.ts:25](https://github.com/ieigen/eigen_service/blob/b52d034/src/util.ts#L25)
 
 ___
 
 ### has\_value
 
-▸ `Const` **has_value**(`variable`): `boolean`
+▸ **has_value**(`variable`): `boolean`
 
 #### Parameters
 
@@ -138,13 +138,13 @@ ___
 
 #### Defined in
 
-[util.ts:42](https://github.com/ieigen/eigen_service/blob/760a065/src/util.ts#L42)
+[util.ts:43](https://github.com/ieigen/eigen_service/blob/b52d034/src/util.ts#L43)
 
 ___
 
 ### check\_user\_id
 
-▸ `Const` **check_user_id**(`req`, `user_id`): `boolean`
+▸ **check_user_id**(`req`, `user_id`): `boolean`
 
 #### Parameters
 
@@ -159,4 +159,4 @@ ___
 
 #### Defined in
 
-[util.ts:52](https://github.com/ieigen/eigen_service/blob/760a065/src/util.ts#L52)
+[util.ts:53](https://github.com/ieigen/eigen_service/blob/b52d034/src/util.ts#L53)
