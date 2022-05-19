@@ -155,6 +155,8 @@ app.get("/user/:user_id(\\d+)/addresses", service.getAddresses);
 
 app.get("/user/:user_id(\\d+)/friends_addresses", service.getFriendsAddresses);
 
+app.delete("/user/:user_id(\\d+)/address",service.deleteAddress);
+
 require("./login/google")(app);
 require("./login/metamask")(app);
 require("./relay/relay")(app);

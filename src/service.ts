@@ -1291,3 +1291,26 @@ export async function getFriendsAddresses(req, res) {
   res.json(util.Succ(result));
   return;
 }
+
+export async function deleteAddress(req, res) {
+  const user_id = req.params.user_id;
+  if (!util.check_user_id(req, user_id)) {
+    consola.error("user_id does not match with decoded JWT");
+    res.json(
+      util.Err(
+        util.ErrCode.InvalidAuth,
+        "user_id does not match, you can't see any other people's information"
+      )
+    );
+    return;
+  }
+  if (!util.has_value(req.body.user_address)) {
+    return res.json(
+      util.Err(util.ErrCode.Unknown, "missing fields 'user_address'")
+    );
+  }
+  const address = req.body.user_address;
+  const result = db_address.deleteAddress(address);
+  consola.log("delete address result: ", result);
+  res.json(util.Succ(result));
+}
