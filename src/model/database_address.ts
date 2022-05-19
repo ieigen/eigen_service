@@ -105,4 +105,8 @@ const updateOrAdd = function (user_id, network_id, user_address, cipher_key) {
     });
 };
 
-export { updateOrAdd, add, findOne, findAll };
+const deleteAddress = function (address) {
+  return addressdb.destroy({ where: { user_address: address } });
+};
+
+export { updateOrAdd, add, findOne, findAll, deleteAddress };
