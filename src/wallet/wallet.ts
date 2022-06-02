@@ -843,7 +843,6 @@ module.exports = function (app) {
     const filter = {
       network_id: network_id,
       address: address,
-      role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
     };
 
     const signers = await db_wallet.search({
@@ -856,6 +855,7 @@ module.exports = function (app) {
 
     for (let i = 0; i < signers.length; i++) {
       const signer = signers[i];
+      if (signer["role"] == db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER) continue;
       const wallet_address = signer["wallet_address"];
       const owner = await db_wallet.findOne({
         wallet_address,
