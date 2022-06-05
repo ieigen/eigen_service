@@ -843,19 +843,22 @@ module.exports = function (app) {
     const filter = {
       network_id: network_id,
       address: address,
-      role: db_wallet.WALLET_USER_ADDRESS_ROLE_SIGNER,
     };
 
-    const signers = await db_wallet.search({
+    const owner_and_signers = await db_wallet.search({
       attributes: arttributes,
       where: filter,
       raw: true,
     });
 
-    consola.log(signers);
+    consola.log(owner_and_signers);
 
-    for (let i = 0; i < signers.length; i++) {
-      const signer = signers[i];
+    for (let i = 0; i < owner_and_signers.length; i++) {
+      if (
+        owner_and_signers[i]["role"] == db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER
+      )
+        continue;
+      const signer = owner_and_signers[i];
       const wallet_address = signer["wallet_address"];
       const owner = await db_wallet.findOne({
         wallet_address,
@@ -863,7 +866,7 @@ module.exports = function (app) {
         role: db_wallet.WALLET_USER_ADDRESS_ROLE_OWNER,
       });
       const owner_address = owner["address"];
-      signers[i]["wallet_id"] = owner["wallet_id"];
+      owner_and_signers[i]["wallet_id"] = owner["wallet_id"];
       // Only Recovering wallet should return this field
       if (owner["wallet_status"] == db_wallet.WalletStatus.Recovering) {
         consola.info(`Wallet (${owner["wallet_id"]}) is Recovering`);
@@ -877,11 +880,11 @@ module.exports = function (app) {
           const new_owner_address = recovering["dataValues"]["data"];
           consola.log("New owner address", new_owner_address);
           if (new_owner_address) {
-            signers[i]["old_owner_address"] = owner_address;
+            owner_and_signers[i]["old_owner_address"] = owner_address;
             consola.info("Recovering record existed: ", new_owner_address);
-            signers[i]["new_owner_address"] = new_owner_address;
+            owner_and_signers[i]["new_owner_address"] = new_owner_address;
           } else {
-            signers[i]["owner_address"] = owner_address;
+            owner_and_signers[i]["owner_address"] = owner_address;
           }
         } else {
           consola.error(
@@ -889,11 +892,11 @@ module.exports = function (app) {
           );
         }
       } else {
-        signers[i]["owner_address"] = owner_address;
+        owner_and_signers[i]["owner_address"] = owner_address;
       }
 
-      signers[i]["wallet_status"] = owner["wallet_status"];
-      signers[i]["network_id"] = owner["network_id"];
+      owner_and_signers[i]["wallet_status"] = owner["wallet_status"];
+      owner_and_signers[i]["network_id"] = owner["network_id"];
 
       // Find the latest mtxid for recovery
       // XXX: network_id should be used to search it?
@@ -905,7 +908,7 @@ module.exports = function (app) {
 
       consola.log("Latest recovery mtxid: ", latest_mtxid);
 
-      signers[i]["mtxid"] = latest_mtxid ? latest_mtxid["id"] : null;
+      owner_and_signers[i]["mtxid"] = latest_mtxid ? latest_mtxid["id"] : null;
 
       // Return owner's name, picture and email
 
@@ -925,14 +928,14 @@ module.exports = function (app) {
         if (!user) {
           consola.error("User id can not be found: ", user_id);
         } else {
-          signers[i]["owner_name"] = user["name"];
-          signers[i]["owner_picture"] = user["picture"];
-          signers[i]["owner_email"] = user["email"];
+          owner_and_signers[i]["owner_name"] = user["name"];
+          owner_and_signers[i]["owner_picture"] = user["picture"];
+          owner_and_signers[i]["owner_email"] = user["email"];
         }
       }
     }
 
-    res.json(util.Succ(signers));
+    res.json(util.Succ(owner_and_signers));
     return;
   });
 
