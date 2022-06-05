@@ -312,7 +312,7 @@ module.exports = function (app) {
     }
     consola.log(req.body);
 
-    const result = await db_wallet.add(
+    const result = await db_wallet.updateOrAdd(
       network_id,
       name,
       wallet_address,
@@ -343,7 +343,7 @@ module.exports = function (app) {
 
     for (const signer of signers) {
       consola.log(`Add ${signer} into wallet ${wallet_id}]}`);
-      db_wallet.add(
+      db_wallet.updateOrAdd(
         network_id,
         name,
         wallet_address,
