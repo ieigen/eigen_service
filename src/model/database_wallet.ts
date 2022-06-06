@@ -364,6 +364,53 @@ const remove = function (network_id, wallet_address, signer_address, role) {
   });
 };
 
+const updateOrAdd = function (
+  network_id,
+  name,
+  wallet_address,
+  address,
+  role,
+  status,
+  wallet_status
+) {
+  walletdb
+    .findOne({
+      where: {
+        network_id: network_id,
+        wallet_address: wallet_address,
+        address: address,
+        role: role,
+      },
+    })
+    .then(function (row: any) {
+      consola.log("find: ", row);
+      if (row === null) {
+        return add(
+          network_id,
+          name,
+          wallet_address,
+          address,
+          role,
+          status,
+          wallet_status
+        );
+      }
+      return row
+        .update({
+          status: status,
+          wallet_status: status,
+        })
+        .then(function (result) {
+          consola.log("Update success: " + JSON.stringify(result));
+          return true;
+        })
+        .catch(function (err) {
+          consola.log("Update error: " + err);
+          return false;
+        });
+    });
+};
+
 export {
   updateOwnerAddress,
   add,
@@ -376,4 +423,5 @@ export {
   findOwnerWalletById,
   updateOrAddBySigner,
   updateAllSignersStatus,
+  updateOrAdd,
 };
