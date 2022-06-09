@@ -37,6 +37,7 @@ export enum TransactionStatus {
   Sent = 0,
   Success = 1,
   Creating = 2,
+  Canceled = 3,
 }
 
 const thdb = sequelize.define("transaction_history_st", {
