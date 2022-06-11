@@ -15,19 +15,43 @@ import * as blockdb from "../model/zkzru_block";
 // import prover
 import * as prover from "@ieigen/zkzru";
 
+const TX_LEAVES = 2
+
+const padding = (arr, num) => {
+
+    if (arr.length >= num) {
+        return arr.slice(0, num)
+    }
+
+    let padNum = num - arr.length;
+    for (var i = 0; i < padNum; i ++) {
+        arr.push(txdb.emptyTX())
+    }
+    return arr
+}
 
 // prove, tx submit and query
 module.exports = function (app) {
 
     app.post("/zkzru/prove", async (req, res) => {
+        let network_id = req.body.network_id;
         let accArray = await accountdb.findAll({status: 0})
         let txArray = await txdb.findAll({})
 
+        // 1. get TX_LEAVES transactions from accArray
+        accArray = padding(accArray, TX_LEAVES)
+
+        // 2. generate proof, returns inputJson, proof
         const result = await prover.prove(accArray, txArray)
 
-        // TODO
-        //
-        // update status
+        // 3. add new block
+        let blockNumber = await blockdb.nextBlockNumber()
+
+        blockdb.add(network_id, blockNumber, result["inputJson"], result["publicJson"], result["proofJson"])
+
+        // 4. update status
+        let updatedIndex = accArray.map(function(item){return item["index"]})
+        txdb.update(updatedIndex, {"status": 1})
     })
 
     // insert new transaction into database
@@ -47,9 +71,10 @@ module.exports = function (app) {
     app.post("/zkzru/block", async(req, res) => {
         const result = await blockdb.add(
             req.body.network_id,
-            req.body.txRoot,
             req.body.blockNumber,
-            req.body.proof
+            req.body.inputJson,
+            req.body.publicJson,
+            req.body.proofJson
         )
         return res.json(util.Succ(result))
     })

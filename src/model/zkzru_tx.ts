@@ -137,9 +137,36 @@ const findOne = async function (filter_dict) {
   let res = await l2txdb.findOne({ where: filter_dict });
   return res;
 };
+
 const findAll = async function (dict) {
   let res =  l2txdb.findAll({ where: dict });
   return res;
 };
 
-export { add, findOne, findAll };
+const emptyTX = () => {
+    return {
+        "network_id": 0,
+        "senderPubkey": "",
+        "receiverPubkey": "",
+        "index": 0,
+        "amount": 0,
+        "nonce": 0,
+        "tokenTypeFrom": 0
+    }
+}
+
+const update = (filter_dict, value_dict) => {
+    return l2txdb
+    .update(
+        { value_dict },
+        {
+            where: filter_dict,
+        }
+    )
+    .then(function (result: any) {
+        consola.log("Update all tx status result: ", result);
+        return true;
+    })
+}
+
+export { add, findOne, findAll, emptyTX, update};
