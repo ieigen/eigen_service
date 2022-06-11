@@ -23,8 +23,8 @@ const padding = (arr, num) => {
         return arr.slice(0, num)
     }
 
-    let padNum = num - arr.length;
-    for (var i = 0; i < padNum; i ++) {
+    const padNum = num - arr.length;
+    for (const i = 0; i < padNum; i ++) {
         arr.push(txdb.emptyTX())
     }
     return arr
@@ -34,9 +34,9 @@ const padding = (arr, num) => {
 module.exports = function (app) {
 
     app.post("/zkzru/prove", async (req, res) => {
-        let network_id = req.body.network_id;
+        const network_id = req.body.network_id;
         let accArray = await accountdb.findAll({status: 0})
-        let txArray = await txdb.findAll({})
+        const txArray = await txdb.findAll({})
 
         // 1. get TX_LEAVES transactions from accArray
         accArray = padding(accArray, TX_LEAVES)
@@ -95,6 +95,15 @@ module.exports = function (app) {
             res.body.tokenType,
             res.body.balance,
             res.body.nonce
+        )
+        return res.json(util.Succ(result))
+    })
+
+    app.post("/zkzru/token", async (req, res) => {
+        const result = await tokendb.add(
+            res.body.network_id,
+            res.body.tokenAddress,
+            res.body.tokenType
         )
         return res.json(util.Succ(result))
     })
