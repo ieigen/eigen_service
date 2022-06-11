@@ -10,6 +10,7 @@ import * as util from "../util";
 import * as txdb from "../model/zkzru_tx";
 import * as accountdb from "../model/zkzru_account";
 import * as tokendb from "../model/zkzru_token";
+import * as blockdb from "../model/zkzru_block";
 
 // import prover
 import * as prover from "@ieigen/zkzru";
@@ -19,14 +20,17 @@ import * as prover from "@ieigen/zkzru";
 module.exports = function (app) {
 
     app.post("/zkzru/prove", async (req, res) => {
-        let accArray = await accountdb.findAll({})
+        let accArray = await accountdb.findAll({status: 0})
         let txArray = await txdb.findAll({})
 
         const result = await prover.prove(accArray, txArray)
 
         // TODO
+        //
+        // update status
     })
 
+    // insert new transaction into database
     app.post("/zkzru/tx", async(req, res) => {
         const result = await txdb.add(
             req.body.network_id,
@@ -35,15 +39,22 @@ module.exports = function (app) {
             req.body.index,
             req.body.amount,
             req.body.nonce,
-            req.body.tokenTypeFrom,
+            req.body.tokenTypeFrom
+        )
+        return res.json(util.Succ(result))
+    })
+
+    app.post("/zkzru/block", async(req, res) => {
+        const result = await blockdb.add(
+            req.body.network_id,
             req.body.txRoot,
-            req.body.position,
+            req.body.blockNumber,
             req.body.proof
         )
         return res.json(util.Succ(result))
     })
 
-    app.get("/zkzru/tx/:txid", async (req, res) => {
+    app.get("/zKzru/tx/:txid", async (req, res) => {
         let filter = {}
         if (req.params.txid != "") {
             filter = {"txid": req.params.txid}

@@ -81,22 +81,7 @@ const l2txdb = sequelize.define("tx_st", {
       type: DataTypes.BIGINT,
   },
 
-  txRoot: {
-      allowNull: false,
-      type: DataTypes.STRING,
-  },
-
-  position: {
-      allowNull: false,
-      type: DataTypes.STRING,
-  },
-
-  proof: {
-      allowNull: false,
-      type: DataTypes.STRING,
-  },
-
-
+  // 0: new, 1, confirming, 2, confirmed
   status: {
     allowNull: false,
     type: DataTypes.INTEGER,
@@ -135,7 +120,7 @@ sequelize
     consola.log("Unable to connect to the database:", err);
   });
 
-const add = async function (network_id, senderPubkey, receiverPubkey, index, amount, nonce, tokenTypeFrom, txRoot, position, proof) {
+const add = async function (network_id, senderPubkey, receiverPubkey, index, amount, nonce, tokenTypeFrom) {
   let res = await l2txdb.create({
     network_id,
     senderPubkey,
@@ -143,10 +128,7 @@ const add = async function (network_id, senderPubkey, receiverPubkey, index, amo
     index,
     amount,
     nonce,
-    tokenTypeFrom,
-    txRoot,
-    position,
-    proof
+    tokenTypeFrom
   });
   return res;
 };
