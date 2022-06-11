@@ -5,6 +5,7 @@
  */
 
 import consola from "consola";
+import { Op } from "sequelize";
 import * as util from "../util";
 import * as txdb from "../model/zkzru_tx";
 import * as accountdb from "../model/zkzru_account";
@@ -24,7 +25,7 @@ module.exports = function (app) {
         const result = await prover.prove(accArray, txArray)
 
         // TODO
-    }
+    })
 
     app.post("/zkzru/tx", async(req, res) => {
         const result = await txdb.add(
@@ -60,5 +61,5 @@ module.exports = function (app) {
             res.body.nonce
         )
         return res.json(util.Succ(result))
-    }
+    })
 }
