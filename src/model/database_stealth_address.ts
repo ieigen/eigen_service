@@ -29,13 +29,22 @@ const sadb = sequelize.define("stealth_address_st", {
   sender_address: DataTypes.CITEXT,
   receiver_address: DataTypes.CITEXT,
   nonce: DataTypes.INTEGER,
+  amount: DataTypes.STRING,
   status: DataTypes.INTEGER,
 });
 
 sequelize
   .sync()
   .then(function () {
-    return sadb.create({});
+    return sadb.create({
+      message:"123",
+      sender_public_key:"0x123abc",
+      sender_address:"0x123",
+      receiver_address:"0x456",
+      nonce:1,
+      status:1,
+      amount:10
+    });
   })
   .then(function (row: any) {
     consola.log(
@@ -43,7 +52,7 @@ sequelize
         plain: true,
       })
     );
-    sadb.destroy({ where: { txid: row.txid } });
+    sadb.destroy({ where: { message: row.message } });
   })
   .catch(function (err) {
     consola.log("Unable to connect to the database:", err);
@@ -54,7 +63,8 @@ const add = function (
   sender_public_key,
   sender_address,
   receiver_address,
-  nonce
+  nonce,
+  amount
 ) {
   return sadb.create({
     message: message,
@@ -63,6 +73,7 @@ const add = function (
     receiver_address: receiver_address,
     nonce: nonce,
     status: StealthAddressStatus.NotExported,
+    amount:amount,
   });
 };
 
