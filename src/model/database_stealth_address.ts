@@ -27,7 +27,8 @@ const sadb = sequelize.define("stealth_address_st", {
   },
   sender_public_key: DataTypes.CITEXT,
   sender_address: DataTypes.CITEXT,
-  receiver_address: DataTypes.CITEXT,
+  stealth_public_key: DataTypes.CITEXT,
+  stealth_address: DataTypes.CITEXT,
   nonce: DataTypes.INTEGER,
   amount: DataTypes.STRING,
   status: DataTypes.INTEGER,
@@ -37,13 +38,14 @@ sequelize
   .sync()
   .then(function () {
     return sadb.create({
-      message:"123",
-      sender_public_key:"0x123abc",
-      sender_address:"0x123",
-      receiver_address:"0x456",
-      nonce:1,
-      status:1,
-      amount:10
+      message: "123",
+      sender_public_key: "0x123abc",
+      sender_address: "0x123",
+      stealth_public_key: "0x456qwe",
+      stealth_address: "0x456",
+      nonce: 1,
+      status: 1,
+      amount: 10,
     });
   })
   .then(function (row: any) {
@@ -62,7 +64,8 @@ const add = function (
   message,
   sender_public_key,
   sender_address,
-  receiver_address,
+  stealth_public_key,
+  stealth_address,
   nonce,
   amount
 ) {
@@ -70,10 +73,11 @@ const add = function (
     message: message,
     sender_public_key: sender_public_key,
     sender_address: sender_address,
-    receiver_address: receiver_address,
+    stealth_public_key: stealth_public_key,
+    stealth_address: stealth_address,
     nonce: nonce,
     status: StealthAddressStatus.NotExported,
-    amount:amount,
+    amount: amount,
   });
 };
 
