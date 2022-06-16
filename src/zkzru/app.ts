@@ -13,7 +13,7 @@ import * as tokendb from "../model/zkzru_token";
 import * as blockdb from "../model/zkzru_block";
 
 // import prover
-import * as prover from "@ieigen/zkzru";
+const prover = require("@ieigen/zkzru")
 
 const TX_LEAVES = 2
 
@@ -24,7 +24,7 @@ const padding = (arr, num) => {
     }
 
     const padNum = num - arr.length;
-    for (const i = 0; i < padNum; i ++) {
+    for (var i = 0; i < padNum; i ++) {
         arr.push(txdb.emptyTX())
     }
     return arr
@@ -42,7 +42,9 @@ module.exports = function (app) {
         accArray = padding(accArray, TX_LEAVES)
 
         // 2. generate proof, returns inputJson, proof
-        const result = await prover.prove(accArray, txArray)
+        const {acc, tx} = prover.parseDBData(accArray, txArray)
+
+        const result = await prover.prove(acc, tx)
 
         // 3. add new block
         let blockNumber = await blockdb.nextBlockNumber()
