@@ -58,6 +58,7 @@ module.exports = function (app) {
 
     // insert new transaction into database
     app.post("/zkzru/tx", async(req, res) => {
+        console.log(req.body)
         const result = await txdb.add(
             req.body.network_id,
             req.body.senderPubkey,
@@ -81,7 +82,7 @@ module.exports = function (app) {
         return res.json(util.Succ(result))
     })
 
-    app.get("/zKzru/tx/:txid", async (req, res) => {
+    app.get("/zkzru/tx/:txid", async (req, res) => {
         let filter = {}
         if (req.params.txid != "") {
             filter = {"txid": req.params.txid}
@@ -91,12 +92,12 @@ module.exports = function (app) {
 
     app.post("/zkzru/account", async (req, res) => {
         const result = await accountdb.add(
-            res.body.network_id,
-            res.body.index,
-            res.body.pubkey,
-            res.body.tokenType,
-            res.body.balance,
-            res.body.nonce
+            req.body.network_id,
+            req.body.index,
+            req.body.pubkey,
+            req.body.tokenType,
+            req.body.balance,
+            req.body.nonce
         )
         return res.json(util.Succ(result))
     })

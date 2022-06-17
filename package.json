@@ -53,6 +53,6 @@
     "sqlite3": "^5.0.2",
     "standard-ecies": "^2.0.0",
     "totp.js": "^0.0.1",
-    "typings": "^2.1.1"
+    "typings": "^0.6.10"
   }
 }

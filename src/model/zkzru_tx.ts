@@ -83,7 +83,6 @@ const l2txdb = sequelize.define("tx_st", {
 
   // 0: new, 1, confirming, 2, confirmed
   status: {
-    allowNull: false,
     type: DataTypes.INTEGER,
   }
 });
