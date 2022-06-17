@@ -1,4 +1,4 @@
-import { Sequelize, Op, DataTypes, Order } from "sequelize";
+import { Sequelize, DataTypes } from "sequelize";
 import consola from "consola";
 
 const sequelize = new Sequelize({
@@ -25,6 +25,7 @@ const sadb = sequelize.define("stealth_address_st", {
     allowNull: false,
     unique: true,
   },
+  user_id: DataTypes.INTEGER,
   sender_public_key: DataTypes.CITEXT,
   sender_address: DataTypes.CITEXT,
   stealth_public_key: DataTypes.CITEXT,
@@ -32,6 +33,7 @@ const sadb = sequelize.define("stealth_address_st", {
   nonce: DataTypes.INTEGER,
   amount: DataTypes.STRING,
   status: DataTypes.INTEGER,
+  token_name: DataTypes.STRING,
 });
 
 sequelize
@@ -39,6 +41,7 @@ sequelize
   .then(function () {
     return sadb.create({
       message: "123",
+      user_id: 1,
       sender_public_key: "0x123abc",
       sender_address: "0x123",
       stealth_public_key: "0x456qwe",
@@ -46,8 +49,9 @@ sequelize
       nonce: 1,
       status: 1,
       amount: 10,
+      token_name: "ETH",
     });
-  })
+  })// eslint-disable-next-line
   .then(function (row: any) {
     consola.log(
       row.get({
@@ -62,15 +66,18 @@ sequelize
 
 const add = function (
   message,
+  user_id,
   sender_public_key,
   sender_address,
   stealth_public_key,
   stealth_address,
   nonce,
-  amount
+  amount,
+  token_name
 ) {
   return sadb.create({
     message: message,
+    user_id: user_id,
     sender_public_key: sender_public_key,
     sender_address: sender_address,
     stealth_public_key: stealth_public_key,
@@ -78,14 +85,16 @@ const add = function (
     nonce: nonce,
     status: StealthAddressStatus.NotExported,
     amount: amount,
+    token_name: token_name,
   });
 };
 
-const findAll = function (filter) {
-  return sadb.findAll(filter);
+const findAllByUserID = function (user_id) {
+  return sadb.findAll({ where: { user_id: user_id } });
 };
 
 const updateStatus = function (message, status) {
+  // eslint-disable-next-line
   return sadb.findOne({ where: { message } }).then(function (row: any) {
     consola.log(row);
     if (row === null) {
@@ -94,7 +103,7 @@ const updateStatus = function (message, status) {
     return row
       .update({
         status: status,
-      })
+      })// eslint-disable-next-line
       .then(function (result) {
         consola.log("Update stealth address status success: ", status, result);
         return true;
@@ -106,4 +115,4 @@ const updateStatus = function (message, status) {
   });
 };
 
-export { add, findAll, updateStatus };
+export { add, findAllByUserID, updateStatus };
