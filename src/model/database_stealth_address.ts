@@ -30,6 +30,7 @@ const sadb = sequelize.define("stealth_address_st", {
   sender_address: DataTypes.CITEXT,
   stealth_public_key: DataTypes.CITEXT,
   stealth_address: DataTypes.CITEXT,
+  receiver_address: DataTypes.CITEXT,
   nonce: DataTypes.INTEGER,
   amount: DataTypes.STRING,
   status: DataTypes.INTEGER,
@@ -46,12 +47,13 @@ sequelize
       sender_address: "0x123",
       stealth_public_key: "0x456qwe",
       stealth_address: "0x456",
+      receiver_address: "0x890",
       nonce: 1,
       status: 1,
       amount: 10,
       token_name: "ETH",
     });
-  })// eslint-disable-next-line
+  }) // eslint-disable-next-line
   .then(function (row: any) {
     consola.log(
       row.get({
@@ -71,6 +73,7 @@ const add = function (
   sender_address,
   stealth_public_key,
   stealth_address,
+  receiver_address,
   nonce,
   amount,
   token_name
@@ -82,6 +85,7 @@ const add = function (
     sender_address: sender_address,
     stealth_public_key: stealth_public_key,
     stealth_address: stealth_address,
+    receiver_address: receiver_address,
     nonce: nonce,
     status: StealthAddressStatus.NotExported,
     amount: amount,
@@ -89,8 +93,8 @@ const add = function (
   });
 };
 
-const findAllByUserID = function (user_id) {
-  return sadb.findAll({ where: { user_id: user_id } });
+const findAll = function (filter) {
+  return sadb.findAll({ where: filter });
 };
 
 const updateStatus = function (message, status) {
@@ -103,7 +107,7 @@ const updateStatus = function (message, status) {
     return row
       .update({
         status: status,
-      })// eslint-disable-next-line
+      }) // eslint-disable-next-line
       .then(function (result) {
         consola.log("Update stealth address status success: ", status, result);
         return true;
@@ -115,4 +119,4 @@ const updateStatus = function (message, status) {
   });
 };
 
-export { add, findAllByUserID, updateStatus };
+export { add, findAll, updateStatus };

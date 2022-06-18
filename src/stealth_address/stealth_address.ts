@@ -18,6 +18,7 @@ module.exports = function (app) {
     const sender_address = req.body.sender_address;
     const stealth_public_key = req.body.stealth_public_key;
     const stealth_address = req.body.stealth_address;
+    const receiver_address = req.body.receiver_address;
     const nonce = req.body.nonce;
     const amount = req.body.amount;
     const token_name = req.body.token_name;
@@ -29,6 +30,7 @@ module.exports = function (app) {
       !util.has_value(sender_address) ||
       !util.has_value(stealth_public_key) ||
       !util.has_value(stealth_address) ||
+      !util.has_value(receiver_address) ||
       !util.has_value(nonce) ||
       !util.has_value(amount) ||
       !util.has_value(token_name)
@@ -43,6 +45,7 @@ module.exports = function (app) {
       sender_address,
       stealth_public_key,
       stealth_address,
+      receiver_address,
       nonce,
       amount,
       token_name
@@ -53,12 +56,18 @@ module.exports = function (app) {
   app.get("/user/stealth_address", async function (req, res) {
     consola.log("req", req);
     const user_id = req.query.user_id;
+    const receiver_address = req.query.receiver_address;
 
-    if (!util.has_value(user_id)) {
+    if (!util.has_value(user_id) || !util.has_value(receiver_address)) {
       return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
     }
 
-    const result = await db_sa.findAllByUserID(user_id);
+    const filter = {
+      user_id: user_id,
+      receiver_address: receiver_address,
+    };
+
+    const result = await db_sa.findAll(filter);
     consola.log(result);
     res.json(util.Succ(result));
   });
