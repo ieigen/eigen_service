@@ -168,7 +168,7 @@ export async function getTxhs(req, res) {
   const page_size = req.query.page_size;
   const order = req.query.order;
 
-  const allow_fileds = {
+  const allow_fields = {
     from: req.query.from,
     to: req.query.to,
     txid: req.query.txid,
@@ -179,11 +179,11 @@ export async function getTxhs(req, res) {
     operation: req.query.operation,
   };
 
-  const filter = Object.keys(allow_fileds)
+  const filter = Object.keys(allow_fields)
     .filter(
-      (key) => allow_fileds[key] !== null && allow_fileds[key] !== undefined
+      (key) => allow_fields[key] !== null && allow_fields[key] !== undefined
     )
-    .reduce((acc, key) => ({ ...acc, [key]: allow_fileds[key] }), {});
+    .reduce((acc, key) => ({ ...acc, [key]: allow_fields[key] }), {});
   let result;
   switch (action) {
     case "search":

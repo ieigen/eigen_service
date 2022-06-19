@@ -1388,4 +1388,44 @@ module.exports = function (app) {
 
     res.json(util.Succ(result));
   });
+
+  app.get("user/wallet_history", async function (req, res) {
+    consola.log(req.query);
+
+    const page = req.query.page;
+    const page_size = req.query.page_size;
+    const order = req.query.order;
+
+    const allow_fields = {
+      from: req.query.from,
+      to: req.query.to,
+      txid: req.query.txid,
+      cause: req.query.cause,
+      data: req.query.data,
+    };
+
+    const filter = Object.keys(allow_fields)
+      .filter(
+        (key) => allow_fields[key] !== null && allow_fields[key] !== undefined
+      )
+      .reduce((acc, key) => ({ ...acc, [key]: allow_fields[key] }), {});
+    const result = await db_wh.search(filter, page, page_size, order);
+
+    consola.log("result", result);
+    //OPT: use batch
+    if (result != null) {
+      const wallet_history = result["wallet_history"];
+      for (let i = 0; i < wallet_history.length; i++) {
+        const txid = wallet_history[i]["txid"];
+        if (!util.has_value(txid)) continue;
+        const res = await db_multisig.findMultisigMetaByConds({ txid: txid });
+        if (res == null) continue;
+        if (!util.has_value(res["id"])) continue;
+        wallet_history[i]["mtxid"] = res["id"];
+      }
+      consola.log(wallet_history);
+      result["wallet_history"] = wallet_history;
+    }
+    return res.json(util.Succ(result));
+  });
 };

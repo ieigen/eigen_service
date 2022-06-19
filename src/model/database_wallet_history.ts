@@ -7,7 +7,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Sequelize, DataTypes, Op } from "sequelize";
+import { Sequelize, DataTypes, Op, Order } from "sequelize";
 import consola from "consola";
 
 import { WalletStatus } from "./database_wallet";
@@ -184,9 +184,50 @@ const findLatestRecoveringByWalletId = function (wallet_id) {
   });
 };
 
+const getOrder = (order): Order => {
+  if (order === "1") return [["updatedAt", "DESC"]];
+  return [];
+};
+
+const search = async function (filter_dict, page, page_size, order) {
+  consola.log("Search filter: ", filter_dict);
+  // Seq will throw for all undefined keys in where options.  https://sequelize.org/v5/manual/upgrade-to-v5.html
+
+  if (page) {
+    consola.log("page = ", page);
+    consola.log("page_size = ", page_size);
+
+    const { count, rows } = await whdb.findAndCountAll({
+      where: filter_dict,
+      order: getOrder(order),
+      limit: page_size,
+      offset: (page - 1) * page_size,
+      raw: true,
+    });
+    consola.log("count = ", count);
+    consola.log("rows = ", rows);
+    const total_page = Math.ceil(count / page_size);
+    return {
+      wallet_history: rows,
+      total_page,
+    };
+  } else {
+    const list = await whdb.findAll({
+      where: filter_dict,
+      order: getOrder(order),
+      raw: true,
+    });
+    return {
+      wallet_history: list,
+      total_page: list.length,
+    };
+  }
+};
+
 export {
   add,
   findOne,
+  search,
   findAllByWalletId,
   findLatestByWalletId,
   findLatestByTxid,
