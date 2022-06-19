@@ -314,6 +314,7 @@ export async function postTxh(req, res) {
   const network_id = req.body.network_id;
   const to_network_id = req.body.to_network_id;
   const operation = req.body.operation;
+  const old_txid = req.body.old_txid;
   if (
     !util.has_value(txid) ||
     !util.has_value(network_id) ||
@@ -325,6 +326,11 @@ export async function postTxh(req, res) {
   ) {
     consola.error("missing fields");
     return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
+  }
+
+  if (util.has_value(old_txid)) {
+    const res = db_txh.delByTxid(old_txid);
+    consola.info("speed up tx, delete old tx res:", res);
   }
 
   if (type == db_txh.TX_TYPE_L1ToL2 || type == db_txh.TX_TYPE_L2ToL1) {
