@@ -61,6 +61,7 @@ sequelize
   .then(function () {
     return accountdb.create({
       network_id: "id",
+      index: 0,
       pubkey: "0xUSER",
       tokenType: 1,
       balance: "100",

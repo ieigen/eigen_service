@@ -13,9 +13,11 @@ import * as tokendb from "../model/zkzru_token";
 import * as blockdb from "../model/zkzru_block";
 
 // import prover
-const prover = require("@ieigen/zkzru")
+import {parseDBData, prove} from "@ieigen/zkzru/operator/prover"
+//const prover = require("@ieigen/zkzru")
 
-const TX_LEAVES = 2
+const ACC_DEPTH = 8
+const ACC_LEAVES = 2 ** ACC_DEPTH
 
 const padding = (arr, num) => {
 
@@ -34,17 +36,15 @@ const padding = (arr, num) => {
 module.exports = function (app) {
 
     app.post("/zkzru/prove", async (req, res) => {
+        // 1. get accounts and txs from db
         const network_id = req.body.network_id;
-        let accArray = await accountdb.findAll({status: 0})
-        const txArray = await txdb.findAll({})
-
-        // 1. get TX_LEAVES transactions from accArray
-        accArray = padding(accArray, TX_LEAVES)
+        let accArray = await accountdb.findAll({})
+        const txArray = await txdb.findAll({status: 0})
 
         // 2. generate proof, returns inputJson, proof
-        const {acc, tx} = prover.parseDBData(accArray, txArray)
+        const {acc, tx} = await parseDBData(accArray, txArray)
 
-        const result = await prover.prove(acc, tx)
+        const result = await prove(acc, tx)
 
         // 3. add new block
         let blockNumber = await blockdb.nextBlockNumber()
@@ -52,7 +52,7 @@ module.exports = function (app) {
         blockdb.add(network_id, blockNumber, result["inputJson"], result["publicJson"], result["proofJson"])
 
         // 4. update status
-        let updatedIndex = accArray.map(function(item){return item["index"]})
+        let updatedIndex = txArray.map(function(item){return item["tx_id"]})
         txdb.update(updatedIndex, {"status": 1})
     })
 
@@ -62,11 +62,14 @@ module.exports = function (app) {
         const result = await txdb.add(
             req.body.network_id,
             req.body.senderPubkey,
+            req.body.r8x,
+            req.body.r8y,
+            req.body.s,   
             req.body.receiverPubkey,
-            req.body.index,
+            req.body.tokenTypeFrom,
             req.body.amount,
             req.body.nonce,
-            req.body.tokenTypeFrom
+            req.body.status
         )
         return res.json(util.Succ(result))
     })

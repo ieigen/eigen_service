@@ -24,16 +24,15 @@ const sequelize = new Sequelize({
 });
 
 const l2txdb = sequelize.define("tx_st", {
+  tx_id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  }, 
+
   network_id: {
     type: DataTypes.STRING(64),
     allowNull: false,
-    primaryKey: true,
-  },
-
-  txid: {
-    type: DataTypes.CITEXT,
-    allowNull: false,
-    primaryKey: true,
   },
 
   senderPubkey: {
@@ -76,11 +75,6 @@ const l2txdb = sequelize.define("tx_st", {
       type: DataTypes.BIGINT,
   },
 
-  index: {
-      allowNull: false,
-      type: DataTypes.BIGINT,
-  },
-
   // 0: new, 1, confirming, 2, confirmed
   status: {
     type: DataTypes.INTEGER,
@@ -93,25 +87,31 @@ sequelize
     return l2txdb.create({
       network_id: "id",
       senderPubkey: "0xUSER", //public key
+      r8x: "111",
+      r8y: "111",
+      s: "111",
       receiverPubkey: "0xUSER", //public key
-      tokenType: 1,
-      balance: "100",
+      tokenTypeFrom: 1,
+      amount: "100",
       nonce: 1,
+      status: 0
     });
   })
   .then(function (row: any) {
     consola.log(
       row.get({
-        address: "0xUSER",
-        tokenType: 1,
-        nonce: 1,
+        senderPubkey: "0xUSER",
+        receiverPubkey: "0xUSER",
+        tokenTypeFrom: 1,
+        nonce: 1
       })
     );
     l2txdb.destroy({
       where: {
-        address: "0xUSER",
-        tokenType: 1,
-        nonce: 1,
+        senderPubkey: "0xUSER",
+        receiverPubkey: "0xUSER",
+        tokenTypeFrom: 1,
+        nonce: 1
       },
     });
   })
@@ -119,15 +119,18 @@ sequelize
     consola.log("Unable to connect to the database:", err);
   });
 
-const add = async function (network_id, senderPubkey, receiverPubkey, index, amount, nonce, tokenTypeFrom) {
+const add = async function (network_id, senderPubkey, r8x, r8y, s, receiverPubkey, tokenTypeFrom, amount, nonce, status) {
   let res = await l2txdb.create({
     network_id,
     senderPubkey,
+    r8x,
+    r8y,
+    s,
     receiverPubkey,
-    index,
+    tokenTypeFrom,
     amount,
     nonce,
-    tokenTypeFrom
+    status
   });
   return res;
 };

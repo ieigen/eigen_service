@@ -56,7 +56,10 @@ sequelize
   .then(function () {
     return l2blockdb.create({
       network_id: "id",
+      blockNumber: 0,
       inputJson: "100",
+      publicJson: "100",
+      proofJson: "100"
     });
   })
   .then(function (row: any) {
