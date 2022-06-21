@@ -49,6 +49,7 @@ module.exports = function (app) {
           .catch(function (err) {
             consola.log("Update error: " + err);
           });
+        return res.json(util.Succ(""))
     })
 
     // insert new transaction into database
