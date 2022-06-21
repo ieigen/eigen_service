@@ -1,11 +1,14 @@
-import { type } from "os";
+import { encode } from "punycode";
 
 const { ethers } = require("ethers");
 const axios = require("axios")
 
 const ff = require("ffjavascript")
-const stringifyBigInts: (obj: object) => any = ff.utils.stringifyBigInts
+const stringifyBigInts = ff.utils.stringifyBigInts
 const buildMimc7 = require("circomlibjs").buildMimc7;
+
+const toHexString = (bytes) =>
+  bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
 
 const {
     prover,
@@ -22,6 +25,15 @@ let axiosConfig = {
     }
 };
 
+function generatePrvkey(i){
+    let prvkey = Buffer.from(i.toString().padStart(64,'0'), "hex");
+    return prvkey;
+}
+
+function encodePublicKey(x, y){
+    return '0x' + '04' + toHexString(x) + toHexString(y)
+}
+
 const TX_DEPTH = 2
 const BAL_DEPTH = 8
 const network_id = 1;
@@ -32,28 +44,17 @@ const genAccount = async() => {
     const tokenTypes = [2, 1, 2, 1, 2, 1];
     const balances = [1000, 20, 200, 100, 500, 20];
     const nonces = [0, 0, 0, 0, 0, 0];
-    let users = [];
-    for (var i = 0; i < numAccounts; i++) {
-        const user = ethers.Wallet.createRandom();
-        users.push(user);
-    }
 
-    // generate zero account and insert to db
-    let zeroAccountUser = ethers.Wallet.createRandom()
-    const zeroAccountPrvkey = zeroAccountUser.privateKey;
-    const zeroAccountPubkey = await accountHelper.generatePubkey(zeroAccountPrvkey);
-    let zeroAccount = new Account(
-        0, zeroAccountPubkey[0], zeroAccountPubkey[1],
-        0, 0, -1, zeroAccountPrvkey
-    );
+    let zeroAccount = new Account();
     await zeroAccount.initialize();
     await axios.post('http://localhost:3000/zkzru/account', {
         network_id: network_id,
         index: zeroAccount.index,
-        pubkey: zeroAccountUser.publicKey,
-        tokenType: -1, // zero account has no token, set tokenType = -1 and balance = 0
+        pubkey: "0",
+        tokenType: 0,
         balance: 0,
-        nonce: 0
+        nonce: 0,
+        prvkey: "0"
     }, axiosConfig)
         .then(function (response) {
         console.log(response);
@@ -64,9 +65,7 @@ const genAccount = async() => {
 
     let accounts = [zeroAccount];
     
-    // generate coordinator account and insert to db
-    let coordinatorUser = ethers.Wallet.createRandom()
-    const coordinatorPrvkey = coordinatorUser.privateKey;
+    const coordinatorPrvkey = generatePrvkey(1);
     const coordinatorPubkey = await accountHelper.generatePubkey(coordinatorPrvkey);
     const coordinator = new Account(
         1, coordinatorPubkey[0], coordinatorPubkey[1],
@@ -76,10 +75,11 @@ const genAccount = async() => {
     await axios.post('http://localhost:3000/zkzru/account', {
         network_id: network_id,
         index: coordinator.index,
-        pubkey: coordinatorUser.publicKey,
+        pubkey: '0x' + '04' + toHexString(coordinatorPubkey[0]) + toHexString(coordinatorPubkey[1]),
         tokenType: 0, // tokenType 0 is reserved for coordinator
         balance: 0,
-        nonce: 0
+        nonce: 0,
+        prvkey: coordinatorPrvkey.toString('hex')
     }, axiosConfig)
         .then(function (response) {
         console.log(response);
@@ -91,19 +91,19 @@ const genAccount = async() => {
     accounts.push(coordinator);
 
     for (var i = 0; i < numAccounts; i++) {
-        let user = users[i];
-        const pubkey = await accountHelper.generatePubkey(user.privateKey);
-        // console.log(pubkey);
-        const acc = new Account(i + 2, pubkey[0], pubkey[1], balances[i], nonces[i], tokenTypes[i], users[i].privateKey);
+        let privateKey = generatePrvkey(i+2)
+        const pubkey = await accountHelper.generatePubkey(privateKey);
+        const acc = new Account(i + 2, pubkey[0], pubkey[1], balances[i], nonces[i], tokenTypes[i], privateKey);
         await acc.initialize();
         accounts.push(acc);
         await axios.post('http://localhost:3000/zkzru/account', {
             network_id: network_id,
             index: acc.index,
-            pubkey: user.publicKey,
+            pubkey: '0x' + '04' + toHexString(pubkey[0]) + toHexString(pubkey[1]),
             tokenType: tokenTypes[i],
             balance: balances[i],
-            nonce: nonces[i]
+            nonce: nonces[i],
+            prvkey: privateKey.toString('hex')
         }, axiosConfig)
             .then(function (response) {
             console.log(response);
@@ -145,20 +145,26 @@ const genTX = async (accounts) => {
         tx.signTxHash(fromAccount.prvkey);
         tx.checkSignature()
 
-        // console.log("you got me")
-        // console.log(tx.R8x)
-        // console.log(typeof(tx.R8x))
-        // console.log(tx.R8y)
-        // console.log(typeof(tx.R8y))
-        // console.log(typeof(tx.S))
-
+        let senderPubkey;
+        let receiverPubkey;
+        if (tx.fromX == 0 && tx.fromY == 0) {
+            senderPubkey = '0'
+        } else {
+            senderPubkey = '0x' + '04' + toHexString(tx.fromX) + toHexString(tx.fromY)
+        }
+        if (tx.toX == 0 && tx.toY == 0) {
+            receiverPubkey = '0'
+        } else {
+            receiverPubkey = '0x' + '04' + toHexString(tx.toX) + toHexString(tx.toY)
+        }
         await axios.post('http://localhost:3000/zkzru/tx', {
             network_id: network_id,
-            senderPubkey: ethers.utils.computePublicKey(fromAccount.prvkey),
-            r8x: F.toString(tx.R8x),
-            r8y: F.toString(tx.R8y),
+            from_index: fromAccount.index,
+            senderPubkey: senderPubkey,
+            r8x: toHexString(tx.R8x),
+            r8y: toHexString(tx.R8y),
             s: stringifyBigInts(tx.S),
-            receiverPubkey: ethers.utils.computePublicKey(toAccount.prvkey),
+            receiverPubkey: receiverPubkey,
             tokenTypeFrom: txTokenTypes[i],
             amount: amounts[i],
             nonce: txNonces[i],

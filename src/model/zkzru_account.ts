@@ -54,6 +54,11 @@ const accountdb = sequelize.define("account_st", {
     allowNull: false,
     type: DataTypes.BIGINT,
   },
+  // FIXME:prvkey should be stored in KMS, currently we save in DB to test
+  prvkey :{
+    type: DataTypes.CITEXT,
+    allowNull: false,
+  }
 });
 
 sequelize
@@ -66,6 +71,7 @@ sequelize
       tokenType: 1,
       balance: "100",
       nonce: 1,
+      prvkey: "0x3234"
     });
   })
   .then(function (row: any) {
@@ -88,7 +94,7 @@ sequelize
     consola.log("Unable to connect to the database:", err);
   });
 
-const add = function (network_id, index, pubkey, tokenType, balance, nonce) {
+const add = function (network_id, index, pubkey, tokenType, balance, nonce, prvkey) {
   return accountdb.create({
     network_id,
     index,
@@ -96,6 +102,7 @@ const add = function (network_id, index, pubkey, tokenType, balance, nonce) {
     tokenType,
     balance,
     nonce,
+    prvkey
   });
 };
 

@@ -106,6 +106,9 @@ const nextBlockNumber = async () => {
         where: { },
         order: [ [ 'createdAt', 'DESC' ]],
     });
+    if (last == null) {
+      return 1;
+    }
     return last["blockNumber"] + 1
 }
 

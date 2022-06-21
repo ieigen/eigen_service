@@ -12,9 +12,7 @@ import * as accountdb from "../model/zkzru_account";
 import * as tokendb from "../model/zkzru_token";
 import * as blockdb from "../model/zkzru_block";
 
-// import prover
-import {parseDBData, prove} from "@ieigen/zkzru/operator/prover"
-//const prover = require("@ieigen/zkzru")
+import {parseDBData, prove, verify} from "@ieigen/zkzru/operator/prover"
 
 const ACC_DEPTH = 8
 const ACC_LEAVES = 2 ** ACC_DEPTH
@@ -38,13 +36,19 @@ module.exports = function (app) {
     app.post("/zkzru/prove", async (req, res) => {
         // 1. get accounts and txs from db
         const network_id = req.body.network_id;
-        let accArray = await accountdb.findAll({})
-        const txArray = await txdb.findAll({status: 0})
+        let accountsInDB = await accountdb.findAll({})
+        const txsInDB = await txdb.findAll({status: 0})
 
         // 2. generate proof, returns inputJson, proof
-        const {acc, tx} = await parseDBData(accArray, txArray)
+        const {accArray, txArray} = await parseDBData(accountsInDB, txsInDB)
 
-        const result = await prove(acc, tx)
+        const result = await prove(accArray, txArray)
+
+        const isValid = await verify(result['vk'], result['proof'])
+
+        if (!isValid) {
+            throw new Error(`Error: the generated proof is not valid`); 
+        }
 
         // 3. add new block
         let blockNumber = await blockdb.nextBlockNumber()
@@ -52,8 +56,13 @@ module.exports = function (app) {
         blockdb.add(network_id, blockNumber, result["inputJson"], result["publicJson"], result["proofJson"])
 
         // 4. update status
-        let updatedIndex = txArray.map(function(item){return item["tx_id"]})
-        txdb.update(updatedIndex, {"status": 1})
+        let updatedIndex = txsInDB.map(function(item){return item["tx_id"]})
+        txdb.update({tx_id: updatedIndex}, {status: 1}).then(function (result) {
+            consola.log("Update success: " + result);
+          })
+          .catch(function (err) {
+            consola.log("Update error: " + err);
+          });
     })
 
     // insert new transaction into database
@@ -61,6 +70,7 @@ module.exports = function (app) {
         console.log(req.body)
         const result = await txdb.add(
             req.body.network_id,
+            req.body.from_index,
             req.body.senderPubkey,
             req.body.r8x,
             req.body.r8y,
@@ -100,7 +110,8 @@ module.exports = function (app) {
             req.body.pubkey,
             req.body.tokenType,
             req.body.balance,
-            req.body.nonce
+            req.body.nonce,
+            req.body.prvkey
         )
         return res.json(util.Succ(result))
     })
