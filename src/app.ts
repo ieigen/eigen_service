@@ -155,7 +155,7 @@ app.get("/user/:user_id(\\d+)/addresses", service.getAddresses);
 
 app.get("/user/:user_id(\\d+)/friends_addresses", service.getFriendsAddresses);
 
-app.delete("/user/:user_id(\\d+)/address",service.deleteAddress);
+app.delete("/user/:user_id(\\d+)/address", service.deleteAddress);
 
 require("./login/google")(app);
 require("./login/metamask")(app);
@@ -163,6 +163,7 @@ require("./relay/relay")(app);
 require("./wallet/wallet")(app);
 require("./message")(app);
 require("./zkzru/app")(app);
+require("./stealth_address/stealth_address")(app);
 
 app.listen(3000, function () {
   consola.log("Eigen Service listening on port 3000!");
