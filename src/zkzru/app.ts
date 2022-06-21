@@ -5,7 +5,6 @@
  */
 
 import consola from "consola";
-import { Op } from "sequelize";
 import * as util from "../util";
 import * as txdb from "../model/zkzru_tx";
 import * as accountdb from "../model/zkzru_account";
@@ -17,26 +16,13 @@ import {parseDBData, prove, verify} from "@ieigen/zkzru/operator/prover"
 const ACC_DEPTH = 8
 const ACC_LEAVES = 2 ** ACC_DEPTH
 
-const padding = (arr, num) => {
-
-    if (arr.length >= num) {
-        return arr.slice(0, num)
-    }
-
-    const padNum = num - arr.length;
-    for (var i = 0; i < padNum; i ++) {
-        arr.push(txdb.emptyTX())
-    }
-    return arr
-}
-
 // prove, tx submit and query
 module.exports = function (app) {
 
     app.post("/zkzru/prove", async (req, res) => {
         // 1. get accounts and txs from db
         const network_id = req.body.network_id;
-        let accountsInDB = await accountdb.findAll({})
+        const accountsInDB = await accountdb.findAll({})
         const txsInDB = await txdb.findAll({status: 0})
 
         // 2. generate proof, returns inputJson, proof
@@ -51,12 +37,12 @@ module.exports = function (app) {
         }
 
         // 3. add new block
-        let blockNumber = await blockdb.nextBlockNumber()
+        const blockNumber = await blockdb.nextBlockNumber()
 
         blockdb.add(network_id, blockNumber, result["inputJson"], result["publicJson"], result["proofJson"])
 
         // 4. update status
-        let updatedIndex = txsInDB.map(function(item){return item["tx_id"]})
+        const updatedIndex = txsInDB.map(function(item){return item["tx_id"]})
         txdb.update({tx_id: updatedIndex}, {status: 1}).then(function (result) {
             consola.log("Update success: " + result);
           })

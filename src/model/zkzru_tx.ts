@@ -126,7 +126,7 @@ sequelize
   });
 
 const add = async function (network_id, from_index, senderPubkey, r8x, r8y, s, receiverPubkey, tokenTypeFrom, amount, nonce, status) {
-  let res = await l2txdb.create({
+  const res = await l2txdb.create({
     network_id,
     from_index,
     senderPubkey,
@@ -143,12 +143,12 @@ const add = async function (network_id, from_index, senderPubkey, r8x, r8y, s, r
 };
 
 const findOne = async function (filter_dict) {
-  let res = await l2txdb.findOne({ where: filter_dict });
+  const res = await l2txdb.findOne({ where: filter_dict });
   return res;
 };
 
 const findAll = async function (dict) {
-  let res =  l2txdb.findAll({ where: dict });
+  const res =  l2txdb.findAll({ where: dict });
   return res;
 };
 

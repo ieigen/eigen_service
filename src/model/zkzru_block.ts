@@ -81,7 +81,7 @@ sequelize
   });
 
 const add = async function (network_id, blockNumber, inputJson, publicJson, proofJson) {
-  let res = await l2blockdb.create({
+  const res = await l2blockdb.create({
     network_id,
     blockNumber,
     inputJson,
@@ -92,12 +92,12 @@ const add = async function (network_id, blockNumber, inputJson, publicJson, proo
 };
 
 const findOne = async function (filter_dict) {
-  let res = await l2blockdb.findOne({ where: filter_dict });
+  const res = await l2blockdb.findOne({ where: filter_dict });
   return res;
 };
 
 const findAll = async function (dict) {
-  let res =  l2blockdb.findAll({ where: dict });
+  const res =  l2blockdb.findAll({ where: dict });
   return res;
 };
 
