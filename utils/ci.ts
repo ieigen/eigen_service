@@ -51,6 +51,7 @@ const genAccount = async() => {
         network_id: network_id,
         index: zeroAccount.index,
         pubkey: "0",
+        address: "0",
         tokenType: 0,
         balance: 0,
         nonce: 0,
@@ -71,11 +72,13 @@ const genAccount = async() => {
         1, coordinatorPubkey[0], coordinatorPubkey[1],
         0, 0, 0, coordinatorPrvkey
     );
+    const coordinatorPubkeyUncompressed = '0x' + '04' + toHexString(coordinatorPubkey[0]) + toHexString(coordinatorPubkey[1]);
     await coordinator.initialize()
     await axios.post('http://localhost:3000/zkzru/account', {
         network_id: network_id,
         index: coordinator.index,
-        pubkey: '0x' + '04' + toHexString(coordinatorPubkey[0]) + toHexString(coordinatorPubkey[1]),
+        pubkey: coordinatorPubkeyUncompressed,
+        address: ethers.utils.computeAddress(coordinatorPubkeyUncompressed),
         tokenType: 0, // tokenType 0 is reserved for coordinator
         balance: 0,
         nonce: 0,
@@ -93,13 +96,15 @@ const genAccount = async() => {
     for (var i = 0; i < numAccounts; i++) {
         let privateKey = generatePrvkey(i+2)
         const pubkey = await accountHelper.generatePubkey(privateKey);
+        const pubkeyUncompressed = '0x' + '04' + toHexString(pubkey[0]) + toHexString(pubkey[1])
         const acc = new Account(i + 2, pubkey[0], pubkey[1], balances[i], nonces[i], tokenTypes[i], privateKey);
         await acc.initialize();
         accounts.push(acc);
         await axios.post('http://localhost:3000/zkzru/account', {
             network_id: network_id,
             index: acc.index,
-            pubkey: '0x' + '04' + toHexString(pubkey[0]) + toHexString(pubkey[1]),
+            pubkey: pubkeyUncompressed,
+            address: ethers.utils.computeAddress(pubkeyUncompressed),
             tokenType: tokenTypes[i],
             balance: balances[i],
             nonce: nonces[i],

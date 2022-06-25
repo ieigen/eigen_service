@@ -40,6 +40,11 @@ const accountdb = sequelize.define("account_st", {
     primaryKey: true,
   },
 
+  address: {
+    type: DataTypes.CITEXT,
+    allowNull: false,
+  },
+
   tokenType: {
     type: DataTypes.INTEGER,
     allowNull: false
@@ -68,6 +73,7 @@ sequelize
       network_id: "id",
       index: 0,
       pubkey: "0xUSER",
+      address: "0x1111",
       tokenType: 1,
       balance: "100",
       nonce: 1,
@@ -94,11 +100,12 @@ sequelize
     consola.log("Unable to connect to the database:", err);
   });
 
-const add = function (network_id, index, pubkey, tokenType, balance, nonce, prvkey) {
+const add = function (network_id, index, pubkey, address, tokenType, balance, nonce, prvkey) {
   return accountdb.create({
     network_id,
     index,
     pubkey,
+    address,
     tokenType,
     balance,
     nonce,

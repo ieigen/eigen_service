@@ -95,6 +95,7 @@ module.exports = function (app) {
             req.body.network_id,
             req.body.index,
             req.body.pubkey,
+            req.body.address,
             req.body.tokenType,
             req.body.balance,
             req.body.nonce,
@@ -102,6 +103,14 @@ module.exports = function (app) {
         )
         return res.json(util.Succ(result))
     })
+
+    app.get("/zkzru/account/:address", async (req, res) => {
+      let filter = {}
+      if (req.params.address != "") {
+          filter = {"address": req.params.address}
+      }
+      return res.json(util.Succ(await accountdb.findAll(filter)))
+  })
 
     app.post("/zkzru/token", async (req, res) => {
         const result = await tokendb.add(
