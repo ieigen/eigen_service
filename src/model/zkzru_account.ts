@@ -31,6 +31,7 @@ const accountdb = sequelize.define("account_st", {
   index: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    primaryKey: true,
   },
 
   pubkey: {
@@ -41,7 +42,6 @@ const accountdb = sequelize.define("account_st", {
   address: {
     type: DataTypes.CITEXT,
     allowNull: false,
-    primaryKey: true,
   },
 
   tokenType: {
