@@ -26,7 +26,6 @@ const accountdb = sequelize.define("account_st", {
   network_id: {
     type: DataTypes.STRING(64),
     allowNull: false,
-    primaryKey: true,
   },
 
   index: {
@@ -37,12 +36,12 @@ const accountdb = sequelize.define("account_st", {
   pubkey: {
     type: DataTypes.CITEXT,
     allowNull: false,
-    primaryKey: true,
   },
 
   address: {
     type: DataTypes.CITEXT,
     allowNull: false,
+    primaryKey: true,
   },
 
   tokenType: {
