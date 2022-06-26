@@ -95,7 +95,9 @@ module.exports = function (app) {
     // insert new transaction into database
     app.post("/zkzru/tx", async(req, res) => {
         console.log(req.body)
-        const result = await txdb.add(
+        let result
+        try {
+          result = await txdb.add(
             req.body.network_id,
             req.body.from_index,
             req.body.senderPubkey,
@@ -107,18 +109,28 @@ module.exports = function (app) {
             req.body.amount,
             req.body.nonce,
             req.body.status
-        )
+          )
+        } catch (err) {
+          console.log(err)
+          throw err
+        }
         return res.json(util.Succ(result))
     })
 
     app.post("/zkzru/block", async(req, res) => {
-        const result = await blockdb.add(
+        let result
+        try {
+          result = await blockdb.add(
             req.body.network_id,
             req.body.blockNumber,
             req.body.inputJson,
             req.body.publicJson,
             req.body.proofJson
-        )
+          )
+        } catch(err) {
+          console.log(err)
+          throw err
+        }
         return res.json(util.Succ(result))
     })
 
@@ -131,7 +143,9 @@ module.exports = function (app) {
     })
 
     app.post("/zkzru/account", async (req, res) => {
-        const result = await accountdb.add(
+        let result
+        try { 
+          result = await accountdb.add(
             req.body.network_id,
             req.body.index,
             req.body.pubkey,
@@ -140,7 +154,11 @@ module.exports = function (app) {
             req.body.balance,
             req.body.nonce,
             req.body.prvkey
-        )
+          )
+        } catch(err) {
+          console.log(err)
+          throw err
+        } 
         return res.json(util.Succ(result))
     })
 
@@ -162,9 +180,15 @@ module.exports = function (app) {
     })
 
     app.post("/zkzru/deposit", async (req, res) => {
-      const result = await depositdb.add(
+      let result 
+      try {
+        result = await depositdb.add(
           res.body.subTreeRoot,
-      )
+        )
+      } catch (err) {
+        console.log(err)
+        throw err
+      } 
       return res.json(util.Succ(result))
   })
 
