@@ -24,7 +24,7 @@
 
 ### constructor
 
-• **new session**(`t`, `e`)
+• **new session**(`t`, `e`, `issue_time?`)
 
 #### Parameters
 
@@ -32,10 +32,11 @@
 | :------ | :------ |
 | `t` | `string` |
 | `e` | `number` |
+| `issue_time?` | `number` |
 
 #### Defined in
 
-[session.ts:17](https://github.com/ieigen/eigen_service/blob/b52d034/src/session.ts#L17)
+[session.ts:34](https://github.com/ieigen/eigen_service/blob/1208a86/src/session.ts#L34)
 
 ## Properties
 
@@ -45,7 +46,7 @@
 
 #### Defined in
 
-[session.ts:14](https://github.com/ieigen/eigen_service/blob/b52d034/src/session.ts#L14)
+[session.ts:31](https://github.com/ieigen/eigen_service/blob/1208a86/src/session.ts#L31)
 
 ___
 
@@ -55,7 +56,7 @@ ___
 
 #### Defined in
 
-[session.ts:15](https://github.com/ieigen/eigen_service/blob/b52d034/src/session.ts#L15)
+[session.ts:32](https://github.com/ieigen/eigen_service/blob/1208a86/src/session.ts#L32)
 
 ___
 
@@ -65,7 +66,7 @@ ___
 
 #### Defined in
 
-[session.ts:16](https://github.com/ieigen/eigen_service/blob/b52d034/src/session.ts#L16)
+[session.ts:33](https://github.com/ieigen/eigen_service/blob/1208a86/src/session.ts#L33)
 
 ## Methods
 
@@ -79,4 +80,4 @@ ___
 
 #### Defined in
 
-[session.ts:23](https://github.com/ieigen/eigen_service/blob/b52d034/src/session.ts#L23)
+[session.ts:44](https://github.com/ieigen/eigen_service/blob/1208a86/src/session.ts#L44)

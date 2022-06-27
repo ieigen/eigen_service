@@ -30,7 +30,7 @@ User information model definition
 
 #### Defined in
 
-[model/database_id_map.ts:53](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_id_map.ts#L53)
+[model/database_id_map.ts:68](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_id_map.ts#L68)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[model/database_id_map.ts:57](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_id_map.ts#L57)
+[model/database_id_map.ts:72](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_id_map.ts#L72)
 
 ___
 
@@ -65,4 +65,4 @@ ___
 
 #### Defined in
 
-[model/database_id_map.ts:61](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_id_map.ts#L61)
+[model/database_id_map.ts:76](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_id_map.ts#L76)

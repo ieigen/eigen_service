@@ -33,7 +33,7 @@ Get a nonce in order to login with metamask
 
 #### Defined in
 
-[login/metamask.ts:39](https://github.com/ieigen/eigen_service/blob/b52d034/src/login/metamask.ts#L39)
+[login/metamask.ts:54](https://github.com/ieigen/eigen_service/blob/1208a86/src/login/metamask.ts#L54)
 
 ___
 
@@ -57,7 +57,7 @@ a UID and JWT
 
 #### Defined in
 
-[login/metamask.ts:70](https://github.com/ieigen/eigen_service/blob/b52d034/src/login/metamask.ts#L70)
+[login/metamask.ts:85](https://github.com/ieigen/eigen_service/blob/1208a86/src/login/metamask.ts#L85)
 
 ___
 
@@ -80,4 +80,4 @@ Association between fake_email and Google email
 
 #### Defined in
 
-[login/metamask.ts:202](https://github.com/ieigen/eigen_service/blob/b52d034/src/login/metamask.ts#L202)
+[login/metamask.ts:217](https://github.com/ieigen/eigen_service/blob/1208a86/src/login/metamask.ts#L217)

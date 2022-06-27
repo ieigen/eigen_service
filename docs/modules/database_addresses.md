@@ -12,6 +12,7 @@ Addresses model definition
 - [findOne](database_addresses.md#findone)
 - [findAll](database_addresses.md#findall)
 - [updateOrAdd](database_addresses.md#updateoradd)
+- [deleteAddress](database_addresses.md#deleteaddress)
 
 ## Functions
 
@@ -34,7 +35,7 @@ Addresses model definition
 
 #### Defined in
 
-[model/database_address.ts:80](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_address.ts#L80)
+[model/database_address.ts:95](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_address.ts#L95)
 
 ___
 
@@ -54,7 +55,7 @@ ___
 
 #### Defined in
 
-[model/database_address.ts:89](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_address.ts#L89)
+[model/database_address.ts:104](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_address.ts#L104)
 
 ___
 
@@ -74,7 +75,7 @@ ___
 
 #### Defined in
 
-[model/database_address.ts:92](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_address.ts#L92)
+[model/database_address.ts:107](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_address.ts#L107)
 
 ___
 
@@ -97,4 +98,24 @@ ___
 
 #### Defined in
 
-[model/database_address.ts:96](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_address.ts#L96)
+[model/database_address.ts:111](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_address.ts#L111)
+
+___
+
+### deleteAddress
+
+▸ **deleteAddress**(`address`): `Promise`<`number`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `address` | `any` |
+
+#### Returns
+
+`Promise`<`number`\>
+
+#### Defined in
+
+[model/database_address.ts:123](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_address.ts#L123)

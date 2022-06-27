@@ -2,53 +2,32 @@
 
 # Module: crypto
 
-Provides ecies related utility functions
+Provides secret share functions
 
 ## Table of contents
 
+### Enumerations
+
+- [SecLevel](../enums/crypto.SecLevel.md)
+
 ### Functions
 
-- [aes\_enc](crypto.md#aes_enc)
-- [aes\_dec](crypto.md#aes_dec)
-- [encrypt](crypto.md#encrypt)
-- [decrypt](crypto.md#decrypt)
+- [generate\_key](crypto.md#generate_key)
+- [generate\_mnemonic](crypto.md#generate_mnemonic)
+- [split](crypto.md#split)
+- [combine](crypto.md#combine)
 
 ## Functions
 
-### aes\_enc
+### generate\_key
 
-▸ **aes_enc**(`cypherName`, `iv`, `key`, `plaintext`): `any`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `cypherName` | `any` |
-| `iv` | `any` |
-| `key` | `any` |
-| `plaintext` | `any` |
-
-#### Returns
-
-`any`
-
-#### Defined in
-
-[crypto/ecies.ts:23](https://github.com/ieigen/eigen_service/blob/b52d034/src/crypto/ecies.ts#L23)
-
-___
-
-### aes\_dec
-
-▸ **aes_dec**(`cypherName`, `key`, `cipherText`): `string`
+▸ **generate_key**(`options?`): `string`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `cypherName` | `any` |
-| `key` | `any` |
-| `cipherText` | `any` |
+| `options?` | `any` |
 
 #### Returns
 
@@ -56,43 +35,19 @@ ___
 
 #### Defined in
 
-[crypto/ecies.ts:31](https://github.com/ieigen/eigen_service/blob/b52d034/src/crypto/ecies.ts#L31)
+[crypto/secretshare.ts:74](https://github.com/ieigen/eigen_service/blob/1208a86/src/crypto/secretshare.ts#L74)
 
 ___
 
-### encrypt
+### generate\_mnemonic
 
-▸ **encrypt**(`publicKey`, `message`, `options`): `any`
+▸ **generate_mnemonic**(`typ`): `string`
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `publicKey` | `any` |
-| `message` | `any` |
-| `options` | `any` |
-
-#### Returns
-
-`any`
-
-#### Defined in
-
-[crypto/ecies.ts:97](https://github.com/ieigen/eigen_service/blob/b52d034/src/crypto/ecies.ts#L97)
-
-___
-
-### decrypt
-
-▸ **decrypt**(`keyPair`, `message`, `options`): `string`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `keyPair` | `any` |
-| `message` | `any` |
-| `options` | `any` |
+| `typ` | [`SecLevel`](../enums/crypto.SecLevel.md) |
 
 #### Returns
 
@@ -100,4 +55,45 @@ ___
 
 #### Defined in
 
-[crypto/ecies.ts:145](https://github.com/ieigen/eigen_service/blob/b52d034/src/crypto/ecies.ts#L145)
+[crypto/secretshare.ts:89](https://github.com/ieigen/eigen_service/blob/1208a86/src/crypto/secretshare.ts#L89)
+
+___
+
+### split
+
+▸ **split**(`secret`, `level`): `string`[]
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `secret` | `string` |
+| `level` | [`SecLevel`](../enums/crypto.SecLevel.md) |
+
+#### Returns
+
+`string`[]
+
+#### Defined in
+
+[crypto/secretshare.ts:112](https://github.com/ieigen/eigen_service/blob/1208a86/src/crypto/secretshare.ts#L112)
+
+___
+
+### combine
+
+▸ **combine**(`shares`): `string`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `shares` | `string`[] |
+
+#### Returns
+
+`string`
+
+#### Defined in
+
+[crypto/secretshare.ts:126](https://github.com/ieigen/eigen_service/blob/1208a86/src/crypto/secretshare.ts#L126)

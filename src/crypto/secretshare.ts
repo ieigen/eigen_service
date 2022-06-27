@@ -17,7 +17,7 @@
 /**
  * Provides secret share functions
  *
- * @module login
+ * @module crypto
  */
 
 /* eslint-disable @typescript-eslint/no-unused-vars */

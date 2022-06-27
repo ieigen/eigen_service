@@ -18,4 +18,4 @@ Provide association related support
 
 #### Defined in
 
-[association.ts:8](https://github.com/ieigen/eigen_service/blob/b52d034/src/association.ts#L8)
+[association.ts:24](https://github.com/ieigen/eigen_service/blob/1208a86/src/association.ts#L24)

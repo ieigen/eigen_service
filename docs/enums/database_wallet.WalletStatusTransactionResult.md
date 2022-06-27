@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[model/database_wallet.ts:74](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet.ts#L74)
+[model/database_wallet.ts:90](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet.ts#L90)
 
 ___
 
@@ -29,4 +29,4 @@ ___
 
 #### Defined in
 
-[model/database_wallet.ts:75](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet.ts#L75)
+[model/database_wallet.ts:91](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet.ts#L91)
