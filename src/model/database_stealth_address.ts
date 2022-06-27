@@ -14,6 +14,13 @@
  * permissions and limitations under the License.
  */
 
+// database_stealth_address.ts
+/**
+ * Stealth address model definition
+ *
+ * @module database_stealth_address
+ */
+
 import { Sequelize, DataTypes } from "sequelize";
 import consola from "consola";
 
