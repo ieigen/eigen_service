@@ -14,6 +14,7 @@ The kind of signature operation.
 - [Sent](database_transaction_history.TransactionStatus.md#sent)
 - [Success](database_transaction_history.TransactionStatus.md#success)
 - [Creating](database_transaction_history.TransactionStatus.md#creating)
+- [Canceled](database_transaction_history.TransactionStatus.md#canceled)
 
 ## Enumeration members
 
@@ -23,7 +24,7 @@ The kind of signature operation.
 
 #### Defined in
 
-[model/database_transaction_history.ts:36](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L36)
+[model/database_transaction_history.ts:52](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_transaction_history.ts#L52)
 
 ___
 
@@ -33,7 +34,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:37](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L37)
+[model/database_transaction_history.ts:53](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_transaction_history.ts#L53)
 
 ___
 
@@ -43,7 +44,7 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:38](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L38)
+[model/database_transaction_history.ts:54](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_transaction_history.ts#L54)
 
 ___
 
@@ -53,4 +54,14 @@ ___
 
 #### Defined in
 
-[model/database_transaction_history.ts:39](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_transaction_history.ts#L39)
+[model/database_transaction_history.ts:55](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_transaction_history.ts#L55)
+
+___
+
+### Canceled
+
+• **Canceled** = `3`
+
+#### Defined in
+
+[model/database_transaction_history.ts:56](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_transaction_history.ts#L56)

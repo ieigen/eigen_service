@@ -27,7 +27,7 @@ The signer status.
 
 #### Defined in
 
-[model/database_wallet.ts:34](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet.ts#L34)
+[model/database_wallet.ts:50](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet.ts#L50)
 
 ___
 
@@ -37,7 +37,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet.ts:35](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet.ts#L35)
+[model/database_wallet.ts:51](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet.ts#L51)
 
 ___
 
@@ -47,7 +47,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet.ts:36](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet.ts#L36)
+[model/database_wallet.ts:52](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet.ts#L52)
 
 ___
 
@@ -57,7 +57,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet.ts:37](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet.ts#L37)
+[model/database_wallet.ts:53](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet.ts#L53)
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet.ts:38](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet.ts#L38)
+[model/database_wallet.ts:54](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet.ts#L54)
 
 ___
 
@@ -77,7 +77,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet.ts:39](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet.ts#L39)
+[model/database_wallet.ts:55](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet.ts#L55)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet.ts:40](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet.ts#L40)
+[model/database_wallet.ts:56](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet.ts#L56)
 
 ___
 
@@ -97,4 +97,4 @@ ___
 
 #### Defined in
 
-[model/database_wallet.ts:41](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet.ts#L41)
+[model/database_wallet.ts:57](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet.ts#L57)

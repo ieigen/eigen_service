@@ -24,7 +24,7 @@ The log utils
 
 #### Defined in
 
-[log.ts:11](https://github.com/ieigen/eigen_service/blob/b52d034/src/log.ts#L11)
+[log.ts:27](https://github.com/ieigen/eigen_service/blob/1208a86/src/log.ts#L27)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[log.ts:15](https://github.com/ieigen/eigen_service/blob/b52d034/src/log.ts#L15)
+[log.ts:31](https://github.com/ieigen/eigen_service/blob/1208a86/src/log.ts#L31)
 
 ___
 
@@ -58,4 +58,4 @@ ___
 
 #### Defined in
 
-[log.ts:21](https://github.com/ieigen/eigen_service/blob/b52d034/src/log.ts#L21)
+[log.ts:37](https://github.com/ieigen/eigen_service/blob/1208a86/src/log.ts#L37)

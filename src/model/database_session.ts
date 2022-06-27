@@ -13,11 +13,12 @@
  * or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-// database_addresses.ts
+
+// database_session.ts
 /**
- * Addresses model definition
+ * Session model definition
  *
- * @module database_addresses
+ * @module database_session
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -34,38 +35,33 @@ const sequelize = new Sequelize({
     acquire: 30000,
     idle: 10000,
   },
-  storage: "./data/db_address.sqlite",
+  storage: "./data/db_session.sqlite",
 });
 
-const addressdb = sequelize.define("address_st", {
-  user_id: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    primaryKey: true,
-  },
-  network_id: {
-    type: DataTypes.STRING(64),
-    allowNull: false,
-    primaryKey: true,
-  },
-
-  user_address: {
+const sessiondb = sequelize.define("session_st", {
+  hash_code: {
     type: DataTypes.CITEXT,
     allowNull: false,
     primaryKey: true,
   },
-
-  cipher_key: {
-    allowNull: false,
-
+  token: {
     type: DataTypes.STRING,
+    allowNull: false,
+  },
+  expiry: {
+    type: DataTypes.NUMBER,
+    allowNull: false,
+  },
+  issue_time: {
+    type: DataTypes.NUMBER,
+    allowNull: false,
   },
 });
 
 sequelize
   .sync()
   .then(function () {
-    return addressdb.create({
+    return sessiondb.create({
       user_id: 1,
       network_id: "id",
       user_address: "0xUSER",
@@ -80,7 +76,7 @@ sequelize
         user_address: "0xUSER",
       })
     );
-    addressdb.destroy({
+    sessiondb.destroy({
       where: {
         user_id: row.user_id,
         network_id: row.network_id,
@@ -92,36 +88,50 @@ sequelize
     consola.log("Unable to connect to the database:", err);
   });
 
-const add = function (user_id, network_id, user_address, cipher_key) {
-  return addressdb.create({
-    user_id,
-    network_id,
-    user_address,
-    cipher_key,
+const add = function (hash_code, token, expiry, issue_time) {
+  return sessiondb.create({
+    hash_code,
+    token,
+    expiry,
+    issue_time,
   });
 };
 
 const findOne = function (filter_dict) {
-  return addressdb.findOne({ where: filter_dict });
+  return sessiondb.findOne({ where: filter_dict });
 };
 const findAll = function (dict) {
-  return addressdb.findAll({ where: dict });
+  return sessiondb.findAll({ where: dict });
 };
 
-const updateOrAdd = function (user_id, network_id, user_address, cipher_key) {
-  addressdb
-    .findOne({ where: { user_id, network_id, user_address } })
-    .then(function (row: any) {
-      consola.log(row);
-      if (row === null) {
-        add(user_id, network_id, user_address, cipher_key);
-      }
+const updateOrAdd = function (hash_code, token, expiry, issue_time) {
+  return sessiondb.findOne({ where: { hash_code } }).then(function (row: any) {
+    consola.log(row);
+    if (row === null) {
+      add(hash_code, token, expiry, issue_time);
       return true;
-    });
+    }
+
+    return row
+      .update({
+        hash_code,
+        token,
+        expiry,
+        issue_time,
+      })
+      .then(function (result) {
+        consola.log("Update seesion success: " + result);
+        return true;
+      })
+      .catch(function (err) {
+        consola.log("Update seesion error: " + err);
+        return false;
+      });
+  });
 };
 
-const deleteAddress = function (address) {
-  return addressdb.destroy({ where: { user_address: address } });
+const deleteSession = function (hash_code) {
+  return sessiondb.destroy({ where: { hash_code: hash_code } });
 };
 
-export { updateOrAdd, add, findOne, findAll, deleteAddress };
+export { updateOrAdd, add, findOne, findAll, deleteSession };

@@ -19,7 +19,7 @@
 
 ### check\_token
 
-▸ **check_token**(`key`): `string`
+▸ **check_token**(`key`): `Promise`<`string`\>
 
 #### Parameters
 
@@ -29,17 +29,17 @@
 
 #### Returns
 
-`string`
+`Promise`<`string`\>
 
 #### Defined in
 
-[session.ts:37](https://github.com/ieigen/eigen_service/blob/b52d034/src/session.ts#L37)
+[session.ts:59](https://github.com/ieigen/eigen_service/blob/1208a86/src/session.ts#L59)
 
 ___
 
 ### add\_token
 
-▸ **add_token**(`key`, `sess`): `void`
+▸ **add_token**(`key`, `sess`): `Promise`<`any`\>
 
 #### Parameters
 
@@ -50,8 +50,8 @@ ___
 
 #### Returns
 
-`void`
+`Promise`<`any`\>
 
 #### Defined in
 
-[session.ts:47](https://github.com/ieigen/eigen_service/blob/b52d034/src/session.ts#L47)
+[session.ts:84](https://github.com/ieigen/eigen_service/blob/1208a86/src/session.ts#L84)

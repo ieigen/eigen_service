@@ -25,7 +25,7 @@ Error code for a JSON responce.
 
 #### Defined in
 
-[util.ts:35](https://github.com/ieigen/eigen_service/blob/b52d034/src/util.ts#L35)
+[util.ts:51](https://github.com/ieigen/eigen_service/blob/1208a86/src/util.ts#L51)
 
 ___
 
@@ -35,7 +35,7 @@ ___
 
 #### Defined in
 
-[util.ts:36](https://github.com/ieigen/eigen_service/blob/b52d034/src/util.ts#L36)
+[util.ts:52](https://github.com/ieigen/eigen_service/blob/1208a86/src/util.ts#L52)
 
 ___
 
@@ -45,7 +45,7 @@ ___
 
 #### Defined in
 
-[util.ts:37](https://github.com/ieigen/eigen_service/blob/b52d034/src/util.ts#L37)
+[util.ts:53](https://github.com/ieigen/eigen_service/blob/1208a86/src/util.ts#L53)
 
 ___
 
@@ -55,7 +55,7 @@ ___
 
 #### Defined in
 
-[util.ts:38](https://github.com/ieigen/eigen_service/blob/b52d034/src/util.ts#L38)
+[util.ts:54](https://github.com/ieigen/eigen_service/blob/1208a86/src/util.ts#L54)
 
 ___
 
@@ -65,7 +65,7 @@ ___
 
 #### Defined in
 
-[util.ts:39](https://github.com/ieigen/eigen_service/blob/b52d034/src/util.ts#L39)
+[util.ts:55](https://github.com/ieigen/eigen_service/blob/1208a86/src/util.ts#L55)
 
 ___
 
@@ -75,4 +75,4 @@ ___
 
 #### Defined in
 
-[util.ts:40](https://github.com/ieigen/eigen_service/blob/b52d034/src/util.ts#L40)
+[util.ts:56](https://github.com/ieigen/eigen_service/blob/1208a86/src/util.ts#L56)

@@ -32,7 +32,7 @@ Public key model definition
 
 #### Defined in
 
-[model/database_pk.ts:50](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_pk.ts#L50)
+[model/database_pk.ts:65](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_pk.ts#L65)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[model/database_pk.ts:57](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_pk.ts#L57)
+[model/database_pk.ts:72](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_pk.ts#L72)
 
 ___
 
@@ -66,7 +66,7 @@ ___
 
 #### Defined in
 
-[model/database_pk.ts:61](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_pk.ts#L61)
+[model/database_pk.ts:76](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_pk.ts#L76)
 
 ___
 
@@ -88,4 +88,4 @@ ___
 
 #### Defined in
 
-[model/database_pk.ts:65](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_pk.ts#L65)
+[model/database_pk.ts:80](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_pk.ts#L80)

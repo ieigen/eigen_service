@@ -29,7 +29,7 @@ The cause of a status transaction change.
 
 #### Defined in
 
-[model/database_wallet_history.ts:33](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L33)
+[model/database_wallet_history.ts:49](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L49)
 
 ___
 
@@ -39,7 +39,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:34](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L34)
+[model/database_wallet_history.ts:50](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L50)
 
 ___
 
@@ -49,7 +49,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:35](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L35)
+[model/database_wallet_history.ts:51](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L51)
 
 ___
 
@@ -59,7 +59,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:36](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L36)
+[model/database_wallet_history.ts:52](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L52)
 
 ___
 
@@ -69,7 +69,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:37](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L37)
+[model/database_wallet_history.ts:53](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L53)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:38](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L38)
+[model/database_wallet_history.ts:54](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L54)
 
 ___
 
@@ -89,7 +89,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:39](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L39)
+[model/database_wallet_history.ts:55](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L55)
 
 ___
 
@@ -99,7 +99,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:40](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L40)
+[model/database_wallet_history.ts:56](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L56)
 
 ___
 
@@ -109,7 +109,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:41](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L41)
+[model/database_wallet_history.ts:57](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L57)
 
 ___
 
@@ -119,4 +119,4 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:42](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L42)
+[model/database_wallet_history.ts:58](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L58)

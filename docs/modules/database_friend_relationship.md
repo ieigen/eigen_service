@@ -29,7 +29,7 @@ Friend relationship model definition
 
 #### Defined in
 
-[model/database_friend_relationship.ts:90](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_friend_relationship.ts#L90)
+[model/database_friend_relationship.ts:105](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_friend_relationship.ts#L105)
 
 ___
 
@@ -50,7 +50,7 @@ ___
 
 #### Defined in
 
-[model/database_friend_relationship.ts:94](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_friend_relationship.ts#L94)
+[model/database_friend_relationship.ts:109](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_friend_relationship.ts#L109)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[model/database_friend_relationship.ts:261](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_friend_relationship.ts#L261)
+[model/database_friend_relationship.ts:276](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_friend_relationship.ts#L276)
 
 ___
 
@@ -92,7 +92,7 @@ ___
 
 #### Defined in
 
-[model/database_friend_relationship.ts:265](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_friend_relationship.ts#L265)
+[model/database_friend_relationship.ts:280](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_friend_relationship.ts#L280)
 
 ___
 
@@ -113,7 +113,7 @@ ___
 
 #### Defined in
 
-[model/database_friend_relationship.ts:269](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_friend_relationship.ts#L269)
+[model/database_friend_relationship.ts:284](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_friend_relationship.ts#L284)
 
 ___
 
@@ -133,7 +133,7 @@ ___
 
 #### Defined in
 
-[model/database_friend_relationship.ts:360](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_friend_relationship.ts#L360)
+[model/database_friend_relationship.ts:375](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_friend_relationship.ts#L375)
 
 ___
 
@@ -153,7 +153,7 @@ ___
 
 #### Defined in
 
-[model/database_friend_relationship.ts:393](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_friend_relationship.ts#L393)
+[model/database_friend_relationship.ts:408](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_friend_relationship.ts#L408)
 
 ___
 
@@ -173,4 +173,4 @@ ___
 
 #### Defined in
 
-[model/database_friend_relationship.ts:430](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_friend_relationship.ts#L430)
+[model/database_friend_relationship.ts:445](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_friend_relationship.ts#L445)

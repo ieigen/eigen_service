@@ -44,7 +44,7 @@ Wallet history model definition
 
 #### Defined in
 
-[model/database_wallet_history.ts:93](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L93)
+[model/database_wallet_history.ts:109](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L109)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:111](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L111)
+[model/database_wallet_history.ts:127](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L127)
 
 ___
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:115](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L115)
+[model/database_wallet_history.ts:131](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L131)
 
 ___
 
@@ -104,7 +104,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:123](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L123)
+[model/database_wallet_history.ts:139](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L139)
 
 ___
 
@@ -124,7 +124,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:132](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L132)
+[model/database_wallet_history.ts:148](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L148)
 
 ___
 
@@ -144,7 +144,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:149](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L149)
+[model/database_wallet_history.ts:165](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L165)
 
 ___
 
@@ -164,7 +164,7 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:158](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L158)
+[model/database_wallet_history.ts:174](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L174)
 
 ___
 
@@ -184,4 +184,4 @@ ___
 
 #### Defined in
 
-[model/database_wallet_history.ts:175](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_wallet_history.ts#L175)
+[model/database_wallet_history.ts:191](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_wallet_history.ts#L191)

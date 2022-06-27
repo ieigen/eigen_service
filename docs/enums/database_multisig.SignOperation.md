@@ -22,7 +22,7 @@ The kind of signature operation.
 
 #### Defined in
 
-[model/database_multisig.ts:69](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_multisig.ts#L69)
+[model/database_multisig.ts:84](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_multisig.ts#L84)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:70](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_multisig.ts#L70)
+[model/database_multisig.ts:85](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_multisig.ts#L85)
 
 ___
 
@@ -42,4 +42,4 @@ ___
 
 #### Defined in
 
-[model/database_multisig.ts:71](https://github.com/ieigen/eigen_service/blob/b52d034/src/model/database_multisig.ts#L71)
+[model/database_multisig.ts:86](https://github.com/ieigen/eigen_service/blob/1208a86/src/model/database_multisig.ts#L86)

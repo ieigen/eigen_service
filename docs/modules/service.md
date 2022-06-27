@@ -1,43 +1,44 @@
-[](../README.md) / [Exports](../modules.md) / main
+[](../README.md) / [Exports](../modules.md) / service
 
-# Module: main
+# Module: service
 
-The entry point for eigen_service
+The service implementation for eigen_service
 
 ## Table of contents
 
 ### Functions
 
-- [getStores](main.md#getstores)
-- [getStore](main.md#getstore)
-- [postStore](main.md#poststore)
-- [putStore](main.md#putstore)
-- [getRecovery](main.md#getrecovery)
-- [deleteRecovery](main.md#deleterecovery)
-- [postRecovery](main.md#postrecovery)
-- [getTxhs](main.md#gettxhs)
-- [getTxh](main.md#gettxh)
-- [postTxh](main.md#posttxh)
-- [putTxh](main.md#puttxh)
-- [postMeta](main.md#postmeta)
-- [putMeta](main.md#putmeta)
-- [getMeta](main.md#getmeta)
-- [postSign](main.md#postsign)
-- [getSign](main.md#getsign)
-- [getUser](main.md#getuser)
-- [postUser](main.md#postuser)
-- [postGuardian](main.md#postguardian)
-- [putGuardian](main.md#putguardian)
-- [deleteGuardian](main.md#deleteguardian)
-- [putOtpauth](main.md#putotpauth)
-- [postOtpauth](main.md#postotpauth)
-- [getStatistics](main.md#getstatistics)
-- [postAllowance](main.md#postallowance)
-- [getAllowance](main.md#getallowance)
-- [getAllowances](main.md#getallowances)
-- [postAddress](main.md#postaddress)
-- [getAddresses](main.md#getaddresses)
-- [getFriendsAddresses](main.md#getfriendsaddresses)
+- [getStores](service.md#getstores)
+- [getStore](service.md#getstore)
+- [postStore](service.md#poststore)
+- [putStore](service.md#putstore)
+- [getRecovery](service.md#getrecovery)
+- [deleteRecovery](service.md#deleterecovery)
+- [postRecovery](service.md#postrecovery)
+- [getTxhs](service.md#gettxhs)
+- [getTxh](service.md#gettxh)
+- [postTxh](service.md#posttxh)
+- [putTxh](service.md#puttxh)
+- [postMeta](service.md#postmeta)
+- [putMeta](service.md#putmeta)
+- [getMeta](service.md#getmeta)
+- [postSign](service.md#postsign)
+- [getSign](service.md#getsign)
+- [getUser](service.md#getuser)
+- [postUser](service.md#postuser)
+- [postGuardian](service.md#postguardian)
+- [putGuardian](service.md#putguardian)
+- [deleteGuardian](service.md#deleteguardian)
+- [putOtpauth](service.md#putotpauth)
+- [postOtpauth](service.md#postotpauth)
+- [getStatistics](service.md#getstatistics)
+- [postAllowance](service.md#postallowance)
+- [getAllowance](service.md#getallowance)
+- [getAllowances](service.md#getallowances)
+- [postAddress](service.md#postaddress)
+- [getAddresses](service.md#getaddresses)
+- [getFriendsAddresses](service.md#getfriendsaddresses)
+- [deleteAddress](service.md#deleteaddress)
 
 ## Functions
 
@@ -60,7 +61,7 @@ Stores public key
 
 #### Defined in
 
-[service.ts:40](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L40)
+[service.ts:56](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L56)
 
 ___
 
@@ -81,7 +82,7 @@ ___
 
 #### Defined in
 
-[service.ts:44](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L44)
+[service.ts:60](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L60)
 
 ___
 
@@ -102,7 +103,7 @@ ___
 
 #### Defined in
 
-[service.ts:59](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L59)
+[service.ts:75](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L75)
 
 ___
 
@@ -123,7 +124,7 @@ ___
 
 #### Defined in
 
-[service.ts:72](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L72)
+[service.ts:88](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L88)
 
 ___
 
@@ -144,7 +145,7 @@ ___
 
 #### Defined in
 
-[service.ts:89](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L89)
+[service.ts:105](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L105)
 
 ___
 
@@ -165,7 +166,7 @@ ___
 
 #### Defined in
 
-[service.ts:109](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L109)
+[service.ts:125](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L125)
 
 ___
 
@@ -186,7 +187,7 @@ ___
 
 #### Defined in
 
-[service.ts:128](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L128)
+[service.ts:144](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L144)
 
 ___
 
@@ -207,7 +208,7 @@ ___
 
 #### Defined in
 
-[service.ts:163](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L163)
+[service.ts:179](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L179)
 
 ___
 
@@ -228,7 +229,7 @@ ___
 
 #### Defined in
 
-[service.ts:277](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L277)
+[service.ts:293](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L293)
 
 ___
 
@@ -249,7 +250,7 @@ ___
 
 #### Defined in
 
-[service.ts:307](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L307)
+[service.ts:323](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L323)
 
 ___
 
@@ -270,7 +271,7 @@ ___
 
 #### Defined in
 
-[service.ts:363](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L363)
+[service.ts:385](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L385)
 
 ___
 
@@ -291,7 +292,7 @@ ___
 
 #### Defined in
 
-[service.ts:376](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L376)
+[service.ts:398](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L398)
 
 ___
 
@@ -312,7 +313,7 @@ ___
 
 #### Defined in
 
-[service.ts:390](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L390)
+[service.ts:412](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L412)
 
 ___
 
@@ -333,7 +334,7 @@ ___
 
 #### Defined in
 
-[service.ts:398](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L398)
+[service.ts:420](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L420)
 
 ___
 
@@ -354,7 +355,7 @@ ___
 
 #### Defined in
 
-[service.ts:419](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L419)
+[service.ts:441](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L441)
 
 ___
 
@@ -375,7 +376,7 @@ ___
 
 #### Defined in
 
-[service.ts:434](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L434)
+[service.ts:456](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L456)
 
 ___
 
@@ -396,7 +397,7 @@ ___
 
 #### Defined in
 
-[service.ts:511](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L511)
+[service.ts:533](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L533)
 
 ___
 
@@ -417,7 +418,7 @@ ___
 
 #### Defined in
 
-[service.ts:604](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L604)
+[service.ts:626](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L626)
 
 ___
 
@@ -438,7 +439,7 @@ ___
 
 #### Defined in
 
-[service.ts:630](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L630)
+[service.ts:652](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L652)
 
 ___
 
@@ -459,7 +460,7 @@ ___
 
 #### Defined in
 
-[service.ts:704](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L704)
+[service.ts:726](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L726)
 
 ___
 
@@ -480,7 +481,7 @@ ___
 
 #### Defined in
 
-[service.ts:811](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L811)
+[service.ts:833](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L833)
 
 ___
 
@@ -501,7 +502,7 @@ ___
 
 #### Defined in
 
-[service.ts:888](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L888)
+[service.ts:910](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L910)
 
 ___
 
@@ -522,7 +523,7 @@ ___
 
 #### Defined in
 
-[service.ts:920](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L920)
+[service.ts:942](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L942)
 
 ___
 
@@ -543,7 +544,7 @@ ___
 
 #### Defined in
 
-[service.ts:957](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L957)
+[service.ts:979](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L979)
 
 ___
 
@@ -564,7 +565,7 @@ ___
 
 #### Defined in
 
-[service.ts:982](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L982)
+[service.ts:1004](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L1004)
 
 ___
 
@@ -585,7 +586,7 @@ ___
 
 #### Defined in
 
-[service.ts:1021](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L1021)
+[service.ts:1043](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L1043)
 
 ___
 
@@ -606,7 +607,7 @@ ___
 
 #### Defined in
 
-[service.ts:1068](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L1068)
+[service.ts:1090](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L1090)
 
 ___
 
@@ -627,7 +628,7 @@ ___
 
 #### Defined in
 
-[service.ts:1153](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L1153)
+[service.ts:1175](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L1175)
 
 ___
 
@@ -648,7 +649,7 @@ ___
 
 #### Defined in
 
-[service.ts:1183](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L1183)
+[service.ts:1205](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L1205)
 
 ___
 
@@ -669,4 +670,25 @@ ___
 
 #### Defined in
 
-[service.ts:1230](https://github.com/ieigen/eigen_service/blob/b52d034/src/service.ts#L1230)
+[service.ts:1252](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L1252)
+
+___
+
+### deleteAddress
+
+▸ **deleteAddress**(`req`, `res`): `Promise`<`any`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `req` | `any` |
+| `res` | `any` |
+
+#### Returns
+
+`Promise`<`any`\>
+
+#### Defined in
+
+[service.ts:1317](https://github.com/ieigen/eigen_service/blob/1208a86/src/service.ts#L1317)
