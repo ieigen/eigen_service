@@ -45,10 +45,11 @@ const processDeposit = async () => {
   let wallet = new ethers.Wallet(coordinatorPrivateKey, provider);
   let rollupNC = new ethers.Contract(contractAddress, RollupNC.abi, wallet)
   queueNumber = await rollupNC.queueNumber();
+  let currentSubTreeRoot;
 
   let proof;
   let proofPos;
-  if (queueNumber >= 4) {
+  if (queueNumber == 4) {
       await axios.get('http://localhost:3000/zkzru/getProcessDepositProof', {
       }, axiosConfig)
       .then(function (response) {
@@ -62,8 +63,9 @@ const processDeposit = async () => {
           console.log(error);
       });
 
-      // TODO: add depositSubTreeRoot to db
-      
+      // look test in ZKZRU, the currentSubTreeRoot is the first4Hash, second4Hash...
+      currentSubTreeRoot = await rollupNC.pendingDeposits(0)
+
       // Call RollupNC contract processDeposit method
       let processDepositResult = await rollupNC.processDeposit(
         2,
@@ -71,6 +73,19 @@ const processDeposit = async () => {
         proof
       );
       console.log("ProcessDeposit Result:", processDepositResult)
+
+      // add currentSubTreeRoot in db
+      await axios.post('http://localhost:3000/zkzru/depositSubTreeRoot', {
+        subTreeRoot: currentSubTreeRoot
+    }, axiosConfig)
+        .then(function (response) {
+        console.log("add subTreeRoot successfully!")
+        console.log(response);
+    })
+        .catch(function (error) {
+        console.log("add subTreeRoot error!")
+        console.log(error);
+    });
   }
 }
 
