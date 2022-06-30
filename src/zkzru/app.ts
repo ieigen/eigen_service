@@ -110,7 +110,7 @@ module.exports = function (app) {
 
         // 4. call RollupNC contract's updateState method
         let wallet = new ethers.Wallet(coordinatorPrivateKey, provider);
-        let rollupNC = new ethers.Contract(contractAddress, abi, wallet)
+        let rollupNC = new ethers.Contract(contractAddress, RollupNC.abi, wallet)
         let updateProof = JSON.parse(data3)
         console.log("updateProof:", updateProof)
         let updateInput = JSON.parse(data1)
