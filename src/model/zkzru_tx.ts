@@ -10,6 +10,7 @@
 import { Sequelize, DataTypes } from "sequelize";
 import consola from "consola";
 import { parse } from "dotenv";
+const TXS_PER_SNARK = 4;
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
@@ -80,8 +81,45 @@ const l2txdb = sequelize.define("tx_st", {
       type: DataTypes.BIGINT,
   },
 
-  // 0: new, 1, confirming, 2, confirmed
+  // 0: new, 1, confirmed
   status: {
+    allowNull: false,
+    type: DataTypes.INTEGER,
+  },
+
+  recipient: {
+    allowNull: true,
+    type: DataTypes.STRING,
+  },
+
+  withdraw_r8x: {
+    allowNull: true,
+    type: DataTypes.STRING,
+  },
+
+  withdraw_r8y: {
+    allowNull: true,
+    type: DataTypes.STRING,
+  },
+
+  withdraw_s: {
+    allowNull: true,
+    type: DataTypes.STRING,
+  },
+
+  withdraw_msg: {
+    allowNull: true,
+    type: DataTypes.STRING,
+  }, 
+
+  block_number: {
+    allowNull: true,
+    type: DataTypes.INTEGER,
+  },
+
+  // current tx index in block
+  block_index: {
+    allowNull: true,
     type: DataTypes.INTEGER,
   }
 });
@@ -125,7 +163,24 @@ sequelize
     consola.log("Unable to connect to the database:", err);
   });
 
-const add = async function (network_id, from_index, senderPubkey, r8x, r8y, s, receiverPubkey, tokenTypeFrom, amount, nonce, status) {
+const add = async function (
+    network_id, 
+    from_index, 
+    senderPubkey, 
+    r8x, 
+    r8y, 
+    s, 
+    receiverPubkey, 
+    tokenTypeFrom, 
+    amount, 
+    nonce, 
+    status, 
+    recipient,
+    withdraw_r8x, 
+    withdraw_r8y, 
+    withdraw_s, 
+    withdraw_msg
+  ) {
   const res = await l2txdb.create({
     network_id,
     from_index,
@@ -137,7 +192,12 @@ const add = async function (network_id, from_index, senderPubkey, r8x, r8y, s, r
     tokenTypeFrom,
     amount,
     nonce,
-    status
+    status,
+    recipient,
+    withdraw_r8x,
+    withdraw_r8y,
+    withdraw_s,
+    withdraw_msg
   });
   return res;
 };
@@ -151,6 +211,31 @@ const findAll = async function (dict) {
   const res =  l2txdb.findAll({ where: dict });
   return res;
 };
+
+const findOneBatchPendingTXs = async function () {
+  const res = await l2txdb.findAll({ 
+    where: { status: 0 },
+    limit: TXS_PER_SNARK,
+    order: [ [ 'createdAt', 'ASC' ]],
+  });
+  return res;
+}
+
+const count = async function (dict) {
+  const amount = l2txdb.count({ where: dict });
+  return amount
+}
+
+const currentTxID = async () => {
+  const last = await l2txdb.findOne({
+      where: { },
+      order: [ [ 'createdAt', 'DESC' ]],
+  });
+  if (last == null) {
+    return 0;
+  }
+  return last["tx_id"]
+}
 
 const emptyTX = () => {
     return {
@@ -178,4 +263,4 @@ const update = (filter_dict, value_dict) => {
     })
 }
 
-export { add, findOne, findAll, emptyTX, update};
+export { add, findOne, findAll, findOneBatchPendingTXs, count, currentTxID, emptyTX, update};

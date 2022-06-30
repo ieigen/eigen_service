@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@ethersproject/shims": "^5.4.0",
+    "@ieigen/zkzru": "0.0.2",
     "asn1.js": "^5.4.1",
     "axios": "^0.23.0",
     "circomlibjs": "^0.1.4",
@@ -51,9 +52,9 @@
     "relay_sdk": "0.0.10",
     "secrets.js-grempe": "^2.0.0",
     "sequelize": "^6.7.0",
+    "set-interval-async": "^2.0.3",
     "socket.io": "^4.4.1",
     "sqlite3": "^5.0.2",
-    "@ieigen/zkzru": "0.0.2",
     "standard-ecies": "^2.0.0",
     "totp.js": "^0.0.1",
     "typings": "^0.6.10"

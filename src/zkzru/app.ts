@@ -11,9 +11,21 @@ import * as txdb from "../model/zkzru_tx";
 import * as accountdb from "../model/zkzru_account";
 import * as tokendb from "../model/zkzru_token";
 import * as blockdb from "../model/zkzru_block";
-import * as depositdb from "../model/zkzru_deposit";
+import * as depositSubTreeRootdb from "../model/zkzru_deposit";
 
-import {parseDBData, prove, verify} from "@ieigen/zkzru/operator/prover"
+import {parseDBData, prove, verify, proveWithdrawSignature, verifyWithdrawSignature} from "@ieigen/zkzru/operator/prover"
+import { ethers } from "ethers";
+
+import RollupNC from "../../utils/RollupNC.json";
+const provider = new ethers.providers.JsonRpcProvider('https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161')
+
+const contractAddress = "0x2bD9aAa2953F988153c8629926D22A6a5F69b14E";
+
+// TODO: change the proverPrivateKey
+const coordinatorPrivateKey = "0x111"
+
+const fromHexString = (hexString) =>
+  Uint8Array.from(hexString.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
 
 const {
   prover,
@@ -39,6 +51,18 @@ const zeroCache = [
   "19452855192846597539349825891822538438453868909233030566164911148476856805886"
 ]
 
+function parsePublicKey(uncompressKey) {
+  let uncompressKeyStr = uncompressKey.toString()
+  if (!uncompressKeyStr.startsWith("0x04")) {
+    throw new Error("Invalid public key:" + uncompressKey)
+  }
+  const xy = uncompressKey.substr(4)
+  const x = xy.substr(0, 64)
+  const y = xy.substr(64)
+
+  return {"x": x, "y": y}
+}
+
 // prove, tx submit and query
 module.exports = function (app) {
 
@@ -46,7 +70,7 @@ module.exports = function (app) {
         // 1. get accounts and txs from db
         const network_id = req.body.network_id;
         const accountsInDB = await accountdb.findAll({})
-        const txsInDB = await txdb.findAll({status: 0})
+        const txsInDB = await txdb.findOneBatchPendingTXs()
 
         // 2. generate proof, returns inputJson, proof
         const {accArray, txArray} = await parseDBData(accountsInDB, txsInDB)
@@ -56,15 +80,18 @@ module.exports = function (app) {
         let inputJson;
         let publicJson;
         let proofJson;
-         
+        let data1;
+        let data2;
+        let data3;
+
         try {
-          const data1 = readFileSync(result["inputJson"], 'utf8');
+          data1 = readFileSync(result["inputJson"], 'utf8');
           inputJson = data1.toString()
         
-          const data2 = readFileSync(result["publicJson"], 'utf8');
+          data2 = readFileSync(result["publicJson"], 'utf8');
           publicJson = data2.toString()
 
-          const data3 = readFileSync(result["proofJson"], "utf-8");
+          data3 = readFileSync(result["proofJson"], "utf-8");
           proofJson = data3.toString()
         } catch (err) {
           throw err
@@ -81,15 +108,98 @@ module.exports = function (app) {
 
         blockdb.add(network_id, blockNumber, inputJson, publicJson, proofJson)
 
-        // 4. update status
-        const updatedIndex = txsInDB.map(function(item){return item["tx_id"]})
-        txdb.update({tx_id: updatedIndex}, {status: 1}).then(function (result) {
+        // 4. call RollupNC contract's updateState method
+        let wallet = new ethers.Wallet(coordinatorPrivateKey, provider);
+        let rollupNC = new ethers.Contract(contractAddress, abi, wallet)
+        let updateProof = JSON.parse(data3)
+        console.log("updateProof:", updateProof)
+        let updateInput = JSON.parse(data1)
+        console.log("updateInput:", updateInput)
+        let validStateUpdate = await rollupNC.updateState(
+          updateProof, updateInput
+        );
+        console.log("validStateUpdate:", validStateUpdate)
+
+        // 5. update status and block_number and block_index
+        for (var i = 0; i < txsInDB.length; i++) {
+          txdb.update(
+            {tx_id: txsInDB[i]["tx_id"]}, 
+            {status: 1, block_number: blockNumber, block_index: i+1}
+          )
+          .then(function (result) {
             consola.log("Update success: " + result);
           })
           .catch(function (err) {
             consola.log("Update error: " + err);
           });
-        return res.json(util.Succ(""))
+        }
+        return res.json(util.Succ({blockNumber: blockNumber}))
+    })
+
+    app.post("/zkzru/proveWithdraw", async (req, res) => {
+      let mimcjs = await buildMimc7();
+      let F = mimcjs.F
+
+      // 1. get account and tx from db
+      const txID = req.body.tx_id;
+      const withdrawTx = await txdb.findOne({tx_id: txID})
+      const fromAccount = await accountdb.findOne({index: withdrawTx["from_index"]})
+      const senderPubkey = withdrawTx["senderPubkey"]
+      const senderPubkeyXY = parsePublicKey(senderPubkey)
+      const x = F.toString(fromHexString(senderPubkeyXY["x"]))
+      const y = F.toString(fromHexString(senderPubkeyXY["y"]))
+
+      // get txRoot, position, proof from block
+      const blockNumber = withdrawTx["block_number"]
+      const blockIndex = withdrawTx["block_index"]
+      const blockInfo = await blockdb.findOne({blockNumber: blockNumber})
+      const blockInputJson = JSON.parse(blockInfo["inputJson"])
+      const txRoot = blockInputJson.txRoot
+      const position = blockInputJson.paths2txRootPos[blockIndex]
+      const proof = blockInputJson.paths2txRoot[blockIndex]
+
+      const txInfo = {
+        pubkeyX: x,
+        pubkeyY: y,
+        index: withdrawTx["from_index"],
+        toX: "0",
+        toY: "0",
+        nonce: withdrawTx["nonce"],
+        amount: withdrawTx["amount"],
+        token_type_from: withdrawTx["tokenTypeFrom"],
+        txRoot: txRoot,
+        position: position,
+        proof: proof,
+    }
+
+      // 2. generate proof, returns inputJson, proof
+      const withdrawProofResult  = await proveWithdrawSignature(
+        withdrawTx["senderPubkey"],
+        withdrawTx["withdraw_r8x"],
+        withdrawTx["withdraw_r8x"],
+        withdrawTx["withdraw_s"],
+        withdrawTx["withdraw_msg"]
+      )
+      let withdrawProofJson;   
+      try {
+        const data = readFileSync(withdrawProofResult["proofJson"], "utf-8");
+        withdrawProofJson = JSON.parse(data)
+      } catch (err) {
+        throw err
+      }
+      
+      // verify the proof is valid
+      const isValid1 = await verifyWithdrawSignature(withdrawProofResult['vk'], withdrawProofResult['proof'])
+      if (!isValid1) {
+          throw new Error(`Error: the generated proof is not valid`); 
+      }
+
+
+      return res.json(util.Succ({
+        txInfo: txInfo,
+        recipient: withdrawTx["recipient"],
+        withdrawProof: withdrawProofJson
+      }))
     })
 
     // insert new transaction into database
@@ -108,13 +218,39 @@ module.exports = function (app) {
             req.body.tokenTypeFrom,
             req.body.amount,
             req.body.nonce,
-            req.body.status
+            req.body.status,
+            req.body.recipient,
+            req.body.withdraw_r8x,
+            req.body.withdraw_r8y,
+            req.body.withdraw_s,
+            req.body.withdraw_msg,
           )
         } catch (err) {
           console.log(err)
           throw err
         }
-        return res.json(util.Succ(result))
+        
+        let currentTxID
+        try {
+          currentTxID = await txdb.currentTxID()
+        } catch (err) {
+          console.log(err)
+          throw err
+        }
+        return res.json(util.Succ({addResult: result, currentTxID: currentTxID}))
+    })
+
+    app.get("/zkzru/tx/:txid", async (req, res) => {
+      let filter = {}
+      if (req.params.txid != "") {
+          filter = {"txid": req.params.txid}
+      }
+      return res.json(util.Succ(await txdb.findAll(filter)))
+    })
+
+    app.get("/zkzru/getPendingTxsCount", async (req, res) => {
+      let amount = await txdb.count({status: 0})
+      return res.json(util.Succ({count: amount}))
     })
 
     app.post("/zkzru/block", async(req, res) => {
@@ -132,15 +268,7 @@ module.exports = function (app) {
           throw err
         }
         return res.json(util.Succ(result))
-    })
-
-    app.get("/zkzru/tx/:txid", async (req, res) => {
-        let filter = {}
-        if (req.params.txid != "") {
-            filter = {"txid": req.params.txid}
-        }
-        return res.json(util.Succ(await txdb.findAll(filter)))
-    })
+    })  
 
     app.post("/zkzru/account", async (req, res) => {
         let result
@@ -168,7 +296,7 @@ module.exports = function (app) {
           filter = {"address": req.params.address}
       }
       return res.json(util.Succ(await accountdb.findAll(filter)))
-  })
+    })
 
     app.post("/zkzru/token", async (req, res) => {
         const result = await tokendb.add(
@@ -179,10 +307,10 @@ module.exports = function (app) {
         return res.json(util.Succ(result))
     })
 
-    app.post("/zkzru/deposit", async (req, res) => {
+    app.post("/zkzru/depositSubTreeRoot", async (req, res) => {
       let result 
       try {
-        result = await depositdb.add(
+        result = await depositSubTreeRootdb.add(
           res.body.subTreeRoot,
         )
       } catch (err) {
@@ -190,18 +318,18 @@ module.exports = function (app) {
         throw err
       } 
       return res.json(util.Succ(result))
-  })
+    })
 
-    app.get("/zkzru/getDepositProof", async (req, res) => {
+    app.get("/zkzru/getProcessDepositProof", async (req, res) => {
       // get all deposit hash in db and construct a merkle tree
       const subtreeDepth = 2
       let mimcjs = await buildMimc7();
       let F = mimcjs.F;
-      const depositInDB = await depositdb.findAll({})
+      const records = await depositSubTreeRootdb.findAll({})
       
-      let leafNodes = new Array(depositInDB.length)
-      for (var i = 0; i < depositInDB.length; i++){
-        const subTreeRoot = depositInDB[i]["subTreeRoot"]
+      let leafNodes = new Array(records.length)
+      for (var i = 0; i < records.length; i++){
+        const subTreeRoot = records[i]["subTreeRoot"]
         leafNodes[i] = F.e(subTreeRoot)
       }
 
@@ -212,8 +340,11 @@ module.exports = function (app) {
       )
       
       let merkleTree = new Tree(paddedLeafNodes)
-      const idx = depositInDB.length
+      const idx = records.length
       const {proof, proofPos} = merkleTree.getProof(idx)
+
+      console.log("proof:", proof)
+      console.log("proofPos", proofPos)
 
       return res.json(util.Succ({proof, proofPos}))
   })

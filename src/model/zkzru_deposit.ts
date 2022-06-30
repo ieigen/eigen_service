@@ -20,10 +20,10 @@ const sequelize = new Sequelize({
     acquire: 30000,
     idle: 10000,
   },
-  storage: "./data/zkzrublock_db.sqlite",
+  storage: "./data/zkzrudeposit_subtreeroot_db.sqlite",
 });
 
-const l2depositdb = sequelize.define("deposit_st", {
+const l2DepositSubTreeRootDB = sequelize.define("deposit_sub_tree_root_st", {
   deposit_id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -39,7 +39,7 @@ const l2depositdb = sequelize.define("deposit_st", {
 sequelize
   .sync()
   .then(function () {
-    return l2depositdb.create({
+    return l2DepositSubTreeRootDB.create({
       subTreeRoot: "15746898236136636561403648879339919593421034102197162753778420002381731361410"
     });
   })
@@ -49,7 +49,7 @@ sequelize
         subTreeRoot: "15746898236136636561403648879339919593421034102197162753778420002381731361410",
       })
     );
-    l2depositdb.destroy({
+    l2DepositSubTreeRootDB.destroy({
       where: {
         subTreeRoot: "15746898236136636561403648879339919593421034102197162753778420002381731361410",      },
     });
@@ -59,19 +59,19 @@ sequelize
   });
 
 const add = async function (subTreeRoot) {
-  const res = await l2depositdb.create({
+  const res = await l2DepositSubTreeRootDB.create({
     subTreeRoot
   });
   return res;
 };
 
 const findOne = async function (filter_dict) {
-  const res = await l2depositdb.findOne({ where: filter_dict });
+  const res = await l2DepositSubTreeRootDB.findOne({ where: filter_dict });
   return res;
 };
 
 const findAll = async function (dict) {
-  const res =  l2depositdb.findAll({ where: dict });
+  const res =  l2DepositSubTreeRootDB.findAll({ where: dict });
   return res;
 };
 
