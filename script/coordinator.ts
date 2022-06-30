@@ -62,6 +62,8 @@ const processDeposit = async () => {
           console.log(error);
       });
 
+      // TODO: add depositSubTreeRoot to db
+      
       // Call RollupNC contract processDeposit method
       let processDepositResult = await rollupNC.processDeposit(
         2,

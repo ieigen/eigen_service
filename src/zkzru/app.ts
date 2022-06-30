@@ -311,7 +311,7 @@ module.exports = function (app) {
       let result 
       try {
         result = await depositSubTreeRootdb.add(
-          res.body.subTreeRoot,
+          req.body.subTreeRoot,
         )
       } catch (err) {
         console.log(err)
