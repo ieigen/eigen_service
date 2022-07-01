@@ -32,7 +32,7 @@ const l2DepositSubTreeRootDB = sequelize.define("deposit_sub_tree_root_st", {
 
   subTreeRoot: {
       allowNull: false,
-      type: DataTypes.BIGINT,
+      type: DataTypes.STRING,
   },
 });
 

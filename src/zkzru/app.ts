@@ -19,10 +19,10 @@ import { ethers } from "ethers";
 import RollupNC from "../../utils/RollupNC.json";
 const provider = new ethers.providers.JsonRpcProvider('https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161')
 
-const contractAddress = "0x2bD9aAa2953F988153c8629926D22A6a5F69b14E";
 
-// TODO: change the proverPrivateKey
-const coordinatorPrivateKey = "0x111"
+util.require_env_variables(["COORDINATOR_PRIVATE_KEY", "ROLLUPNC_CONTRACT_ADDRESS"])
+const coordinatorPrivateKey = process.env.COORDINATOR_PRIVATE_KEY
+const contractAddress = process.env.ROLLUPNC_CONTRACT_ADDRESS
 
 const fromHexString = (hexString) =>
   Uint8Array.from(hexString.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
@@ -237,13 +237,13 @@ module.exports = function (app) {
           console.log(err)
           throw err
         }
-        return res.json(util.Succ({addResult: result, currentTxID: currentTxID}))
+        return res.json(util.Succ(result))
     })
 
     app.get("/zkzru/tx/:txid", async (req, res) => {
       let filter = {}
       if (req.params.txid != "") {
-          filter = {"txid": req.params.txid}
+          filter = {"tx_id": req.params.txid}
       }
       return res.json(util.Succ(await txdb.findAll(filter)))
     })
@@ -275,13 +275,11 @@ module.exports = function (app) {
         try { 
           result = await accountdb.add(
             req.body.network_id,
-            req.body.index,
             req.body.pubkey,
             req.body.address,
             req.body.tokenType,
             req.body.balance,
-            req.body.nonce,
-            req.body.prvkey
+            req.body.nonce
           )
         } catch(err) {
           console.log(err)
@@ -325,6 +323,7 @@ module.exports = function (app) {
       const subtreeDepth = 2
       let mimcjs = await buildMimc7();
       let F = mimcjs.F;
+      await treeHelper.initialize();
       const records = await depositSubTreeRootdb.findAll({})
       
       let leafNodes = new Array(records.length)
@@ -333,7 +332,7 @@ module.exports = function (app) {
         leafNodes[i] = F.e(subTreeRoot)
       }
 
-      const padValue = zeroCache[subtreeDepth]
+      const padValue = F.e(zeroCache[subtreeDepth])
 
       const paddedLeafNodes = treeHelper.padArray(
         leafNodes, padValue, 2 ** (ACC_DEPTH - subtreeDepth)
@@ -341,8 +340,11 @@ module.exports = function (app) {
       
       let merkleTree = new Tree(paddedLeafNodes)
       const idx = records.length
-      const {proof, proofPos} = merkleTree.getProof(idx)
+      let {proof, proofPos} = merkleTree.getProof(idx)
 
+      for (var j = 0; j < proof.length; j++) {
+        proof[j] = F.toString(proof[j])
+      }
       console.log("proof:", proof)
       console.log("proofPos", proofPos)
 

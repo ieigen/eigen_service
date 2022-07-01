@@ -9,6 +9,12 @@
 
 import { Sequelize, DataTypes } from "sequelize";
 import consola from "consola";
+import * as util from "../util";
+import { ethers } from "ethers";
+
+util.require_env_variables(["COORDINATOR_PRIVATE_KEY", "NETWORK_ID"])
+const coordinatorPrivateKey = process.env.COORDINATOR_PRIVATE_KEY
+const network_id = process.env.NETWORK_ID
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
@@ -32,6 +38,7 @@ const accountdb = sequelize.define("account_st", {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
+    autoIncrement: true,
   },
 
   pubkey: {
@@ -58,57 +65,43 @@ const accountdb = sequelize.define("account_st", {
     allowNull: false,
     type: DataTypes.BIGINT,
   },
-  // FIXME:prvkey should be stored in KMS, currently we save in DB to test
-  prvkey :{
-    type: DataTypes.CITEXT,
-    allowNull: false,
-  }
 });
 
 sequelize
   .sync()
   .then(function () {
-    return accountdb.create({
-      network_id: "id",
+    // create zeroAccount, set index=0 to make autoIncrement start from 0
+    let res1 = accountdb.create({
+      network_id: network_id,
       index: 0,
-      pubkey: "0xUSER",
-      address: "0x1111",
-      tokenType: 1,
-      balance: "100",
-      nonce: 1,
-      prvkey: "0x3234"
+      pubkey: "0",
+      address: "0",
+      tokenType: 0,
+      balance: "0",
+      nonce: 0
     });
-  })
-  .then(function (row: any) {
-    consola.log(
-      row.get({
-        pubkey: "0xUSER",
-        tokenType: 1,
-        nonce: 1,
-      })
-    );
-    accountdb.destroy({
-      where: {
-        pubkey: "0xUSER",
-        tokenType: 1,
-        nonce: 1,
-      },
+    // create coordinator account
+    let res2 = accountdb.create({
+      network_id: network_id,
+      pubkey: ethers.utils.computePublicKey(coordinatorPrivateKey),
+      address: ethers.utils.computeAddress(coordinatorPrivateKey),
+      tokenType: 0,
+      balance: "0",
+      nonce: 1
     });
   })
   .catch(function (err) {
     consola.log("Unable to connect to the database:", err);
   });
 
-const add = function (network_id, index, pubkey, address, tokenType, balance, nonce, prvkey) {
+const add = function (network_id, pubkey, address, tokenType, balance, nonce) {
   return accountdb.create({
     network_id,
-    index,
     pubkey,
     address,
     tokenType,
     balance,
-    nonce,
-    prvkey
+    nonce
   });
 };
 

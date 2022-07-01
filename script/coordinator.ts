@@ -2,6 +2,7 @@ const axios = require("axios")
 const ethers = require("ethers")
 const { setIntervalAsync } = require('set-interval-async/dynamic')
 const RollupNC = require("../utils/RollupNC.json")
+const util = require("../src/util")
 
 let axiosConfig = {
     headers: {
@@ -10,11 +11,11 @@ let axiosConfig = {
     }
 };
 
-// FIXME: set network_id constant currently
-const network_id = 1;
-let contractAddress = "0x2bD9aAa2953F988153c8629926D22A6a5F69b14E";
-// TODO: change the proverPrivateKey
-const coordinatorPrivateKey = "0x111"
+util.require_env_variables(["COORDINATOR_PRIVATE_KEY", "ROLLUPNC_CONTRACT_ADDRESS", "NETWORK_ID"])
+const coordinatorPrivateKey = process.env.COORDINATOR_PRIVATE_KEY
+const contractAddress = process.env.ROLLUPNC_CONTRACT_ADDRESS
+const network_id = process.env.NETWORK_ID
+
 const provider = new ethers.providers.JsonRpcProvider('https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161')
 
 const queryAndProve = async () => {
@@ -23,11 +24,13 @@ const queryAndProve = async () => {
         .then(function (response) {
             console.log(response);
             amount = response.data.amount
+            console.log("Current pending tx amount is:", amount)
         })
         .catch(function (error) {
             console.log(error);
         });
     if (amount >= 4) {
+        console.log("======================Start to prove=======================")
         await axios.post('http://localhost:3000/zkzru/prove', {
           network_id: network_id,
         }, axiosConfig)
@@ -37,6 +40,7 @@ const queryAndProve = async () => {
             .catch(function (error) {
             console.log(error);
         });
+        console.log("========================Prove ends==========================")
     }
 }
 

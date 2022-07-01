@@ -152,6 +152,11 @@ const genTX = async (accounts) => {
 
         let senderPubkey;
         let receiverPubkey;
+        let recipient;
+        let withdraw_r8x;
+        let withdraw_r8y;
+        let withdraw_s;
+        let withdraw_msg
         if (tx.fromX == 0 && tx.fromY == 0) {
             senderPubkey = '0'
         } else {
