@@ -2,7 +2,7 @@ const axios = require("axios")
 const ethers = require("ethers")
 const { setIntervalAsync } = require('set-interval-async/dynamic')
 const RollupNC = require("../utils/RollupNC.json")
-const util = require("../src/util")
+// const util = require("../src/util")
 
 let axiosConfig = {
     headers: {
@@ -11,10 +11,10 @@ let axiosConfig = {
     }
 };
 
-util.require_env_variables(["COORDINATOR_PRIVATE_KEY", "ROLLUPNC_CONTRACT_ADDRESS", "NETWORK_ID"])
-const coordinatorPrivateKey = process.env.COORDINATOR_PRIVATE_KEY
-const contractAddress = process.env.ROLLUPNC_CONTRACT_ADDRESS
-const network_id = process.env.NETWORK_ID
+// util.require_env_variables(["COORDINATOR_PRIVATE_KEY", "ROLLUPNC_CONTRACT_ADDRESS", "NETWORK_ID"])
+const coordinatorPrivateKey = process.env.COORDINATOR_PRIVATE_KEY || process.exit(-1)
+const contractAddress = process.env.ROLLUPNC_CONTRACT_ADDRESS || process.exit(-1)
+const network_id = process.env.NETWORK_ID || process.exit(-1)
 
 const provider = new ethers.providers.JsonRpcProvider('https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161')
 
@@ -23,7 +23,7 @@ const queryAndProve = async () => {
     await axios.get('http://localhost:3000/zkzru/getPendingTxsCount')
         .then(function (response) {
             console.log(response);
-            amount = response.data.amount
+            amount = response.data.data.count
             console.log("Current pending tx amount is:", amount)
         })
         .catch(function (error) {
@@ -35,7 +35,7 @@ const queryAndProve = async () => {
           network_id: network_id,
         }, axiosConfig)
             .then(function (response) {
-            console.log("Generate block %d successfully!", response.data.blockNumber);
+            console.log("Generate block %d successfully!", response.data.data.blockNumber);
         })
             .catch(function (error) {
             console.log(error);
@@ -48,7 +48,9 @@ const processDeposit = async () => {
   let queueNumber
   let wallet = new ethers.Wallet(coordinatorPrivateKey, provider);
   let rollupNC = new ethers.Contract(contractAddress, RollupNC.abi, wallet)
-  queueNumber = await rollupNC.queueNumber();
+  let res = await rollupNC.queueNumber();
+  queueNumber = res.toNumber();
+  console.log("Current queue number is:", queueNumber);
   let currentSubTreeRoot;
 
   let proof;
@@ -57,10 +59,11 @@ const processDeposit = async () => {
       await axios.get('http://localhost:3000/zkzru/getProcessDepositProof', {
       }, axiosConfig)
       .then(function (response) {
+	  console.log(response)
           console.log("Get ProcessDeposit Info successfully!");
-          proof = response.data.proof;
+          proof = response.data.data.proof;
           console.log("The proof is:", proof)
-          proofPos = response.data.proofPos;
+          proofPos = response.data.data.proofPos;
           console.log("The proofPos is:", proofPos)
       })
       .catch(function (error) {
@@ -68,10 +71,12 @@ const processDeposit = async () => {
       });
 
       // look test in ZKZRU, the currentSubTreeRoot is the first4Hash, second4Hash...
-      currentSubTreeRoot = await rollupNC.pendingDeposits(0)
+      let pendingDeposits0 = await rollupNC.pendingDeposits(0)
+      currentSubTreeRoot = pendingDeposits0.toString() 
+      console.log("currentSubTreeRoot is:", currentSubTreeRoot)
 
       // Call RollupNC contract processDeposit method
-      let processDepositResult = await rollupNC.processDeposit(
+      let processDepositResult = await rollupNC.processDeposits(
         2,
         proofPos,
         proof
@@ -102,7 +107,7 @@ function main() {
     // query every minute
     setInterval(async () => {
         await queryAndProve();     
-      }, 60 * 1000
+      }, 120 * 1000
     )
 }
 

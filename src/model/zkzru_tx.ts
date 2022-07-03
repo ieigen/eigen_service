@@ -126,42 +126,6 @@ const l2txdb = sequelize.define("tx_st", {
 
 sequelize
   .sync()
-  .then(function () {
-    return l2txdb.create({
-      network_id: "id",
-      from_index: 0,
-      senderPubkey: "0xUSER", //public key
-      r8x: "111",
-      r8y: "111",
-      s: "111",
-      receiverPubkey: "0xUSER", //public key
-      tokenTypeFrom: 1,
-      amount: "100",
-      nonce: 1,
-      status: 0
-    });
-  })
-  .then(function (row: any) {
-    consola.log(
-      row.get({
-        senderPubkey: "0xUSER",
-        receiverPubkey: "0xUSER",
-        tokenTypeFrom: 1,
-        nonce: 1
-      })
-    );
-    l2txdb.destroy({
-      where: {
-        senderPubkey: "0xUSER",
-        receiverPubkey: "0xUSER",
-        tokenTypeFrom: 1,
-        nonce: 1
-      },
-    });
-  })
-  .catch(function (err) {
-    consola.log("Unable to connect to the database:", err);
-  });
 
 const add = async function (
     network_id, 

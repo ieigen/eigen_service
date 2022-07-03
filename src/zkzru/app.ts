@@ -87,12 +87,15 @@ module.exports = function (app) {
         try {
           data1 = readFileSync(result["inputJson"], 'utf8');
           inputJson = data1.toString()
+          console.log("inputJson:", inputJson)
         
           data2 = readFileSync(result["publicJson"], 'utf8');
           publicJson = data2.toString()
+          console.log("publicJson:", publicJson)
 
           data3 = readFileSync(result["proofJson"], "utf-8");
           proofJson = data3.toString()
+          console.log("proofJson:", proofJson)
         } catch (err) {
           throw err
         }
@@ -106,17 +109,18 @@ module.exports = function (app) {
         // 3. add new block
         const blockNumber = await blockdb.nextBlockNumber()
 
-        blockdb.add(network_id, blockNumber, inputJson, publicJson, proofJson)
+        await blockdb.add(network_id, blockNumber, inputJson, publicJson, proofJson)
 
         // 4. call RollupNC contract's updateState method
         let wallet = new ethers.Wallet(coordinatorPrivateKey, provider);
+        console.log("RollupNC contract address:", contractAddress)
         let rollupNC = new ethers.Contract(contractAddress, RollupNC.abi, wallet)
         let updateProof = JSON.parse(data3)
         console.log("updateProof:", updateProof)
-        let updateInput = JSON.parse(data1)
-        console.log("updateInput:", updateInput)
+        let updatePublic = JSON.parse(data2)
+        console.log("updatePublic:", updatePublic)
         let validStateUpdate = await rollupNC.updateState(
-          updateProof, updateInput
+          updateProof, updatePublic
         );
         console.log("validStateUpdate:", validStateUpdate)
 

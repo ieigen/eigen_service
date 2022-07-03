@@ -27,12 +27,12 @@ const l2blockdb = sequelize.define("block_st", {
   network_id: {
     type: DataTypes.STRING(64),
     allowNull: false,
-    primaryKey: true,
   },
 
   blockNumber: {
       allowNull: false,
       type: DataTypes.BIGINT,
+      primaryKey: true,
   },
 
   inputJson: {
