@@ -30,4 +30,6 @@ RUN wget https://github.com/ieigen/EigenZKit/releases/download/v0.0.1/zkit-x86_6
     tar -zxvf zkit-x86_64-unknown-linux-gnu.tar.gz -C /usr/local/bin && \
     rm -f zkit-x86_64-unknown-linux-gnu.tar.gz
 
+# compile circuits TODO @zelig
+
 CMD ["forever", "build/src/app.js"]
