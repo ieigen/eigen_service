@@ -40,11 +40,11 @@ ENV WORKSPACE /var/run/zkzru
 RUN cp -r $OLD_CIRCUIT_DIR $CIRCUIT_DIR && cp -r $OLD_SCRIPTS_DIR /app/scripts && cd $CIRCUIT_DIR && mkdir -p $WORKSPACE
 
 RUN zkit compile -i $CIRCUIT_DIR/update_state_verifier.circom --O2=full -o $WORKSPACE && \
-    cd /app && node ${CIRCUIT_DIR}/../scripts/generate_update_state_verifier.js  && \
+    node ${CIRCUIT_DIR}/../scripts/generate_update_state_verifier.js  && \
     mv input.json ${WORKSPACE}/update_state_verifier_js/
 
 RUN zkit compile -i $CIRCUIT_DIR/withdraw_signature_verifier.circom --O2=full -o $WORKSPACE && \
-    cd /app && node ${CIRCUIT_DIR}/../scripts/generate_withdraw_signature_verifier.js  && \
+    node ${CIRCUIT_DIR}/../scripts/generate_withdraw_signature_verifier.js  && \
     mv input.json ${WORKSPACE}/withdraw_signature_verifier_js/
 
 CMD ["forever", "build/src/app.js"]
