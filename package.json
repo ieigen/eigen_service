@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "start": "yarn build && node ./build/src/app.js",
-    "build": "./node_modules/.bin/tsc",
+    "build": "yarn && ./node_modules/.bin/tsc",
     "test": "yarn build && mocha ./build/**/*.test.js",
     "clean": "rm -f ./data/db_*.sqlite",
     "build_image": "docker build -t ieigen/service:v1 .",
@@ -33,10 +33,11 @@
   },
   "dependencies": {
     "@ethersproject/shims": "^5.4.0",
-    "@ieigen/zkzru": "^0.0.6",
+    "@ieigen/zkzru": "^0.0.8",
     "asn1.js": "^5.4.1",
     "axios": "^0.23.0",
     "circomlibjs": "^0.1.4",
+    "circomlib": "^2.0.5",
     "consola": "^2.15.3",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
