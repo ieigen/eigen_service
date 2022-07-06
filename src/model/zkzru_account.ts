@@ -12,9 +12,9 @@ import consola from "consola";
 import * as util from "../util";
 import { ethers } from "ethers";
 
-util.require_env_variables(["COORDINATOR_PRIVATE_KEY", "NETWORK_ID"])
-const coordinatorPrivateKey = process.env.COORDINATOR_PRIVATE_KEY
-const network_id = process.env.NETWORK_ID
+util.require_env_variables(["COORDINATOR_PRIVATE_KEY", "NETWORK_ID"]);
+const coordinatorPrivateKey = process.env.COORDINATOR_PRIVATE_KEY;
+const network_id = process.env.NETWORK_ID;
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
@@ -53,7 +53,7 @@ const accountdb = sequelize.define("account_st", {
 
   tokenType: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
   },
 
   balance: {
@@ -69,7 +69,7 @@ const accountdb = sequelize.define("account_st", {
 
 sequelize
   .sync()
-  .then(function () {
+  .then(function() {
     // create zeroAccount, set index=0 to make autoIncrement start from 0
     let res1 = accountdb.create({
       network_id: network_id,
@@ -78,7 +78,7 @@ sequelize
       address: "0",
       tokenType: 0,
       balance: "0",
-      nonce: 0
+      nonce: 0,
     });
     // create coordinator account
     let res2 = accountdb.create({
@@ -87,29 +87,52 @@ sequelize
       address: ethers.utils.computeAddress(coordinatorPrivateKey),
       tokenType: 0,
       balance: "0",
-      nonce: 1
+      nonce: 1,
     });
   })
-  .catch(function (err) {
+  .catch(function(err) {
     consola.log("Unable to connect to the database:", err);
   });
 
-const add = function (network_id, pubkey, address, tokenType, balance, nonce) {
+const add = function(network_id, pubkey, address, tokenType, balance, nonce) {
   return accountdb.create({
     network_id,
     pubkey,
     address,
     tokenType,
     balance,
-    nonce
+    nonce,
   });
 };
 
-const findOne = function (filter_dict) {
+const updateNonceByIndex = function(nonce, index) {
+  return accountdb
+    .findOne({ where: { index: index } })
+    .then(function(row: any) {
+      consola.log(row);
+      if (row === null) {
+        return false;
+      }
+      return row
+        .update({
+          nonce: nonce,
+        }) // eslint-disable-next-line
+        .then(function(result) {
+          consola.log("Update nonce success: ", result);
+          return true;
+        })
+        .catch(function(err) {
+          consola.log("Update nonce error: ", err, nonce);
+          return false;
+        });
+    });
+};
+
+const findOne = function(filter_dict) {
   return accountdb.findOne({ where: filter_dict });
 };
-const findAll = function (dict) {
+const findAll = function(dict) {
   return accountdb.findAll({ where: dict });
 };
 
-export { add, findOne, findAll };
+export { add, findOne, findAll, updateNonceByIndex };
