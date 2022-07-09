@@ -36,7 +36,7 @@ const accountdb = sequelize.define("account_st", {
     allowNull: false,
   },
 
-  index: {
+  account_index: {
     type: DataTypes.INTEGER,
     allowNull: false,
     primaryKey: true,
@@ -75,7 +75,7 @@ sequelize
     // create zeroAccount, set index=0 to make autoIncrement start from 0
     const res1 = accountdb.create({
       network_id: network_id,
-      index: 0,
+      account_index: 0,
       pubkey: "0",
       address: "0",
       tokenType: 0,
@@ -137,4 +137,18 @@ const updateNonce = function(nonce, address) {
     });
 };
 
-export { add, findOne, findAll, updateNonce };
+const update = (filter_dict, value_dict) => {
+  return accountdb
+  .update(
+      value_dict,
+      {
+          where: filter_dict,
+      }
+  )
+  .then(function (result: any) {
+      consola.log("Update result: ", result);
+      return true;
+  })
+}
+
+export { add, findOne, findAll, update, updateNonce };

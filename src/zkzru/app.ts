@@ -24,6 +24,9 @@ util.require_env_variables(["COORDINATOR_PRIVATE_KEY", "ROLLUPNC_CONTRACT_ADDRES
 const coordinatorPrivateKey = process.env.COORDINATOR_PRIVATE_KEY
 const contractAddress = process.env.ROLLUPNC_CONTRACT_ADDRESS
 
+const toHexString = (bytes) =>
+  bytes.reduce((str, byte) => str + byte.toString(16).padStart(2, "0"), "");
+
 const fromHexString = (hexString) =>
   Uint8Array.from(hexString.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
 
@@ -78,7 +81,7 @@ module.exports = function (app) {
 
         const result = await prove(accArray, txArray)
 
-        let inputJson;
+        let inputJsonStr;
         let publicJson;
         let proofJson;
         let data1;
@@ -87,8 +90,8 @@ module.exports = function (app) {
 
         try {
           data1 = readFileSync(result["inputJson"], 'utf8');
-          inputJson = data1.toString()
-          console.log("inputJson:", inputJson)
+          inputJsonStr = data1.toString()
+          console.log("inputJson:", inputJsonStr)
         
           data2 = readFileSync(result["publicJson"], 'utf8');
           publicJson = data2.toString()
@@ -110,7 +113,7 @@ module.exports = function (app) {
         // 3. add new block
         const blockNumber = await blockdb.nextBlockNumber()
 
-        await blockdb.add(network_id, blockNumber, inputJson, publicJson, proofJson)
+        await blockdb.add(network_id, blockNumber, inputJsonStr, publicJson, proofJson)
 
         // 4. call RollupNC contract's updateState method
         const wallet = new ethers.Wallet(coordinatorPrivateKey, provider);
@@ -125,8 +128,9 @@ module.exports = function (app) {
         );
         console.log("validStateUpdate:", validStateUpdate)
 
-        // 5. update status and block_number and block_index
-        for (let i = 0; i < txsInDB.length; i++) {
+        // 5. update status, block_number, block_index and account balance
+        const len = txsInDB.length
+        for (var i = 0; i < len; i++) {
           txdb.update(
             {tx_id: txsInDB[i]["tx_id"]}, 
             {status: 1, block_number: blockNumber, block_index: i+1}
@@ -138,6 +142,41 @@ module.exports = function (app) {
             consola.log("Update error: " + err);
           });
         }
+
+        let mimcjs = await buildMimc7()
+        let F = mimcjs.F
+        const inputJson = JSON.parse(data1)
+        for (var i = 0; i < len; i++) {
+          let fromIndex = inputJson.fromIndex[i]
+          let balanceFrom = inputJson.balanceFrom[i]
+          let balanceTo = inputJson.balanceTo[i]
+          let toX = inputJson.toX[i]
+          let toY = inputJson.toY[i]
+          accountdb.update(
+            {account_index: fromIndex}, 
+            {balance: balanceFrom}
+          )
+          .then(function (result) {
+            consola.log("Update sender account balance success: " + result);
+          })
+          .catch(function (err) {
+            consola.log("Update sender account balance error: " + err);
+          });
+          if (toX != 0 && toY != 0) {
+            let toAccountPubkey = '0x' + '04' + toHexString(F.e(toX)) + toHexString(F.e(toY))
+            accountdb.update(
+              {pubkey: toAccountPubkey}, 
+              {balance: balanceTo}
+            )
+            .then(function (result) {
+              consola.log("Update receiver account balance success: " + result);
+            })
+            .catch(function (err) {
+              consola.log("Update receiver account balance error: " + err);
+            });
+          } 
+        }
+
         return res.json(util.Succ({blockNumber: blockNumber}))
     })
 
