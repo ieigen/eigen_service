@@ -34,13 +34,14 @@ const {
   treeHelper,
   Transaction,
   Tree
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 } = require("@ieigen/zkzru");
 
 const ACC_DEPTH = 4 // set 4 temporarily
 const ACC_LEAVES = 2 ** ACC_DEPTH
 const TXS_PER_SNARK = 4
 const zeroAccount = new Account();
-
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const buildMimc7 = require("circomlibjs").buildMimc7;
 
 const zeroCache = [
@@ -52,7 +53,7 @@ const zeroCache = [
 ]
 
 function parsePublicKey(uncompressKey) {
-  let uncompressKeyStr = uncompressKey.toString()
+  const uncompressKeyStr = uncompressKey.toString()
   if (!uncompressKeyStr.startsWith("0x04")) {
     throw new Error("Invalid public key:" + uncompressKey)
   }
@@ -112,20 +113,20 @@ module.exports = function (app) {
         await blockdb.add(network_id, blockNumber, inputJson, publicJson, proofJson)
 
         // 4. call RollupNC contract's updateState method
-        let wallet = new ethers.Wallet(coordinatorPrivateKey, provider);
+        const wallet = new ethers.Wallet(coordinatorPrivateKey, provider);
         console.log("RollupNC contract address:", contractAddress)
-        let rollupNC = new ethers.Contract(contractAddress, RollupNC.abi, wallet)
-        let updateProof = JSON.parse(data3)
+        const rollupNC = new ethers.Contract(contractAddress, RollupNC.abi, wallet)
+        const updateProof = JSON.parse(data3)
         console.log("updateProof:", updateProof)
-        let updatePublic = JSON.parse(data2)
+        const updatePublic = JSON.parse(data2)
         console.log("updatePublic:", updatePublic)
-        let validStateUpdate = await rollupNC.updateState(
+        const validStateUpdate = await rollupNC.updateState(
           updateProof, updatePublic
         );
         console.log("validStateUpdate:", validStateUpdate)
 
         // 5. update status and block_number and block_index
-        for (var i = 0; i < txsInDB.length; i++) {
+        for (let i = 0; i < txsInDB.length; i++) {
           txdb.update(
             {tx_id: txsInDB[i]["tx_id"]}, 
             {status: 1, block_number: blockNumber, block_index: i+1}
@@ -141,8 +142,8 @@ module.exports = function (app) {
     })
 
     app.post("/zkzru/proveWithdraw", async (req, res) => {
-      let mimcjs = await buildMimc7();
-      let F = mimcjs.F
+      const mimcjs = await buildMimc7();
+      const F = mimcjs.F
 
       // 1. get account and tx from db
       const txID = req.body.tx_id;
@@ -259,7 +260,7 @@ module.exports = function (app) {
     })
 
     app.get("/zkzru/getPendingTxsCount", async (req, res) => {
-      let amount = await txdb.count({status: 0})
+      const amount = await txdb.count({status: 0})
       return res.json(util.Succ({count: amount}))
     })
 
@@ -331,13 +332,13 @@ module.exports = function (app) {
     app.get("/zkzru/getProcessDepositProof", async (req, res) => {
       // get all deposit hash in db and construct a merkle tree
       const subtreeDepth = 2
-      let mimcjs = await buildMimc7();
-      let F = mimcjs.F;
+      const mimcjs = await buildMimc7();
+      const F = mimcjs.F;
       await treeHelper.initialize();
       const records = await depositSubTreeRootdb.findAll({})
       
-      let leafNodes = new Array(records.length)
-      for (var i = 0; i < records.length; i++){
+      const leafNodes = new Array(records.length)
+      for (let i = 0; i < records.length; i++){
         const subTreeRoot = records[i]["subTreeRoot"]
         leafNodes[i] = F.e(subTreeRoot)
       }
@@ -348,11 +349,11 @@ module.exports = function (app) {
         leafNodes, padValue, 2 ** (ACC_DEPTH - subtreeDepth)
       )
       
-      let merkleTree = new Tree(paddedLeafNodes)
+      const merkleTree = new Tree(paddedLeafNodes)
       const idx = records.length
-      let {proof, proofPos} = merkleTree.getProof(idx)
+      const {proof, proofPos} = merkleTree.getProof(idx)
 
-      for (var j = 0; j < proof.length; j++) {
+      for (let j = 0; j < proof.length; j++) {
         proof[j] = F.toString(proof[j])
       }
       console.log("proof:", proof)

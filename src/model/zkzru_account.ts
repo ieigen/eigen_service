@@ -73,7 +73,7 @@ sequelize
   .sync()
   .then(function () {
     // create zeroAccount, set index=0 to make autoIncrement start from 0
-    let res1 = accountdb.create({
+    const res1 = accountdb.create({
       network_id: network_id,
       index: 0,
       pubkey: "0",
@@ -83,7 +83,7 @@ sequelize
       nonce: 0 // currently nonce must be 0
     });
     // create coordinator account
-    let res2 = accountdb.create({
+    const res2 = accountdb.create({
       network_id: network_id,
       pubkey: coordinatorPublicKey,
       address: coordinatorAddress,
