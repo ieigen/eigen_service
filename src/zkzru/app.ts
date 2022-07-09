@@ -361,4 +361,14 @@ module.exports = function (app) {
 
       return res.json(util.Succ({proof, proofPos}))
   })
+
+  app.post("/zkzru/account/:index", async (req, res) => {
+    const index = req.params.index;
+    const nonce = req.body.nonce;
+    if (!util.has_value(index) || !util.has_value(nonce)) {
+      return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
+    }
+    const result = await accountdb.updateNonceByIndex(nonce, index);
+    return res.json(util.Succ(result));
+  });
 }
