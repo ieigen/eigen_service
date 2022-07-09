@@ -114,9 +114,9 @@ const findAll = function (dict) {
   return accountdb.findAll({ where: dict });
 };
 
-const updateNonceByIndex = function(nonce, index) {
+const updateNonce = function(nonce, address) {
   return accountdb
-    .findOne({ where: { index: index } })
+    .findOne({ where: { address: address } })
     .then(function(row: any) {
       consola.log(row);
       if (row === null) {
@@ -137,4 +137,4 @@ const updateNonceByIndex = function(nonce, index) {
     });
 };
 
-export { add, findOne, findAll, updateNonceByIndex };
+export { add, findOne, findAll, updateNonce };
