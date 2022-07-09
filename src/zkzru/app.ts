@@ -159,8 +159,8 @@ module.exports = function (app) {
       const blockInfo = await blockdb.findOne({blockNumber: blockNumber})
       const blockInputJson = JSON.parse(blockInfo["inputJson"])
       const txRoot = blockInputJson.txRoot
-      const position = blockInputJson.paths2txRootPos[blockIndex]
-      const proof = blockInputJson.paths2txRoot[blockIndex]
+      const position = blockInputJson.paths2txRootPos[blockIndex - 1] // the index starts with 1
+      const proof = blockInputJson.paths2txRoot[blockIndex - 1]
 
       const txInfo = {
         pubkeyX: x,
@@ -177,12 +177,18 @@ module.exports = function (app) {
     }
 
       // 2. generate proof, returns inputJson, proof
+      const sigR8x = F.e(withdrawTx["withdraw_r8x"])
+      const sigR8y = F.e(withdrawTx["withdraw_r8y"])
+      const sig = {
+        R8: [sigR8x, sigR8y],
+        S: withdrawTx["withdraw_s"]
+      }
+      const pubkeyXY = parsePublicKey(withdrawTx["senderPubkey"])
+      const pubkey = [fromHexString(pubkeyXY["x"]), fromHexString(pubkeyXY["y"])]
       const withdrawProofResult  = await proveWithdrawSignature(
-        withdrawTx["senderPubkey"],
-        withdrawTx["withdraw_r8x"],
-        withdrawTx["withdraw_r8x"],
-        withdrawTx["withdraw_s"],
-        withdrawTx["withdraw_msg"]
+        pubkey,
+        sig,
+        F.e(withdrawTx["withdraw_msg"])
       )
       let withdrawProofJson;   
       try {

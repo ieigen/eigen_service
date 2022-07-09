@@ -12,9 +12,11 @@ import consola from "consola";
 import * as util from "../util";
 import { ethers } from "ethers";
 
-util.require_env_variables(["COORDINATOR_PRIVATE_KEY", "NETWORK_ID"])
+util.require_env_variables(["COORDINATOR_PRIVATE_KEY", "COORDINATOR_PUBLIC_KEY", "COORDINATOR_ADDRESS", "NETWORK_ID"])
 const coordinatorPrivateKey = process.env.COORDINATOR_PRIVATE_KEY
 const network_id = process.env.NETWORK_ID
+const coordinatorPublicKey = process.env.COORDINATOR_PUBLIC_KEY
+const coordinatorAddress = process.env.COORDINATOR_ADDRESS
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
@@ -78,16 +80,16 @@ sequelize
       address: "0",
       tokenType: 0,
       balance: "0",
-      nonce: 0
+      nonce: 0 // currently nonce must be 0
     });
     // create coordinator account
     let res2 = accountdb.create({
       network_id: network_id,
-      pubkey: ethers.utils.computePublicKey(coordinatorPrivateKey),
-      address: ethers.utils.computeAddress(coordinatorPrivateKey),
+      pubkey: coordinatorPublicKey,
+      address: coordinatorAddress,
       tokenType: 0,
       balance: "0",
-      nonce: 1
+      nonce: 0 // currently nonce must be 0
     });
   })
   .catch(function (err) {
