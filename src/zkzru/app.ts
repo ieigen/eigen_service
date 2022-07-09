@@ -130,7 +130,7 @@ module.exports = function (app) {
 
         // 5. update status, block_number, block_index and account balance
         const len = txsInDB.length
-        for (var i = 0; i < len; i++) {
+        for (let i = 0; i < len; i++) {
           txdb.update(
             {tx_id: txsInDB[i]["tx_id"]}, 
             {status: 1, block_number: blockNumber, block_index: i+1}
@@ -143,15 +143,15 @@ module.exports = function (app) {
           });
         }
 
-        let mimcjs = await buildMimc7()
-        let F = mimcjs.F
+        const mimcjs = await buildMimc7()
+        const F = mimcjs.F
         const inputJson = JSON.parse(data1)
-        for (var i = 0; i < len; i++) {
-          let fromIndex = inputJson.fromIndex[i]
-          let balanceFrom = inputJson.balanceFrom[i]
-          let balanceTo = inputJson.balanceTo[i]
-          let toX = inputJson.toX[i]
-          let toY = inputJson.toY[i]
+        for (let i = 0; i < len; i++) {
+          const fromIndex = inputJson.fromIndex[i]
+          const balanceFrom = inputJson.balanceFrom[i]
+          const balanceTo = inputJson.balanceTo[i]
+          const toX = inputJson.toX[i]
+          const toY = inputJson.toY[i]
           accountdb.update(
             {account_index: fromIndex}, 
             {balance: balanceFrom}
@@ -163,7 +163,7 @@ module.exports = function (app) {
             consola.log("Update sender account balance error: " + err);
           });
           if (toX != 0 && toY != 0) {
-            let toAccountPubkey = '0x' + '04' + toHexString(F.e(toX)) + toHexString(F.e(toY))
+            const toAccountPubkey = '0x' + '04' + toHexString(F.e(toX)) + toHexString(F.e(toY))
             accountdb.update(
               {pubkey: toAccountPubkey}, 
               {balance: balanceTo}
