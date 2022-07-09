@@ -420,10 +420,19 @@ module.exports = function (app) {
       address : address
     }
     const record = await accountdb.findOne(dict)
-    const result = {
-      address : address,
-      nonce : record['nonce']
+    let result
+    if ( record == null ){
+      result = {
+        address : address,
+        nonce : 0
+      }
+    } else {
+      result = {
+        address : address,
+        nonce : record['nonce']
+      }
     }
+    
     return res.json(util.Succ(result));
   });
 }
