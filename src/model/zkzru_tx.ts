@@ -12,6 +12,16 @@ import consola from "consola";
 import { parse } from "dotenv";
 const TXS_PER_SNARK = 4;
 
+export enum tx_status {
+  NewTx = 0,
+  ConfirmedTx = 1,
+}
+
+export enum tx_withdraw_status {
+  WithdrawPending = 0,
+  WithdrawFinish = 1,
+}
+
 const sequelize = new Sequelize({
   dialect: "sqlite",
 
@@ -40,7 +50,7 @@ const l2txdb = sequelize.define("tx_st", {
     type: DataTypes.BIGINT,
     allowNull: false,
   },
-
+  
   senderPubkey: {
       type: DataTypes.CITEXT,
       allowNull: false,
@@ -110,7 +120,14 @@ const l2txdb = sequelize.define("tx_st", {
   withdraw_msg: {
     allowNull: true,
     type: DataTypes.STRING,
-  }, 
+  },
+
+  // withdraw finish, status: 1
+  withdraw_status: {
+    allowNull: true,
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
 
   block_number: {
     allowNull: true,
@@ -122,6 +139,7 @@ const l2txdb = sequelize.define("tx_st", {
     allowNull: true,
     type: DataTypes.INTEGER,
   }
+
 });
 
 sequelize
@@ -227,4 +245,22 @@ const update = (filter_dict, value_dict) => {
     })
 }
 
-export { add, findOne, findAll, findOneBatchPendingTXs, count, currentTxID, emptyTX, update};
+const findAllOrderByCreateTime = async function (dict) {
+  const res =  l2txdb.findAll({ 
+    where: dict,
+    order: [ [ 'createdAt', 'ASC' ]]});
+
+  return res;
+};
+
+export { 
+  add,
+  findOne, 
+  findAll, 
+  findOneBatchPendingTXs, 
+  count, 
+  currentTxID, 
+  emptyTX, 
+  update, 
+  findAllOrderByCreateTime
+};

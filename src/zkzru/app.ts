@@ -435,4 +435,35 @@ module.exports = function (app) {
     
     return res.json(util.Succ(result));
   });
+
+  app.get("/zkzru/account/withdraw_status/:senderPubkey", async(req, res) => {
+    const senderPubkey = req.params.senderPubkey;
+    if (!util.has_value(senderPubkey)) {
+      return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
+    }
+    const filter_dict = {
+      senderPubkey: senderPubkey,
+      status: txdb.tx_status.ConfirmedTx,
+      withdraw_status: txdb.tx_withdraw_status.WithdrawPending
+    }
+    const result = await txdb.findAllOrderByCreateTime(filter_dict)
+    return res.json(util.Succ(result))
+  });
+
+  app.put("/zkzru/account/withdraw_status", async (req, res) => {
+    const tx_id = req.body.tx_id;
+    if (!util.has_value(tx_id)) {
+      return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
+    }
+
+    const withdraw_status = txdb.tx_withdraw_status.WithdrawFinish;
+    const filter_dict = {
+      tx_id: tx_id
+    }
+    const value_dict = {
+      withdraw_status: withdraw_status
+    }
+    const result = await txdb.update(filter_dict, value_dict);
+    return res.json(util.Succ(result))
+  });  
 }
