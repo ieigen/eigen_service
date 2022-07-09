@@ -114,4 +114,27 @@ const findAll = function (dict) {
   return accountdb.findAll({ where: dict });
 };
 
-export { add, findOne, findAll };
+const updateNonce = function(nonce, address) {
+  return accountdb
+    .findOne({ where: { address: address } })
+    .then(function(row: any) {
+      consola.log(row);
+      if (row === null) {
+        return false;
+      }
+      return row
+        .update({
+          nonce: nonce,
+        }) // eslint-disable-next-line
+        .then(function(result) {
+          consola.log("Update nonce success: ", result);
+          return true;
+        })
+        .catch(function(err) {
+          consola.log("Update nonce error: ", err, nonce);
+          return false;
+        });
+    });
+};
+
+export { add, findOne, findAll, updateNonce };

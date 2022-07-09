@@ -361,4 +361,30 @@ module.exports = function (app) {
 
       return res.json(util.Succ({proof, proofPos}))
   })
+
+  app.put("/zkzru/account/nonce", async (req, res) => {
+    const address = req.body.address;
+    const nonce = req.body.nonce;
+    if (!util.has_value(address) || !util.has_value(nonce)) {
+      return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
+    }
+    const result = await accountdb.updateNonce(nonce, address);
+    return res.json(util.Succ(result));
+  });
+
+  app.get("/zkzru/account/nonce/:address", async (req, res) => {
+    const address = req.params.address;
+    if (!util.has_value(address)) {
+      return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
+    }
+    const dict = {
+      address : address
+    }
+    const record = await accountdb.findOne(dict)
+    const result = {
+      address : address,
+      nonce : record['nonce']
+    }
+    return res.json(util.Succ(result));
+  });
 }
