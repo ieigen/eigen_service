@@ -248,7 +248,7 @@ const update = (filter_dict, value_dict) => {
 const findAllOrderByCreateTime = async function (dict) {
   const res =  l2txdb.findAll({ 
     where: dict,
-    order: [ [ 'createdAt', 'DESC' ]]});
+    order: [ [ 'createdAt', 'ASC' ]]});
 
   return res;
 };

@@ -442,16 +442,15 @@ module.exports = function (app) {
   });
 
   app.put("/zkzru/account/withdraw_status", async (req, res) => {
-    const withdraw_status = req.body.withdraw_status;
     const tx_id = req.body.tx_id;
-    if (!util.has_value(withdraw_status)||!util.has_value(tx_id)) {
+    if (!util.has_value(tx_id)) {
       return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
     }
 
+    const withdraw_status = txdb.tx_withdraw_status.WithdrawFinish;
     const filter_dict = {
       tx_id: tx_id
     }
-
     const value_dict = {
       withdraw_status: withdraw_status
     }
