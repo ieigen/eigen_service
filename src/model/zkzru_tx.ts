@@ -91,6 +91,11 @@ const l2txdb = sequelize.define("tx_st", {
       type: DataTypes.BIGINT,
   },
 
+  virtual_nonce: {
+    allowNull: false,
+    type: DataTypes.BIGINT,
+  },
+
   // 0: new, 1, confirmed
   status: {
     allowNull: false,
@@ -155,7 +160,8 @@ const add = async function (
     receiverPubkey, 
     tokenTypeFrom, 
     amount, 
-    nonce, 
+    nonce,
+    virtual_nonce,
     status, 
     recipient,
     withdraw_r8x, 
@@ -174,6 +180,7 @@ const add = async function (
     tokenTypeFrom,
     amount,
     nonce,
+    virtual_nonce,
     status,
     recipient,
     withdraw_r8x,

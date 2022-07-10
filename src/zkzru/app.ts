@@ -131,9 +131,10 @@ module.exports = function (app) {
         // 5. update status, block_number, block_index and account balance
         const len = txsInDB.length
         for (let i = 0; i < len; i++) {
+          const record = await accountdb.findOne({tx_id: txsInDB[i]["tx_id"]})
           txdb.update(
             {tx_id: txsInDB[i]["tx_id"]}, 
-            {status: 1, block_number: blockNumber, block_index: i+1}
+            {status: 1, block_number: blockNumber, block_index: i+1, nonce: record['virtual_nonce']}
           )
           .then(function (result) {
             consola.log("Update success: " + result);
@@ -267,6 +268,7 @@ module.exports = function (app) {
             req.body.receiverPubkey,
             req.body.tokenTypeFrom,
             req.body.amount,
+            req.body.nonce,
             req.body.nonce,
             req.body.status,
             req.body.recipient,
@@ -403,11 +405,11 @@ module.exports = function (app) {
 
   app.put("/zkzru/account/nonce", async (req, res) => {
     const address = req.body.address;
-    const nonce = req.body.nonce;
-    if (!util.has_value(address) || !util.has_value(nonce)) {
+    const virtual_nonce = req.body.nonce;
+    if (!util.has_value(address) || !util.has_value(virtual_nonce)) {
       return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
     }
-    const result = await accountdb.updateNonce(nonce, address);
+    const result = await accountdb.updateVirtualNonce(virtual_nonce, address);
     return res.json(util.Succ(result));
   });
 
@@ -429,7 +431,7 @@ module.exports = function (app) {
     } else {
       result = {
         address : address,
-        nonce : record['nonce']
+        nonce : record['virtual_nonce']
       }
     }
     

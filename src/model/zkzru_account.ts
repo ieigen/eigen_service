@@ -114,7 +114,7 @@ const findAll = function (dict) {
   return accountdb.findAll({ where: dict });
 };
 
-const updateNonce = function(nonce, address) {
+const updateVirtualNonce = function(virtual_nonce, address) {
   return accountdb
     .findOne({ where: { address: address } })
     .then(function(row: any) {
@@ -124,14 +124,14 @@ const updateNonce = function(nonce, address) {
       }
       return row
         .update({
-          nonce: nonce,
+          virtual_nonce: virtual_nonce,
         }) // eslint-disable-next-line
         .then(function(result) {
-          consola.log("Update nonce success: ", result);
+          consola.log("Update virtual_nonce success: ", result);
           return true;
         })
         .catch(function(err) {
-          consola.log("Update nonce error: ", err, nonce);
+          consola.log("Update virtual_nonce error: ", err, virtual_nonce);
           return false;
         });
     });
@@ -151,4 +151,4 @@ const update = (filter_dict, value_dict) => {
   })
 }
 
-export { add, findOne, findAll, update, updateNonce };
+export { add, findOne, findAll, update, updateVirtualNonce };
