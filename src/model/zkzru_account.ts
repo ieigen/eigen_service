@@ -67,6 +67,12 @@ const accountdb = sequelize.define("account_st", {
     allowNull: false,
     type: DataTypes.BIGINT,
   },
+
+  
+  virtual_nonce: {
+    allowNull: false,
+    type: DataTypes.BIGINT,
+  },
 });
 
 sequelize
@@ -80,7 +86,8 @@ sequelize
       address: "0",
       tokenType: 0,
       balance: "0",
-      nonce: 0 // currently nonce must be 0
+      nonce: 0, // currently nonce must be 0
+      virtual_nonce: 0
     });
     // create coordinator account
     const res2 = accountdb.create({
@@ -89,21 +96,23 @@ sequelize
       address: coordinatorAddress,
       tokenType: 0,
       balance: "0",
-      nonce: 0 // currently nonce must be 0
+      nonce: 0, // currently nonce must be 0
+      virtual_nonce: 0
     });
   })
   .catch(function (err) {
     consola.log("Unable to connect to the database:", err);
   });
 
-const add = function (network_id, pubkey, address, tokenType, balance, nonce) {
+const add = function (network_id, pubkey, address, tokenType, balance, nonce, virtual_nonce) {
   return accountdb.create({
     network_id,
     pubkey,
     address,
     tokenType,
     balance,
-    nonce
+    nonce,
+    virtual_nonce
   });
 };
 

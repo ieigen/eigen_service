@@ -269,7 +269,6 @@ module.exports = function (app) {
             req.body.tokenTypeFrom,
             req.body.amount,
             req.body.nonce,
-            req.body.nonce,
             req.body.status,
             req.body.recipient,
             req.body.withdraw_r8x,
@@ -331,6 +330,7 @@ module.exports = function (app) {
             req.body.address,
             req.body.tokenType,
             req.body.balance,
+            req.body.nonce,
             req.body.nonce
           )
         } catch(err) {
