@@ -68,7 +68,6 @@ const accountdb = sequelize.define("account_st", {
     type: DataTypes.BIGINT,
   },
 
-  
   virtual_nonce: {
     allowNull: false,
     type: DataTypes.BIGINT,

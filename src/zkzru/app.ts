@@ -143,8 +143,8 @@ module.exports = function (app) {
             consola.log("Update error: " + err);
           });
 
-          const account_record = accountdb.findOne({"account_index": record["from_index"]})
-          accountdb.update({"account_index": account_record["account_record"]}, {"nonce": account_record["virtual_nonce"]})
+          const account_record = await accountdb.findOne({"account_index": record["from_index"]})
+          accountdb.update({"account_index": account_record["account_index"]}, {"nonce": account_record["virtual_nonce"]})
         }
 
         const mimcjs = await buildMimc7()
