@@ -154,11 +154,12 @@ module.exports = function (app) {
           const fromIndex = inputJson.fromIndex[i]
           const balanceFrom = inputJson.balanceFrom[i]
           const balanceTo = inputJson.balanceTo[i]
+          const amount = inputJson.amount[i]
           const toX = inputJson.toX[i]
           const toY = inputJson.toY[i]
           accountdb.update(
             {account_index: fromIndex}, 
-            {balance: balanceFrom}
+            {balance: balanceFrom - amount}
           )
           .then(function (result) {
             consola.log("Update sender account balance success: " + result);
@@ -170,7 +171,7 @@ module.exports = function (app) {
             const toAccountPubkey = '0x' + '04' + toHexString(F.e(toX)) + toHexString(F.e(toY))
             accountdb.update(
               {pubkey: toAccountPubkey}, 
-              {balance: balanceTo}
+              {balance: balanceTo + amount}
             )
             .then(function (result) {
               consola.log("Update receiver account balance success: " + result);
