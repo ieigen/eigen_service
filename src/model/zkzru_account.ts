@@ -123,9 +123,9 @@ const findAll = function (dict) {
   return accountdb.findAll({ where: dict });
 };
 
-const updateVirtualNonce = function(virtual_nonce, address) {
+const updateVirtualNonce = function(virtual_nonce, filter_dict) {
   return accountdb
-    .findOne({ where: { address: address } })
+    .findOne({ where: filter_dict })
     .then(function(row: any) {
       consola.log(row);
       if (row === null) {

@@ -131,10 +131,10 @@ module.exports = function (app) {
         // 5. update status, block_number, block_index and account balance
         const len = txsInDB.length
         for (let i = 0; i < len; i++) {
-          const record = await accountdb.findOne({tx_id: txsInDB[i]["tx_id"]})
+          const record = await txdb.findOne({tx_id: txsInDB[i]["tx_id"]})
           txdb.update(
             {tx_id: txsInDB[i]["tx_id"]}, 
-            {status: 1, block_number: blockNumber, block_index: i+1, nonce: record['virtual_nonce']}
+            {status: 1, block_number: blockNumber, block_index: i+1}
           )
           .then(function (result) {
             consola.log("Update success: " + result);
@@ -142,6 +142,9 @@ module.exports = function (app) {
           .catch(function (err) {
             consola.log("Update error: " + err);
           });
+
+          const account_record = accountdb.findOne({"account_index": record["from_index"]})
+          accountdb.update({"account_index": account_record["account_record"]}, {"nonce": account_record["virtual_nonce"]})
         }
 
         const mimcjs = await buildMimc7()
@@ -409,7 +412,10 @@ module.exports = function (app) {
     if (!util.has_value(address) || !util.has_value(virtual_nonce)) {
       return res.json(util.Err(util.ErrCode.Unknown, "missing fields"));
     }
-    const result = await accountdb.updateVirtualNonce(virtual_nonce, address);
+    const filter_dict = {
+      address: address
+    }
+    const result = await accountdb.updateVirtualNonce(virtual_nonce, filter_dict);
     return res.json(util.Succ(result));
   });
 
