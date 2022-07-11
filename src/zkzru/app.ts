@@ -191,7 +191,6 @@ module.exports = function (app) {
       // 1. get account and tx from db
       const txID = req.body.tx_id;
       const withdrawTx = await txdb.findOne({tx_id: txID})
-      const fromAccount = await accountdb.findOne({index: withdrawTx["from_index"]})
       const senderPubkey = withdrawTx["senderPubkey"]
       const senderPubkeyXY = parsePublicKey(senderPubkey)
       const x = F.toString(fromHexString(senderPubkeyXY["x"]))

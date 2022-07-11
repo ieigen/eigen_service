@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@ethersproject/shims": "^5.4.0",
-    "@ieigen/zkzru": "^0.0.12",
+    "@ieigen/zkzru": "^0.0.13",
     "asn1.js": "^5.4.1",
     "axios": "^0.23.0",
     "circomlib": "^2.0.5",
