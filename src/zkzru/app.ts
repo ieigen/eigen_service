@@ -451,6 +451,7 @@ module.exports = function (app) {
     }
     const filter_dict = {
       senderPubkey: senderPubkey,
+      receiverPubkey: "0",
       status: txdb.tx_status.ConfirmedTx,
       withdraw_status: txdb.tx_withdraw_status.WithdrawPending
     }
