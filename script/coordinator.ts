@@ -2,6 +2,7 @@ const axios = require("axios")
 const ethers = require("ethers")
 const { setIntervalAsync } = require('set-interval-async/dynamic')
 const RollupNC = require("../utils/RollupNC.json")
+require('dotenv').config()
 // const util = require("../src/util")
 
 let axiosConfig = {
