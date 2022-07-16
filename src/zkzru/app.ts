@@ -157,9 +157,10 @@ module.exports = function (app) {
           const amount = inputJson.amount[i]
           const toX = inputJson.toX[i]
           const toY = inputJson.toY[i]
+          const newBalanceFrom = BigInt(balanceFrom) - BigInt(amount)
           accountdb.update(
             {account_index: fromIndex}, 
-            {balance: balanceFrom - amount}
+            {balance: newBalanceFrom.toString()}
           )
           .then(function (result) {
             consola.log("Update sender account balance success: " + result);
@@ -167,11 +168,12 @@ module.exports = function (app) {
           .catch(function (err) {
             consola.log("Update sender account balance error: " + err);
           });
+          const newBalanceTo = BigInt(balanceTo) + BigInt(amount)
           if (toX != 0 && toY != 0) {
             const toAccountPubkey = '0x' + '04' + toHexString(F.e(toX)) + toHexString(F.e(toY))
             accountdb.update(
               {pubkey: toAccountPubkey}, 
-              {balance: balanceTo + amount}
+              {balance: newBalanceTo.toString()}
             )
             .then(function (result) {
               consola.log("Update receiver account balance success: " + result);
@@ -284,13 +286,6 @@ module.exports = function (app) {
           throw err
         }
         
-        let currentTxID
-        try {
-          currentTxID = await txdb.currentTxID()
-        } catch (err) {
-          console.log(err)
-          throw err
-        }
         return res.json(util.Succ(result))
     })
 
