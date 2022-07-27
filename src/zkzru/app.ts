@@ -4,10 +4,12 @@
  * @module zkzru/app
  */
 
+import { v4 as uuidv4 } from "uuid";
 import consola from "consola";
 import { readFileSync } from "fs";
 import * as util from "../util";
 import * as txdb from "../model/zkzru_tx";
+import * as txdb_l1 from "../model/database_transaction_history";
 import * as accountdb from "../model/zkzru_account";
 import * as tokendb from "../model/zkzru_token";
 import * as blockdb from "../model/zkzru_block";
@@ -15,8 +17,8 @@ import * as depositSubTreeRootdb from "../model/zkzru_deposit";
 
 import {parseDBData, prove, verify, proveWithdrawSignature, verifyWithdrawSignature} from "@ieigen/zkzru/operator/prover"
 import { ethers } from "ethers";
-
 import RollupNC from "../../utils/RollupNC.json";
+
 const provider = new ethers.providers.JsonRpcProvider('https://ropsten.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161')
 
 
@@ -143,6 +145,8 @@ module.exports = function (app) {
             consola.log("Update error: " + err);
           });
 
+          txdb_l1.update({"txid_l2":txsInDB[i]["tx_id"]}, {"status": 1, "block_num": blockNumber})
+
           const account_record = await accountdb.findOne({"account_index": record["from_index"]})
           accountdb.update({"account_index": account_record["account_index"]}, {"nonce": account_record["virtual_nonce"]})
         }
@@ -261,9 +265,7 @@ module.exports = function (app) {
     // insert new transaction into database
     app.post("/zkzru/tx", async(req, res) => {
         console.log(req.body)
-        let result
-        try {
-          result = await txdb.add(
+        const result = await txdb.add(
             req.body.network_id,
             req.body.from_index,
             req.body.senderPubkey,
@@ -281,10 +283,24 @@ module.exports = function (app) {
             req.body.withdraw_s,
             req.body.withdraw_msg,
           )
-        } catch (err) {
-          console.log(err)
-          throw err
-        }
+        const txid_l2 = result["tx_id"];
+        const txidInt = uuidv4();
+        const txid = "zkzru-".concat(txidInt)
+
+        const res2 = await txdb_l1.add({
+          txid: txid,
+          network_id: req.body.network_id,
+          from: req.body.senderPubkey,
+          to_network_id: req.body.network_id,
+          to: req.body.receiverPubkey,
+          value: req.body.amount,
+          type: txdb_l1.TX_TYPE_L2ToL2,
+          name: "ETH",
+          status: txdb_l1.TransactionStatus.Creating,
+          operation: "Send",
+          txid_l2: txid_l2
+        })
+        consola.log("res2:", res2)
         
         return res.json(util.Succ(result))
     })
