@@ -340,6 +340,7 @@ module.exports = function (app) {
         let result
         try { 
           result = await accountdb.add(
+            req.body.account_index,
             req.body.network_id,
             req.body.pubkey,
             req.body.address,

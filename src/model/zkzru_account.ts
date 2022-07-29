@@ -77,7 +77,7 @@ const accountdb = sequelize.define("account_st", {
 sequelize
   .sync()
   .then(function () {
-    const res1 = accountdb.create({
+    return accountdb.create({
       network_id: network_id,
       account_index: 0,
       pubkey: "0",
@@ -99,8 +99,9 @@ sequelize
     consola.log("Unable to connect to the database:", err);
   });
 
-const add = function (network_id, pubkey, address, tokenType, balance, nonce, virtual_nonce) {
+const add = function (account_index, network_id, pubkey, address, tokenType, balance, nonce, virtual_nonce) {
   return accountdb.create({
+    account_index,
     network_id,
     pubkey,
     address,

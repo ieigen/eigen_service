@@ -108,6 +108,7 @@ const initAccount = async () => {
       }, axiosConfig)
     if (res.data.data.length == 0) {
         const req = {
+            account_index: 0,
             network_id: network_id,
             pubkey: "0",
             address: "0",
