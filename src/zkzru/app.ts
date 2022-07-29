@@ -38,7 +38,8 @@ const {
   Account,
   treeHelper,
   Transaction,
-  Tree
+  Tree,
+  AccountTree
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 } = require("@ieigen/zkzru");
 
@@ -384,6 +385,8 @@ module.exports = function (app) {
       return res.json(util.Succ(result))
     })
 
+    // This interface is used for batch deposit.
+    /*
     app.get("/zkzru/getProcessDepositProof", async (req, res) => {
       // get all deposit hash in db and construct a merkle tree
       const subtreeDepth = 2
@@ -416,6 +419,56 @@ module.exports = function (app) {
 
       return res.json(util.Succ({proof, proofPos}))
   })
+  */
+
+  // This interface is used for non batch depos
+  app.get("/zkzru/getProcessDepositData", async (req, res) => {
+    // get all accounts in db and construct a merkle tree
+    const mimcjs = await buildMimc7();
+    const F = mimcjs.F;
+    await treeHelper.initialize();
+    const accountsInDB = await accountdb.findAll({})
+    
+    let accArray = new Array()
+    for (var i = 0; i < accountsInDB.length; i ++) {
+      const acc = accountsInDB[i]
+      let account;
+      if (acc["pubkey"] == "0") {
+        account = new Account();
+      } else {
+        const pk = parsePublicKey(acc["pubkey"])
+        account = new Account(
+          acc["account_index"],
+          fromHexString(pk["x"]),
+          fromHexString(pk["y"]),
+          BigInt(acc["balance"]),
+          acc["nonce"],
+          acc["tokenType"],
+        )
+      }
+      await account.initialize()
+      accArray.push(account)
+    }
+    console.log("coordinator:", accArray[1])
+
+    let zeroAccount = new Account();
+    await zeroAccount.initialize();
+
+    const paddedAccounts = treeHelper.padArray(accArray, zeroAccount, ACC_LEAVES);
+    const accountTree = new AccountTree(paddedAccounts)
+    console.log("coordinator account hash:", F.toString(accountTree.leafNodes[1]))
+
+    const idx = accountsInDB.length
+    const {proof, proofPos} = accountTree.getProof(idx)
+
+    for (let j = 0; j < proof.length; j++) {
+      proof[j] = F.toString(proof[j])
+    }
+    console.log("proof:", proof)
+    console.log("proofPos", proofPos)
+
+    return res.json(util.Succ({proof, proofPos}))
+})
 
   app.put("/zkzru/account/nonce", async (req, res) => {
     const address = req.body.address;
