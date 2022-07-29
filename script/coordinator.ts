@@ -14,6 +14,8 @@ let axiosConfig = {
 
 // util.require_env_variables(["COORDINATOR_PRIVATE_KEY", "ROLLUPNC_CONTRACT_ADDRESS", "NETWORK_ID"])
 const coordinatorPrivateKey = process.env.COORDINATOR_PRIVATE_KEY || process.exit(-1)
+const coordinatorPublicKey = process.env.COORDINATOR_PUBLIC_KEY || process.exit(-1)
+const coordinatorAddress = process.env.COORDINATOR_ADDRESS || process.exit(-1)
 const contractAddress = process.env.ROLLUPNC_CONTRACT_ADDRESS || process.exit(-1)
 const network_id = process.env.NETWORK_ID || process.exit(-1)
 
@@ -99,7 +101,45 @@ const processDeposit = async () => {
   }
 }
 
+const initAccount = async () => {
+    // create zeroAccount
+    let url= "http://localhost:3000/zkzru/account/0"
+    let res = await axios.get(url, {
+      }, axiosConfig)
+    if (res.data.data.length == 0) {
+        const req = {
+            network_id: network_id,
+            pubkey: "0",
+            address: "0",
+            tokenType: 0,
+            balance: "0",
+            nonce: 0, // currently nonce must be 0
+            virtual_nonce: 0
+        }
+        await axios.post('http://localhost:3000/zkzru/account', req, axiosConfig)
+    }
+
+    // create coordinator account
+    url= "http://localhost:3000/zkzru/account/" + coordinatorAddress
+    res= await axios.get(url, {
+      }, axiosConfig)
+    if (res.data.data.length == 0) {
+        const req2 = {
+            network_id: network_id,
+            pubkey: coordinatorPublicKey,
+            address: coordinatorAddress,
+            tokenType: 0,
+            balance: "0",
+            nonce: 0, // currently nonce must be 0
+            virtual_nonce: 0
+        }
+        await axios.post('http://localhost:3000/zkzru/account', req2, axiosConfig)
+    }
+}
+
 function main() {
+    initAccount()
+
     setInterval(async () => {
         await processDeposit();     
       }, 60 * 1000

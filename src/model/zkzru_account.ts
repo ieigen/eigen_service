@@ -77,7 +77,6 @@ const accountdb = sequelize.define("account_st", {
 sequelize
   .sync()
   .then(function () {
-    // create zeroAccount, set index=0 to make autoIncrement start from 0
     const res1 = accountdb.create({
       network_id: network_id,
       account_index: 0,
@@ -88,15 +87,12 @@ sequelize
       nonce: 0, // currently nonce must be 0
       virtual_nonce: 0
     });
-    // create coordinator account
-    const res2 = accountdb.create({
-      network_id: network_id,
-      pubkey: coordinatorPublicKey,
-      address: coordinatorAddress,
-      tokenType: 0,
-      balance: "0",
-      nonce: 0, // currently nonce must be 0
-      virtual_nonce: 0
+  })
+  .then(function (row: any) {
+    accountdb.destroy({
+      where: {
+        account_index: 0
+      },
     });
   })
   .catch(function (err) {
