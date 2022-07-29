@@ -429,8 +429,8 @@ module.exports = function (app) {
     await treeHelper.initialize();
     const accountsInDB = await accountdb.findAll({})
     
-    let accArray = new Array()
-    for (var i = 0; i < accountsInDB.length; i ++) {
+    const accArray = []
+    for (let i = 0; i < accountsInDB.length; i ++) {
       const acc = accountsInDB[i]
       let account;
       if (acc["pubkey"] == "0") {
@@ -450,7 +450,7 @@ module.exports = function (app) {
       accArray.push(account)
     }
 
-    let zeroAccount = new Account();
+    const zeroAccount = new Account();
     await zeroAccount.initialize();
 
     const paddedAccounts = treeHelper.padArray(accArray, zeroAccount, ACC_LEAVES);
