@@ -449,14 +449,12 @@ module.exports = function (app) {
       await account.initialize()
       accArray.push(account)
     }
-    console.log("coordinator:", accArray[1])
 
     let zeroAccount = new Account();
     await zeroAccount.initialize();
 
     const paddedAccounts = treeHelper.padArray(accArray, zeroAccount, ACC_LEAVES);
     const accountTree = new AccountTree(paddedAccounts)
-    console.log("coordinator account hash:", F.toString(accountTree.leafNodes[1]))
 
     const idx = accountsInDB.length
     const {proof, proofPos} = accountTree.getProof(idx)
