@@ -62,7 +62,7 @@ const processDeposit = async () => {
       await axios.get('http://localhost:3000/zkzru/getProcessDepositProof', {
       }, axiosConfig)
       .then(function (response) {
-	  console.log(response)
+	        console.log(response)
           console.log("Get ProcessDeposit Info successfully!");
           proof = response.data.data.proof;
           console.log("The proof is:", proof)
@@ -102,7 +102,51 @@ const processDeposit = async () => {
 }
 
 const initAccount = async () => {
-    // create zeroAccount
+    let proof;
+    let proofPos;
+    let wallet = new ethers.Wallet(coordinatorPrivateKey, provider);
+    let rollupNC = new ethers.Contract(contractAddress, RollupNC.abi, wallet)
+
+    // Zero Account: deposit -> processDeposit -> create zeroAccount in DB
+    // deposit
+    rollupNC.deposit([0, 0], 0, 0).then(async tx=> {
+      console.log(tx)
+      tx.wait().then(async res => {
+        console.log('deposit zero account:', res)
+      }).catch(error => {
+        console.log(error)
+      })
+    }).catch(error => {
+      console.log(error)
+    })
+
+    await axios.get('http://localhost:3000/zkzru/getProcessDepositData', {
+      }, axiosConfig)
+      .then(function (response) {
+	        console.log(response)
+          console.log("Get ProcessDeposit Info successfully!");
+          proof = response.data.data.proof;
+          console.log("The proof is:", proof)
+          proofPos = response.data.data.proofPos;
+          console.log("The proofPos is:", proofPos)
+      })
+      .catch(function (error) {
+          console.log(error);
+      });
+
+    // Call RollupNC contract processDeposit method
+    rollupNC.processDeposits(proofPos, proof).then(async tx=> {
+      console.log(tx)
+      tx.wait().then(async res => {
+          console.log('processDeposit zero account:', res)
+      }).catch(error => {
+          console.log(error)
+      })
+    }).catch(error => {
+        console.log(error)
+    })
+
+    // create zeroAccount in DB
     let url= "http://localhost:3000/zkzru/account/0"
     let res = await axios.get(url, {
       }, axiosConfig)
@@ -120,7 +164,51 @@ const initAccount = async () => {
         await axios.post('http://localhost:3000/zkzru/account', req, axiosConfig)
     }
 
-    // create coordinator account
+
+    // Coordinator Account: deposit -> processDeposit -> create coordinator Account in DB
+    const pubkeyCoordinator = [
+      '11272163730179884137553846264063981893256467337839744581177763041069534786542',
+      '15087857856636020541068595983556500961641122088946557767189421497078430055442'
+    ]
+    // deposit
+    rollupNC.deposit(pubkeyCoordinator, 0, 0).then(async tx=> {
+      console.log(tx)
+      tx.wait().then(async res => {
+        console.log('deposit zero account:', res)
+      }).catch(error => {
+        console.log(error)
+      })
+    }).catch(error => {
+      console.log(error)
+    })
+
+    await axios.get('http://localhost:3000/zkzru/getProcessDepositData', {
+      }, axiosConfig)
+      .then(function (response) {
+	        console.log(response)
+          console.log("Get ProcessDeposit Info successfully!");
+          proof = response.data.data.proof;
+          console.log("The proof is:", proof)
+          proofPos = response.data.data.proofPos;
+          console.log("The proofPos is:", proofPos)
+      })
+      .catch(function (error) {
+          console.log(error);
+      });
+
+
+    rollupNC.processDeposits(proofPos, proof).then(async tx=> {
+      console.log(tx)
+      tx.wait().then(async res => {
+          console.log('processDeposit zero account:', res)
+      }).catch(error => {
+          console.log(error)
+      })
+    }).catch(error => {
+        console.log(error)
+    })
+
+    // create coordinator account in DB
     url= "http://localhost:3000/zkzru/account/" + coordinatorAddress
     res= await axios.get(url, {
       }, axiosConfig)
@@ -140,11 +228,6 @@ const initAccount = async () => {
 
 function main() {
     initAccount()
-
-    setInterval(async () => {
-        await processDeposit();     
-      }, 60 * 1000
-    )
 
     // query every minute
     setInterval(async () => {
