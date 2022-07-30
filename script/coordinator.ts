@@ -1,5 +1,6 @@
 const axios = require("axios")
 const ethers = require("ethers")
+const argv = require('minimist')(process.argv.slice(2));
 const { setIntervalAsync } = require('set-interval-async/dynamic')
 const RollupNC = require("../utils/RollupNC.json")
 require('dotenv').config()
@@ -227,13 +228,22 @@ const initAccount = async () => {
 }
 
 function main() {
-    initAccount()
+    if (argv.mode == "init") {
+        initAccount()
+    }
+    if (argv.mode == "process") {
+        setInterval(async () => {
+            await processDeposit();     
+          }, 60 * 1000
+        )
 
-    // query every minute
-    setInterval(async () => {
-        await queryAndProve();     
-      }, 120 * 1000
-    )
+        // query every minute
+        setInterval(async () => {
+            await queryAndProve();     
+          }, 120 * 1000
+        )
+    }
+    
 }
 
 main()
