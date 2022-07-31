@@ -240,10 +240,9 @@ function main() {
         // query every minute
         setInterval(async () => {
             await queryAndProve();     
-          }, 120 * 1000
+          }, 150 * 1000
         )
     }
-    
 }
 
 main()

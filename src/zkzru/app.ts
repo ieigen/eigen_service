@@ -387,7 +387,6 @@ module.exports = function (app) {
     })
 
     // This interface is used for batch deposit.
-    /*
     app.get("/zkzru/getProcessDepositProof", async (req, res) => {
       // get all deposit hash in db and construct a merkle tree
       const subtreeDepth = 2
@@ -420,7 +419,6 @@ module.exports = function (app) {
 
       return res.json(util.Succ({proof, proofPos}))
   })
-  */
 
   // This interface is used for non batch depos
   app.get("/zkzru/getProcessDepositData", async (req, res) => {
