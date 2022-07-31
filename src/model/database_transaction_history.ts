@@ -58,6 +58,7 @@ const thdb = sequelize.define("transaction_history_st", {
   status: DataTypes.INTEGER,
   sub_txid: DataTypes.CITEXT,
   operation: DataTypes.CITEXT, // Transaction operation (e.g., send, exchange, approve, etc.)
+  txid_l2: DataTypes.INTEGER,
 });
 
 export const TX_TYPE_L1ToL1 = 0x0;
@@ -85,6 +86,7 @@ sequelize
       status: TransactionStatus.Success,
       sub_txid: "",
       operation: "send",
+      txid_l2: 0,
     });
   })
   .then(function (row: any) {
@@ -114,6 +116,7 @@ const add = function (dict) {
     status: dict.status,
     sub_txid: dict.sub_txid || "",
     operation: dict.operation,
+    txid_l2: dict.txid_l2,
   });
 };
 
@@ -318,10 +321,25 @@ const transaction_count_l2 = function () {
   });
 };
 
+const update = (filter_dict, value_dict) => {
+  return thdb
+  .update(
+      value_dict,
+      {
+          where: filter_dict,
+      }
+  )
+  .then(function (result: any) {
+      consola.log("Update result: ", result);
+      return true;
+  })
+}
+
 export {
   account_count_l2,
   transaction_count_l2,
   updateOrAdd,
+  update,
   add,
   search,
   getByTxid,

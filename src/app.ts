@@ -162,6 +162,7 @@ require("./login/metamask")(app);
 require("./relay/relay")(app);
 require("./wallet/wallet")(app);
 require("./message")(app);
+require("./zkzru/app")(app);
 require("./stealth_address/stealth_address")(app);
 
 app.listen(3000, function () {
